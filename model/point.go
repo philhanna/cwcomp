@@ -19,7 +19,7 @@ type Point struct {
 
 // Compare returns -1, 0, or 1 depending on whether this point is
 // less than, equal to, or greater than another.
-func (p *Point) compare(other Point) int {
+func (p *Point) Compare(other Point) int {
 	switch {
 	case p.Row < other.Row:
 		return -1
