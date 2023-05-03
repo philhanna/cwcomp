@@ -1,4 +1,4 @@
-package model
+package grid
 
 import "testing"
 import "github.com/stretchr/testify/assert"

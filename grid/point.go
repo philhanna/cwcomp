@@ -1,4 +1,4 @@
-package model
+package grid
 
 import "fmt"
 import "encoding/json"
