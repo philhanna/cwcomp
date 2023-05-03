@@ -57,3 +57,26 @@ func TestPoint_Equal(t *testing.T) {
 		})
 	}
 }
+
+func TestPoint_FromJSON(t *testing.T) {
+	jsonBlob := []byte(`{"r":1,"c":3}`)
+	want := Point{Row: 1, Col: 3}
+	p := new(Point)
+	err := p.FromJSON(jsonBlob)
+	assert.Nil(t, err)
+	have := *p
+	assert.Equal(t, want, have)
+}
+
+func TestPoint_String(t *testing.T) {
+	
+}
+
+func TestPoint_ToJSON(t *testing.T) {
+	point := Point{Row: 3, Col: -1}
+	jsonBlob, err := point.ToJSON()
+	assert.Nil(t, err)
+	have := string(jsonBlob)
+	want := `{"r":3,"c":-1}`
+	assert.JSONEq(t, want, have)
+}
