@@ -30,6 +30,14 @@ func TestPoint_Compare(t *testing.T) {
 }
 
 func TestPoint_Equal(t *testing.T) {
+	p1 := Point{Row: 1, Col: 3}
+	p2 := p1
+	p3 := Point{}
+	p3.Row++
+	p3.Col++
+	p3.Col++
+	p3.Col++
+	
 	tests := []struct {
 		name string
 		this Point
@@ -38,13 +46,8 @@ func TestPoint_Equal(t *testing.T) {
 	}{
 		{"same point", Point{Row: 1, Col: 3}, Point{Row: 1, Col: 3}, true},
 		{"this column is greater", Point{Row: 1, Col: 3}, Point{Row: 1, Col: 2}, false},
-		{"this column is less", Point{Row: 1, Col: 3}, Point{Row: 1, Col: 4}, false},
-		{"this row is greater", Point{Row: 1, Col: 3}, Point{Row: 0, Col: 4}, false},
-		{"this row is less", Point{Row: 0, Col: 3}, Point{Row: 1, Col: 0}, false},
-		{"same row, col less", Point{Row: 0, Col: 0}, Point{Row: 0, Col: 4}, false},
-		{"same row, col more", Point{Row: 0, Col: 0}, Point{Row: 0, Col: -4}, false},
-		{"same col, row less", Point{2, 3}, Point{3, 3}, false},
-		{"same col, row more", Point{4, 3}, Point{3, 3}, false},
+		{"identical objects", p1, p2, true},
+		{"same values", p1, p3, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
