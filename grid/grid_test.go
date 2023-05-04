@@ -24,7 +24,7 @@ func getGoodGrid() *Grid {
 	return p
 }
 
-func TestGrid_CalculateWordNumbers(t *testing.T) {
+func TestGrid_FindNumberedCells(t *testing.T) {
 	grid := getGoodGrid()
 	assert.Equal(t, 25, len(grid.nclist))
 }
