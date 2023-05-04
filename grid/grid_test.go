@@ -20,7 +20,7 @@ func getGoodGrid() *Grid {
 		{8, 5},
 		{9, 5}, {9, 9},
 	}
-	p.CalculateWordNumbers()
+	p.FindNumberedCells()
 	return p
 }
 

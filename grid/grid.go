@@ -26,7 +26,7 @@ import "github.com/philhanna/stack"
 type Grid struct {
 	n         int                // Size of the grid (n x n square)
 	bclist    []Point            // Black cell points
-	nclist    []NumberedCell      // Numbered cells
+	nclist    []NumberedCell     // Numbered cells
 	undoStack stack.Stack[Point] // Undo stack
 	redoStack stack.Stack[Point] // Redo stack
 }
@@ -49,7 +49,7 @@ func NewGrid(n int) *Grid {
 // ---------------------------------------------------------------------
 // Methods
 // ---------------------------------------------------------------------
-// CalculateWordNumbers figures out the numbering of the across and down
+// FindNumberedCells figures out the numbering of the across and down
 // words in this word based on the locations of all the black cells.
 //
 // Algorithm:
@@ -63,7 +63,7 @@ func NewGrid(n int) *Grid {
 //   - If either an across or down word is found:
 //   - Create a new WordNumber with the next available number
 //   - Add it to the list
-func (grid *Grid) CalculateWordNumbers() {
+func (grid *Grid) FindNumberedCells() {
 	var n = grid.n
 
 	nclist := make([]NumberedCell, 0)
