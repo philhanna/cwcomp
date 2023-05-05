@@ -1,7 +1,6 @@
 package grid
 
 import "fmt"
-import "encoding/json"
 
 // ---------------------------------------------------------------------
 // Type definitions
@@ -40,19 +39,7 @@ func (p *Point) Equal(other Point) bool {
 	return *p == other
 }
 
-// FromJSON creates a Point from its JSON representation. See ToJSON.
-func (p *Point) FromJSON(jsonBlob []byte) error {
-	err := json.Unmarshal(jsonBlob, p)
-	return err
-}
-
 // String returns a string representation of this type
 func (p *Point) String() string {
 	return fmt.Sprintf("(%d,%d)", p.Row, p.Col)
-}
-
-// ToJSON creates a JSON representatoin from a Point. See FromJSON.
-func (p *Point) ToJSON() ([]byte, error) {
-	result, err := json.Marshal(p)
-	return result, err
 }

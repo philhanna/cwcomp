@@ -1,7 +1,11 @@
 package grid
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"encoding/json"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestPoint_Compare(t *testing.T) {
 	tests := []struct {
@@ -57,17 +61,15 @@ func TestPoint_Equal(t *testing.T) {
 		})
 	}
 }
-
 func TestPoint_FromJSON(t *testing.T) {
 	jsonBlob := []byte(`{"r":1,"c":3}`)
 	want := Point{Row: 1, Col: 3}
 	p := new(Point)
-	err := p.FromJSON(jsonBlob)
+	err := json.Unmarshal(jsonBlob, p)
 	assert.Nil(t, err)
 	have := *p
 	assert.Equal(t, want, have)
 }
-
 func TestPoint_String(t *testing.T) {
 	want := `(1,3)`
 	point := Point{Row: 1, Col: 3}
@@ -77,7 +79,7 @@ func TestPoint_String(t *testing.T) {
 
 func TestPoint_ToJSON(t *testing.T) {
 	point := Point{Row: 3, Col: -1}
-	jsonBlob, err := point.ToJSON()
+	jsonBlob, err := json.Marshal(point)
 	assert.Nil(t, err)
 	have := string(jsonBlob)
 	want := `{"r":3,"c":-1}`
