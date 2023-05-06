@@ -1,13 +1,33 @@
 package grid
 
+import (
+	"fmt"
+	"strings"
+)
+
 // ---------------------------------------------------------------------
 // Type definitions
 // ---------------------------------------------------------------------
 
-// A word number in the grid
+// NumberedCell is a letter cell that is the beginning of an across word
+// and/or a down word.
 type NumberedCell struct {
-	point Point // Starting point of numbered cell
-	seq   int   // Word number (1, 2, ...)
-	alen  int   // Length of across word starting at this point
-	dlen  int   // Length of down word starting at this point
+	LetterCell     // The numbered cell letter values
+	seq        int // The word number
+	aLen       int // Length of the across word (if any)
+	dLen       int // Length of the down word (if any)
+}
+
+// ---------------------------------------------------------------------
+// Methods
+// ---------------------------------------------------------------------
+
+// String returns a string representation of the structure.
+func (nc *NumberedCell) String() string {
+	return strings.Join([]string{
+		fmt.Sprintf("letterCell:%v", nc.LetterCell),
+		fmt.Sprintf("seq:%d", nc.seq),
+		fmt.Sprintf("aLen:%d", nc.aLen),
+		fmt.Sprintf("dLen:%d", nc.dLen),
+	}, ", ")
 }
