@@ -13,7 +13,8 @@ func TestLetterCell_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"simple", fields{Point{1, 3}, Point{4, 2}, "A"}, `ncAcross:(1,3), ncDown:(4,2), letter:"A"`},
+		{"vanilla", fields{Point{1, 3}, Point{4, 2}, "A"}, `ncAcross:(1,3), ncDown:(4,2), letter:"A"`},
+		{"no letter", fields{Point{1, 3}, Point{4, 2}, ""}, `ncAcross:(1,3), ncDown:(4,2), letter:""`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
