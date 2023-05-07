@@ -83,67 +83,65 @@ func TestGrid_AddBlackCell(t *testing.T) {
 
 }
 
-func TestGrid_FindNumberedCells_BadGrid(t *testing.T) {
-	grid := getTestGrid([]Point {
-		{1, 1}, {1, 5},
-		{2, 5},
-		{3, 5},
-		{4, 6},
-		{4, 9},
-		{5, 1}, {5, 2}, {5, 3},
-	})
-	//dumpGrid(grid)
-	n := grid.n
-	countBlackCells := 0
-	countLetterCells := 0
-	countNumberedCells := 0
-	for r := 1; r <= n; r++ {
-		for c := 1; c <= n; c++ {
-			point := Point{r, c}
-			cell := grid.GetCell(point)
-			switch cellType := cell.(type) {
-			case BlackCell:
-				countBlackCells++
-			case LetterCell:
-				countLetterCells++
-			case NumberedCell:
-				countNumberedCells++
-			default:
-				t.Fatalf("Unrecognized type %v\n", cellType)
-			}
-		}
+func TestGrid_FindNumberedCells(t *testing.T) {
+	tests := []struct {
+		name       string
+		blackCells []Point
+		nBC        int
+		nLC        int
+		nNC        int
+	}{
+		// Add test cases
+		{
+			"Good",
+			[]Point{
+				{1, 1}, {1, 5},
+				{2, 5},
+				{3, 5},
+				{4, 9},
+				{5, 1}, {5, 2}, {5, 3},
+			},
+			16, 40, 25,
+		},
+		{
+			"Bad",
+			[]Point{
+				{1, 1}, {1, 5},
+				{2, 5},
+				{3, 5},
+				{4, 6},
+				{4, 9},
+				{5, 1}, {5, 2}, {5, 3},
+			},
+			18, 35, 28,
+		},
 	}
-	assert.Equal(t, 18, countBlackCells)
-	assert.Equal(t, 35, countLetterCells)
-	assert.Equal(t, 28, countNumberedCells)
-}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			grid := getTestGrid(tt.blackCells)
+			have_nBC := 0
+			have_nLC := 0
+			have_nNC := 0
+			for r := 1; r <= grid.n; r++ {
+				for c := 1; c <= grid.n; c++ {
+					point := Point{r, c}
+					cell := grid.GetCell(point)
+					switch cell.(type) {
+					case BlackCell:
+						have_nBC++
+					case LetterCell:
+						have_nLC++
+					case NumberedCell:
+						have_nNC++
+					}
+				}
+			}
+			assert.Equal(t, tt.nBC, have_nBC)
+			assert.Equal(t, tt.nLC, have_nLC)
+			assert.Equal(t, tt.nNC, have_nNC)
+		})
+	}
 
-func TestGrid_FindNumberedCells_GoodGrid(t *testing.T) {
-	grid := getGoodGrid()
-	dumpGrid(grid)
-	n := grid.n
-	countBlackCells := 0
-	countLetterCells := 0
-	countNumberedCells := 0
-	for r := 1; r <= n; r++ {
-		for c := 1; c <= n; c++ {
-			point := Point{r, c}
-			cell := grid.GetCell(point)
-			switch cellType := cell.(type) {
-			case BlackCell:
-				countBlackCells++
-			case LetterCell:
-				countLetterCells++
-			case NumberedCell:
-				countNumberedCells++
-			default:
-				t.Fatalf("Unrecognized type %v\n", cellType)
-			}
-		}
-	}
-	assert.Equal(t, 16, countBlackCells)
-	assert.Equal(t, 40, countLetterCells)
-	assert.Equal(t, 25, countNumberedCells)
 }
 
 func TestGrid_SymmetricPoint(t *testing.T) {
