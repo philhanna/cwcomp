@@ -75,16 +75,17 @@ func TestGrid_AddBlackCell(t *testing.T) {
 		grid.AddBlackCell(point)
 
 		cell := grid.GetCell(point)
-		switch cell.(type) {
+		switch cellType := cell.(type) {
 		case BlackCell: // OK
 		default:
-			t.Errorf("Point %v should be black cell, not %T", point, point)
+			t.Errorf("Point %v should be black cell, not %v", point, cellType)
 		}
+
 		symCell := grid.GetCell(symPoint)
-		switch symCell.(type) {
+		switch cellType := symCell.(type) {
 		case BlackCell: // OK
 		default:
-			t.Errorf("Symmetric point %v should be black cell, not %T", symPoint, symPoint)
+			t.Errorf("Symmetric point %v should be black cell, not %v", symPoint, cellType)
 		}
 	}
 
