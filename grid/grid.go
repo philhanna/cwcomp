@@ -1,6 +1,8 @@
 package grid
 
 import (
+	"log"
+
 	"github.com/philhanna/stack"
 )
 
@@ -165,6 +167,7 @@ func (grid *Grid) FindNumberedCells() {
 				// must be at least three to qualify.
 				nc.dLen = thisPoint.Row - startingPoint.Row
 				if nc.dLen < 3 {
+					log.Printf("WARNING: at (%d,%d), down word is invalid\n", r, c)
 					nc.dLen = 0
 				}
 
