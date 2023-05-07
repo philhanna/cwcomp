@@ -85,3 +85,23 @@ func TestPoint_ToJSON(t *testing.T) {
 	want := `{"r":3,"c":-1}`
 	assert.JSONEq(t, want, have)
 }
+
+func TestPoint_ToXY(t *testing.T) {
+	tests := []struct {
+		name   string
+		point Point
+		x      int
+		y      int
+	}{
+		{"simple", Point{1, 7}, 6, 0},
+		{"zeros", Point{0, 0}, -1, -1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			point := tt.point
+			x, y := point.ToXY()
+			assert.Equal(t, tt.x, x)
+			assert.Equal(t, tt.y, y)
+		})
+	}
+}
