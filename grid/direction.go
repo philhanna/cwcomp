@@ -9,6 +9,6 @@ package grid
 type Direction byte
 
 const (
-	Across Direction = iota
-	Down
+	ACROSS Direction = iota
+	DOWN
 )
