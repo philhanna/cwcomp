@@ -112,8 +112,9 @@ func TestGrid_FindNumberedCells(t *testing.T) {
 				{4, 6},
 				{4, 9},
 				{5, 1}, {5, 2}, {5, 3},
+				{7, 1},
 			},
-			18, 35, 28,
+			20, 34, 27,
 		},
 	}
 	for _, tt := range tests {

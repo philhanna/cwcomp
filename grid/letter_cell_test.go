@@ -18,6 +18,7 @@ func TestLetterCell_String(t *testing.T) {
 		{"no ncDown", fields{&Point{5, 7}, nil, "C"}, `ncAcross:(5,7), ncDown:<nil>, letter:"C"`},
 		{"no letter", fields{&Point{1, 3}, &Point{4, 2}, ""}, `ncAcross:(1,3), ncDown:(4,2), letter:""`},
 		{"no pointers", fields{nil, nil, "E"}, `ncAcross:<nil>, ncDown:<nil>, letter:"E"`},
+		{"nothing", fields{nil, nil, ""}, `ncAcross:<nil>, ncDown:<nil>, letter:""`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
