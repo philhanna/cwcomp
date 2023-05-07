@@ -39,6 +39,14 @@ func (p *Point) Equal(other Point) bool {
 	return *p == other
 }
 
+// ToXY converts a point (that uses 1-based coordinates) to a pair (x,
+// y) that uses zero-based ones.
+func (p *Point) ToXY() (int, int) {
+	x := p.Col - 1
+	y := p.Row - 1
+	return x, y
+}
+
 // String returns a string representation of this type
 func (p *Point) String() string {
 	return fmt.Sprintf("(%d,%d)", p.Row, p.Col)
