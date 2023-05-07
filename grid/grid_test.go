@@ -26,9 +26,8 @@ func dumpGrid(grid *Grid) {
 		}
 	}
 }
-func getGoodGrid() *Grid {
 
-	// This is the list of points that will be black cells
+func getBadGrid() *Grid {
 	points := []Point{
 		{1, 1}, {1, 5},
 		{2, 5},
@@ -36,13 +35,25 @@ func getGoodGrid() *Grid {
 		{4, 9},
 		{5, 1}, {5, 2}, {5, 3},
 	}
+	return getTestGrid(points)
+}
 
-	// Create the grid and initialize the black cells
+func getGoodGrid() *Grid {
+	points := []Point{
+		{1, 1}, {1, 5},
+		{2, 5},
+		{3, 5},
+		{4, 9},
+		{5, 1}, {5, 2}, {5, 3},
+	}
+	return getTestGrid(points)
+}
+
+func getTestGrid(points []Point) *Grid {
 	grid := NewGrid(9)
 	for _, point := range points {
 		grid.AddBlackCell(point)
 	}
-
 	grid.FindNumberedCells()
 	return grid
 }
