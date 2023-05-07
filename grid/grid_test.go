@@ -32,6 +32,7 @@ func getBadGrid() *Grid {
 		{1, 1}, {1, 5},
 		{2, 5},
 		{3, 5},
+		{4, 6},
 		{4, 9},
 		{5, 1}, {5, 2}, {5, 3},
 	}
@@ -89,9 +90,36 @@ func TestGrid_AddBlackCell(t *testing.T) {
 
 }
 
-func TestGrid_FindNumberedCells(t *testing.T) {
+func TestGrid_FindNumberedCells_BadGrid(t *testing.T) {
+	grid := getBadGrid()
+	dumpGrid(grid)
+	n := grid.n
+	countBlackCells := 0
+	countLetterCells := 0
+	countNumberedCells := 0
+	for r := 1; r <= n; r++ {
+		for c := 1; c <= n; c++ {
+			point := Point{r, c}
+			cell := grid.GetCell(point)
+			switch cellType := cell.(type) {
+			case BlackCell:
+				countBlackCells++
+			case LetterCell:
+				countLetterCells++
+			case NumberedCell:
+				countNumberedCells++
+			default:
+				t.Fatalf("Unrecognized type %v\n", cellType)
+			}
+		}
+	}
+	assert.Equal(t, 18, countBlackCells)
+	assert.Equal(t, 35, countLetterCells)
+	assert.Equal(t, 28, countNumberedCells)
+}
+
+func TestGrid_FindNumberedCells_GoodGrid(t *testing.T) {
 	grid := getGoodGrid()
-	//dumpGrid(grid)
 	n := grid.n
 	countBlackCells := 0
 	countLetterCells := 0
