@@ -6,9 +6,9 @@ package grid
 
 // Direction is either Across or Down (according to the enumerated
 // constants of those names).
-type Direction string
+type Direction byte
 
 const (
-	Across Direction = "across"
-	Down   Direction = "down"
+	Across Direction = iota
+	Down
 )
