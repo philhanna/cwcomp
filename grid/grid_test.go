@@ -13,30 +13,22 @@ func dumpGrid(grid *Grid) {
 		for c := 1; c <= n; c++ {
 			point := Point{r, c}
 			cell := grid.GetCell(point)
-			switch cell.(type) {
+			switch cellType := cell.(type) {
 			case BlackCell:
-				log.Printf("BlackCell    at %v is %T %v\n", point, cell, cell)
+				bc := cell.(BlackCell)
+				log.Printf("BlackCell    at %v has value %v\n", point, bc.String())
 			case LetterCell:
-				log.Printf("LetterCell   at %v is %T %+v\n", point, cell, cell)
+				lc := cell.(LetterCell)
+				log.Printf("LetterCell   at %v has value %v\n", point, lc.String())
 			case NumberedCell:
-				log.Printf("NumberedCell at %v is %T %v\n", point, cell, cell)
+				nc := cell.(NumberedCell)
+				lc := nc.LetterCell
+				log.Printf("NumberedCell at %v has value %v, seq:%d, aLen:%d, dLen:%d\n", point, lc.String(), nc.seq, nc.aLen, nc.dLen)
 			default:
-				log.Printf("???????????  at %v is %T %v\n", point, cell, cell)
+				log.Printf("???????????  at %v is type %s, value %v\n", point, cellType, cell)
 			}
 		}
 	}
-}
-
-func getBadGrid() *Grid {
-	points := []Point{
-		{1, 1}, {1, 5},
-		{2, 5},
-		{3, 5},
-		{4, 6},
-		{4, 9},
-		{5, 1}, {5, 2}, {5, 3},
-	}
-	return getTestGrid(points)
 }
 
 func getGoodGrid() *Grid {
@@ -92,8 +84,15 @@ func TestGrid_AddBlackCell(t *testing.T) {
 }
 
 func TestGrid_FindNumberedCells_BadGrid(t *testing.T) {
-	grid := getBadGrid()
-	dumpGrid(grid)
+	grid := getTestGrid([]Point {
+		{1, 1}, {1, 5},
+		{2, 5},
+		{3, 5},
+		{4, 6},
+		{4, 9},
+		{5, 1}, {5, 2}, {5, 3},
+	})
+	//dumpGrid(grid)
 	n := grid.n
 	countBlackCells := 0
 	countLetterCells := 0
@@ -121,6 +120,7 @@ func TestGrid_FindNumberedCells_BadGrid(t *testing.T) {
 
 func TestGrid_FindNumberedCells_GoodGrid(t *testing.T) {
 	grid := getGoodGrid()
+	dumpGrid(grid)
 	n := grid.n
 	countBlackCells := 0
 	countLetterCells := 0
