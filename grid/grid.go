@@ -124,15 +124,17 @@ func (grid *Grid) FindNumberedCells() {
 			if startingPoint.Col == 1 || grid.IsBlackCell(Point{r, c - 1}) {
 
 				// Find the ending point of this across word
+				nc.aLen = 0
 				thisPoint := startingPoint
-				for thisPoint.Col < n && !grid.IsBlackCell(thisPoint) {
+				for thisPoint.Col <= n && !grid.IsBlackCell(thisPoint) {
+					nc.aLen++
 					thisPoint.Col++
 				}
 
-				// From this, we can calculate the length. Word lengths
-				// must be at least three to qualify.
-				nc.aLen = thisPoint.Col - startingPoint.Col
+				// Word lengths must be >= 3 to qualify. If this one
+				// isn't, set its length back to zero.
 				if nc.aLen < 3 {
+					log.Printf("WARNING: at (%d,%d), across word is invalid\n", r, c)
 					nc.aLen = 0
 				}
 
@@ -158,14 +160,15 @@ func (grid *Grid) FindNumberedCells() {
 			if startingPoint.Row == 1 || grid.IsBlackCell(Point{r - 1, c}) {
 
 				// Find the ending point of this down word
+				nc.dLen = 0
 				thisPoint := startingPoint
-				for thisPoint.Row < n && !grid.IsBlackCell(thisPoint) {
+				for thisPoint.Row <= n && !grid.IsBlackCell(thisPoint) {
+					nc.dLen++
 					thisPoint.Row++
 				}
 
-				// From this, we can calculate the length. Word lengths
-				// must be at least three to qualify.
-				nc.dLen = thisPoint.Row - startingPoint.Row
+				// Word lengths must be >= 3 to qualify. If this one
+				// isn't, set its length back to zero.
 				if nc.dLen < 3 {
 					log.Printf("WARNING: at (%d,%d), down word is invalid\n", r, c)
 					nc.dLen = 0
