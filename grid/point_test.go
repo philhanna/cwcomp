@@ -88,10 +88,10 @@ func TestPoint_ToJSON(t *testing.T) {
 
 func TestPoint_ToXY(t *testing.T) {
 	tests := []struct {
-		name   string
+		name  string
 		point Point
-		x      int
-		y      int
+		x     int
+		y     int
 	}{
 		{"simple", Point{1, 7}, 6, 0},
 		{"zeros", Point{0, 0}, -1, -1},
