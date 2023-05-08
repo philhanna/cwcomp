@@ -61,6 +61,23 @@ func NewGrid(n int) *Grid {
 // Methods
 // ---------------------------------------------------------------------
 
+// PointIterator is a generator for all the points in the grid, from
+// top bottom and left to right (i.e, (1, 1), (1, 2), ..., (1, n),
+// (2, 1), (2, 2), ..., (2, n), ..., (n, 1) (n, 2), ..., (n, n)).
+func (grid *Grid) PointIterator() <-chan Point {
+	out := make(chan Point)
+	go func() {
+		defer close(out)
+		n := grid.n
+		for r := 1; r <= n; r++ {
+			for c := 1; c <= n; c++ {
+				out <- Point{r, c}
+			}
+		}
+	}()
+	return out
+}
+
 // GetCell returns the cell at the specified point, which may be a black
 // cell, a letter cell, or a numbered cell.
 func (grid *Grid) GetCell(point Point) Cell {
