@@ -45,12 +45,11 @@ func NewNumberedCell(point Point) *NumberedCell {
 //   - Ignore black cells.
 //   - See if this is the beginning of an across word.
 //     If so, find the row and column of the stopping point,
-//     which is either the next black cell or the edge of the puzzle,
-//     then change this to a numbered cell
+//     which is either the next black cell or the edge of the puzzle.
 //   - Do the same for down words
 //   - If either an across or down word is found:
 //   - Create a new WordNumber with the next available number
-//   - Add it to the list
+//   - TODO set the type of the starting point to NumberedCell
 func (grid *Grid) FindNumberedCells() {
 
 	n := grid.n
