@@ -22,8 +22,7 @@ func dumpGrid(grid *Grid) {
 				log.Printf("LetterCell   at %v has value %v\n", point, lc.String())
 			case NumberedCell:
 				nc := cell.(NumberedCell)
-				lc := nc.LetterCell
-				log.Printf("NumberedCell at %v has value %v, seq:%d, aLen:%d, dLen:%d\n", point, lc.String(), nc.seq, nc.aLen, nc.dLen)
+				log.Printf("NumberedCell at %v has value %v\n", point, nc.String())
 			default:
 				log.Printf("???????????  at %v is type %s, value %v\n", point, cellType, cell)
 			}

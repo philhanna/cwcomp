@@ -13,10 +13,10 @@ import (
 // NumberedCell is a letter cell that is the beginning of an across word
 // and/or a down word.
 type NumberedCell struct {
-	LetterCell     // The numbered cell letter values
-	seq        int // The word number
-	aLen       int // Length of the across word (if any)
-	dLen       int // Length of the down word (if any)
+	seq    int    // The word number
+	aLen   int    // Length of the across word (if any)
+	dLen   int    // Length of the down word (if any)
+	letter string // Character in the cell
 }
 
 // ---------------------------------------------------------------------
@@ -63,9 +63,6 @@ func (grid *Grid) FindNumberedCells() {
 			// some letters have already been entered in the grid
 			// (EDITING_PUZZLE).
 			nc := new(NumberedCell)
-			nc.LetterCell = grid.GetCell(startingPoint).(LetterCell)
-			nc.LetterCell.ncAcross = nil
-			nc.LetterCell.ncDown = nil
 
 			// This is the beginning point of an across word if either:
 			//  - It is in the first column
@@ -156,9 +153,9 @@ func (grid *Grid) FindNumberedCells() {
 // String returns a string representation of the structure.
 func (nc *NumberedCell) String() string {
 	return strings.Join([]string{
-		fmt.Sprintf("letterCell:%v", nc.LetterCell),
 		fmt.Sprintf("seq:%d", nc.seq),
 		fmt.Sprintf("aLen:%d", nc.aLen),
 		fmt.Sprintf("dLen:%d", nc.dLen),
+		fmt.Sprintf("letter:%q", nc.letter),
 	}, ", ")
 }
