@@ -117,7 +117,7 @@ func TestGrid_FindNumberedCells(t *testing.T) {
 			20, 34, 27,
 		},
 	}
-	for _, tt := range tests {
+	for i, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			grid := getTestGrid(tt.blackCells)
 			have_nBC := 0
@@ -136,6 +136,9 @@ func TestGrid_FindNumberedCells(t *testing.T) {
 						have_nNC++
 					}
 				}
+			}
+			if i == 0 {
+				dumpGrid(grid)
 			}
 			assert.Equal(t, tt.nBC, have_nBC)
 			assert.Equal(t, tt.nLC, have_nLC)
