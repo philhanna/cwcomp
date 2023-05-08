@@ -148,6 +148,33 @@ func TestGrid_FindNumberedCells(t *testing.T) {
 
 }
 
+func TestGrid_PointIterator(t *testing.T) {
+	const n = 3
+	grid := NewGrid(n)
+
+	// Make a list of all points received from the iterator
+	list1 := make([]Point, n*n)
+	it := grid.PointIterator()
+	index := 0
+	for point := range it {
+		list1[index] = point
+		index++
+	}
+
+	// Make another list of points created from nested loops
+	list2 := make([]Point, n*n)
+	index = 0
+	for r := 1; r <= n; r++ {
+		for c := 1; c <= n; c++ {
+			list2[index] = Point{r, c}
+			index++
+		}
+	}
+
+	// Should be the same
+	assert.Equal(t, list1, list2)
+}
+
 func TestGrid_SymmetricPoint(t *testing.T) {
 	grid := NewGrid(9)
 	tests := []struct {
