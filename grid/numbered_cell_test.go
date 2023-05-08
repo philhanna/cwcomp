@@ -14,8 +14,7 @@ func TestNumberedCell_String(t *testing.T) {
 		dLen   int
 		letter string
 		want   string
-	}{
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			nc := &NumberedCell{
