@@ -28,7 +28,7 @@ func NewBlackCell(point Point) BlackCell {
 // TODO: push this cell onto the undo stack?
 func (grid *Grid) AddBlackCell(point Point) {
 
-	cell := BlackCell{point: point}
+	cell := NewBlackCell(point)
 	grid.SetCell(point, cell)
 
 	symPoint := grid.SymmetricPoint(point)

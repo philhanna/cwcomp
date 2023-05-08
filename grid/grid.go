@@ -61,6 +61,20 @@ func NewGrid(n int) *Grid {
 // Methods
 // ---------------------------------------------------------------------
 
+// CellIterator is a generator for all the cells in the grid, from top
+// to bottom, left to right (same as PointIterator).
+func (grid *Grid) CellIterator() <-chan Cell {
+	out := make(chan Cell)
+	go func() {
+		defer close(out)
+		for point := range grid.PointIterator() {
+			cell := grid.GetCell(point)
+			out <- cell
+		}	
+	}()
+	return out
+}
+
 // GetCell returns the cell at the specified point, which may be a black
 // cell, a letter cell, or a numbered cell.
 func (grid *Grid) GetCell(point Point) Cell {
