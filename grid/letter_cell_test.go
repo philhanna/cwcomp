@@ -1,35 +1,43 @@
 package grid
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestLetterCell_String(t *testing.T) {
-	type fields struct {
+	tests := []struct {
+		name     string
+		point    Point
 		ncAcross *Point
 		ncDown   *Point
 		letter   string
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
+		want     string
 	}{
-		{"vanilla", fields{&Point{1, 3}, &Point{4, 2}, "A"}, `ncAcross:(1,3), ncDown:(4,2), letter:"A"`},
-		{"no ncAcross", fields{nil, &Point{4, 3}, "B"}, `ncAcross:<nil>, ncDown:(4,3), letter:"B"`},
-		{"no ncDown", fields{&Point{5, 7}, nil, "C"}, `ncAcross:(5,7), ncDown:<nil>, letter:"C"`},
-		{"no letter", fields{&Point{1, 3}, &Point{4, 2}, ""}, `ncAcross:(1,3), ncDown:(4,2), letter:""`},
-		{"no pointers", fields{nil, nil, "E"}, `ncAcross:<nil>, ncDown:<nil>, letter:"E"`},
-		{"nothing", fields{nil, nil, ""}, `ncAcross:<nil>, ncDown:<nil>, letter:""`},
+		{"vanilla", Point{}, &Point{1, 3}, &Point{4, 2}, "A",
+			`point:{0,0},ncAcross:(1,3),ncDown:(4,2),letter:"A"`},
+		{"no ncAcross", Point{}, nil, &Point{4, 3}, "B",
+			`point:{0,0},ncAcross:<nil>,ncDown:(4,3),letter:"B"`},
+		{"no ncDown", Point{}, &Point{5, 7}, nil, "C",
+			`point:{0,0},ncAcross:(5,7),ncDown:<nil>,letter:"C"`},
+		{"no letter", Point{}, &Point{1, 3}, &Point{4, 2}, "",
+			`point:{0,0},ncAcross:(1,3),ncDown:(4,2),letter:""`},
+		{"no pointers", Point{}, nil, nil, "E",
+			`point:{0,0},ncAcross:<nil>,ncDown:<nil>,letter:"E"`},
+		{"nothing", Point{}, nil, nil, "",
+			`point:{0,0},ncAcross:<nil>,ncDown:<nil>,letter:""`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			lc := &LetterCell{
-				ncAcross: tt.fields.ncAcross,
-				ncDown:   tt.fields.ncDown,
-				letter:   tt.fields.letter,
+				ncAcross: tt.ncAcross,
+				ncDown:   tt.ncDown,
+				letter:   tt.letter,
 			}
-			if got := lc.String(); got != tt.want {
-				t.Errorf("LetterCell.String() = %v, want %v", got, tt.want)
-			}
+			want := tt.want
+			have := lc.String()
+			assert.Equal(t, want, have)
 		})
 	}
 }

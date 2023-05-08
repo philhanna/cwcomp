@@ -6,4 +6,5 @@ package grid
 
 // Cell can be either a black cell, letter cell, or numbered cell.
 type Cell interface {
+	GetPoint() Point
 }

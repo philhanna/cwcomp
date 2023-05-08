@@ -46,8 +46,9 @@ func NewGrid(n int) *Grid {
 	for i := 0; i < n; i++ {
 		g.cells[i] = make([]Cell, n)
 		for j := 0; j < n; j++ {
-			cell := new(LetterCell)
-			g.cells[i][j] = *cell
+			point := Point{Row: i+1, Col: j+1}
+			cell := NewLetterCell(point)
+			g.cells[i][j] = cell
 		}
 	}
 
