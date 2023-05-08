@@ -157,5 +157,5 @@ func (nc *NumberedCell) String() string {
 		fmt.Sprintf("aLen:%d", nc.aLen),
 		fmt.Sprintf("dLen:%d", nc.dLen),
 		fmt.Sprintf("letter:%q", nc.letter),
-	}, ", ")
+	}, ",")
 }
