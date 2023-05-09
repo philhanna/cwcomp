@@ -166,10 +166,9 @@ func (nc NumberedCell) GetPoint() Point {
 // String returns a string representation of the structure.
 func (nc *NumberedCell) String() string {
 	return strings.Join([]string{
-		fmt.Sprintf("point:{Row:%d,Col:%d}", nc.point.Row, nc.point.Col),
+		fmt.Sprintf("LetterCell:{%v}", nc.LetterCell.String()),
 		fmt.Sprintf("seq:%d", nc.seq),
 		fmt.Sprintf("aLen:%d", nc.aLen),
 		fmt.Sprintf("dLen:%d", nc.dLen),
-		fmt.Sprintf("letter:%q", nc.letter),
 	}, ",")
 }
