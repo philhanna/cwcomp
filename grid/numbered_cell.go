@@ -13,7 +13,7 @@ import (
 // NumberedCell is a letter cell that is the beginning of an across word
 // and/or a down word.
 type NumberedCell struct {
-	point  Point  // Location of the cell
+	point  Point  // Location of this cell
 	seq    int    // The word number
 	aLen   int    // Length of the across word (if any)
 	dLen   int    // Length of the down word (if any)

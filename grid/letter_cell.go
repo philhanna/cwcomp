@@ -14,7 +14,7 @@ import (
 //   - A pointer to the numbered cell for the down word (if any)
 //   - The character in the cell
 type LetterCell struct {
-	point    Point  // Location of the letter cell
+	point    Point  // Location of this letter cell
 	ncAcross *Point // Pointer to the numbered cell in the across direction
 	ncDown   *Point // Pointer to the numbered cell in the down direction
 	letter   string // Character in the cell

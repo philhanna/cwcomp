@@ -7,7 +7,7 @@ package grid
 // BlackCell is a point in the grid that can have no letters. It marks
 // the boundaries for the starting and stopping point of words.
 type BlackCell struct {
-	point Point // Location of the cell for the Cell interface
+	point Point // Location of this cell
 }
 
 // ---------------------------------------------------------------------
