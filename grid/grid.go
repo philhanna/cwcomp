@@ -61,6 +61,23 @@ func NewGrid(n int) *Grid {
 // Methods
 // ---------------------------------------------------------------------
 
+// BlackCellIterator is a generator for all the black cells in the grid.
+func (grid *Grid) BlackCellIterator() <-chan BlackCell {
+	out := make(chan BlackCell)
+	go func() {
+		defer close(out)
+		for point := range grid.PointIterator() {
+			cell := grid.GetCell(point)
+			switch cell.(type) {
+			case BlackCell:
+				bc := cell.(BlackCell)
+				out <- bc
+			}
+		}
+	}()
+	return out
+}
+
 // CellIterator is a generator for all the cells in the grid, from top
 // to bottom, left to right (same as PointIterator).
 func (grid *Grid) CellIterator() <-chan Cell {
@@ -80,6 +97,40 @@ func (grid *Grid) CellIterator() <-chan Cell {
 func (grid *Grid) GetCell(point Point) Cell {
 	x, y := point.ToXY()
 	return grid.cells[y][x]
+}
+
+// LetterCellIterator is a generator for all the LetterCells in the grid.
+func (grid *Grid) LetterCellIterator() <-chan LetterCell {
+	out := make(chan LetterCell)
+	go func() {
+		defer close(out)
+		for point := range grid.PointIterator() {
+			cell := grid.GetCell(point)
+			switch cell.(type) {
+			case LetterCell:
+				lc := cell.(LetterCell)
+				out <- lc
+			}
+		}
+	}()
+	return out
+}
+
+// NumberedCellIterator is a generator for all the NumberedCells in the grid.
+func (grid *Grid) NumberedCellIterator() <-chan NumberedCell {
+	out := make(chan NumberedCell)
+	go func() {
+		defer close(out)
+		for point := range grid.PointIterator() {
+			cell := grid.GetCell(point)
+			switch cell.(type) {
+			case NumberedCell:
+				nc := cell.(NumberedCell)
+				out <- nc
+			}
+		}
+	}()
+	return out
 }
 
 // PointIterator is a generator for all the points in the grid, from
