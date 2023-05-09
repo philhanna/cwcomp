@@ -46,7 +46,7 @@ func NewGrid(n int) *Grid {
 	for i := 0; i < n; i++ {
 		g.cells[i] = make([]Cell, n)
 		for j := 0; j < n; j++ {
-			point := Point{Row: i+1, Col: j+1}
+			point := Point{Row: i + 1, Col: j + 1}
 			cell := NewLetterCell(point)
 			g.cells[i][j] = cell
 		}
@@ -70,7 +70,7 @@ func (grid *Grid) CellIterator() <-chan Cell {
 		for point := range grid.PointIterator() {
 			cell := grid.GetCell(point)
 			out <- cell
-		}	
+		}
 	}()
 	return out
 }

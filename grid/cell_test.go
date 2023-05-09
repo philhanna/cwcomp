@@ -10,13 +10,13 @@ import (
 
 const (
 	PACKAGE_NAME = "grid"
-	PREFIX = PACKAGE_NAME + "."
+	PREFIX       = PACKAGE_NAME + "."
 )
 
 func TestCell_GetPoint(t *testing.T) {
-	
+
 	// Map out the cell types (abbreviations).
-	
+
 	abbrev := []string{
 		"BNNNBNNNN",
 		"NLLLBNLLL",
@@ -30,7 +30,7 @@ func TestCell_GetPoint(t *testing.T) {
 	}
 
 	const n = 9
-	
+
 	grid := getGoodGrid()
 
 	verify := func(t *testing.T, point Point, name string) {
@@ -55,6 +55,6 @@ func TestCell_GetPoint(t *testing.T) {
 			verify(t, point, "NumberedCell")
 		default:
 			t.Fatalf("Unknown type at %v\n", actualCell)
-		}		
+		}
 	}
 }

@@ -14,9 +14,9 @@ import (
 // and/or a down word.
 type NumberedCell struct {
 	LetterCell
-	seq    int    // The word number
-	aLen   int    // Length of the across word (if any)
-	dLen   int    // Length of the down word (if any)
+	seq  int // The word number
+	aLen int // Length of the across word (if any)
+	dLen int // Length of the down word (if any)
 }
 
 // ---------------------------------------------------------------------
