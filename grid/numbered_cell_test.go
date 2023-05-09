@@ -8,25 +8,29 @@ import (
 
 func TestNumberedCell_String(t *testing.T) {
 	tests := []struct {
-		name   string
-		point  Point
-		seq    int
-		aLen   int
-		dLen   int
-		letter string
-		want   string
+		name string
+		lc   LetterCell
+		seq  int
+		aLen int
+		dLen int
+		want string
 	}{
-		{"simple", Point{1, 2}, 1, 3, 4, "O", `point:{Row:1,Col:2},seq:1,aLen:3,dLen:4,letter:"O"`},
+		{
+			"simple",
+			LetterCell{
+				point:    Point{1, 2},
+				ncAcross: nil,
+				ncDown:   nil,
+				letter:   "O",
+			},
+			1,
+			3,
+			4,
+			`LetterCell:{point:{1,2},ncAcross:<nil>,ncDown:<nil>,letter:"O"},seq:1,aLen:3,dLen:4`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			nc := &NumberedCell{
-				point:  tt.point,
-				seq:    tt.seq,
-				aLen:   tt.aLen,
-				dLen:   tt.dLen,
-				letter: tt.letter,
-			}
+			nc := &NumberedCell{tt.lc, tt.seq, tt.aLen, tt.dLen}
 			assert.Equal(t, tt.want, nc.String())
 		})
 	}
