@@ -8,7 +8,7 @@ func TestBlackCell_String(t *testing.T) {
 		bc   *BlackCell
 		want string
 	}{
-		{"simple", &BlackCell{}, "bc"},
+		{"simple", &BlackCell{}, "(0,0)"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -44,16 +44,8 @@ func (lc LetterCell) GetPoint() Point {
 func (lc *LetterCell) String() string {
 	parts := make([]string, 0)
 	parts = append(parts, fmt.Sprintf(`point:{%d,%d}`, lc.point.Row, lc.point.Col))
-	if lc.ncAcross == nil {
-		parts = append(parts, fmt.Sprintf(`ncAcross:%v`, nil))
-	} else {
-		parts = append(parts, fmt.Sprintf(`ncAcross:%v`, lc.ncAcross.String()))
-	}
-	if lc.ncDown == nil {
-		parts = append(parts, fmt.Sprintf(`ncDown:%v`, nil))
-	} else {
-		parts = append(parts, fmt.Sprintf(`ncDown:%v`, lc.ncDown.String()))
-	}
+	parts = append(parts, fmt.Sprintf(`ncAcross:%v`, lc.ncAcross))
+	parts = append(parts, fmt.Sprintf(`ncDown:%v`, lc.ncDown))
 	parts = append(parts, fmt.Sprintf("letter:%q", lc.letter))
 	s := strings.Join(parts, ",")
 	return s

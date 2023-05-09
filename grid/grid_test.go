@@ -1,7 +1,7 @@
 package grid
 
 import (
-	"log"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,15 +16,15 @@ func dumpGrid(grid *Grid) {
 			switch cellType := cell.(type) {
 			case BlackCell:
 				bc := cell.(BlackCell)
-				log.Printf("BlackCell    at %v has value %v\n", point, bc.String())
+				fmt.Printf("BlackCell    at %v has value %v\n", point, bc.String())
 			case LetterCell:
 				lc := cell.(LetterCell)
-				log.Printf("LetterCell   at %v has value %v\n", point, lc.String())
+				fmt.Printf("LetterCell   at %v has value %v\n", point, lc.String())
 			case NumberedCell:
 				nc := cell.(NumberedCell)
-				log.Printf("NumberedCell at %v has value %v\n", point, nc.String())
+				fmt.Printf("NumberedCell at %v has value %v\n", point, nc.String())
 			default:
-				log.Printf("???????????  at %v is type %s, value %v\n", point, cellType, cell)
+				fmt.Printf("???????????  at %v is type %s, value %v\n", point, cellType, cell)
 			}
 		}
 	}
@@ -46,8 +46,36 @@ func getTestGrid(points []Point) *Grid {
 	for _, point := range points {
 		grid.AddBlackCell(point)
 	}
-	grid.FindNumberedCells()
+	grid.RenumberCells()
 	return grid
+}
+
+func TestGrid_RemoveBlackCell(t *testing.T) {
+	grid := NewGrid(9)
+	points := []Point{
+		{1, 1},
+		{3, 5},
+		{5, 5},
+	}
+	for _, point := range points {
+		grid.AddBlackCell(point)
+	}
+
+	expected := []Point{
+		{3, 5},
+		{5, 5},
+		{7, 5},
+	}
+
+	actual := []Point{}
+	grid.RemoveBlackCell(points[0])
+	for point := range grid.PointIterator() {
+		if grid.IsBlackCell(point) {
+			actual = append(actual, point)
+		}
+	}
+
+	assert.Equal(t, expected, actual)
 }
 
 func TestGrid_AddBlackCell(t *testing.T) {
@@ -62,7 +90,6 @@ func TestGrid_AddBlackCell(t *testing.T) {
 	for _, tt := range tests {
 		grid := NewGrid(9)
 		point := tt.p
-		symPoint := tt.sp
 		grid.AddBlackCell(point)
 
 		cell := grid.GetCell(point)
@@ -72,6 +99,7 @@ func TestGrid_AddBlackCell(t *testing.T) {
 			t.Errorf("Point %v should be black cell, not %v", point, cellType)
 		}
 
+		symPoint := tt.sp
 		symCell := grid.GetCell(symPoint)
 		switch cellType := symCell.(type) {
 		case BlackCell: // OK
@@ -82,7 +110,7 @@ func TestGrid_AddBlackCell(t *testing.T) {
 
 }
 
-func TestGrid_FindNumberedCells(t *testing.T) {
+func TestGrid_FindNumberedCells_Bad(t *testing.T) {
 	tests := []struct {
 		name       string
 		blackCells []Point
@@ -90,18 +118,6 @@ func TestGrid_FindNumberedCells(t *testing.T) {
 		nLC        int
 		nNC        int
 	}{
-		// Add test cases
-		{
-			"Good",
-			[]Point{
-				{1, 1}, {1, 5},
-				{2, 5},
-				{3, 5},
-				{4, 9},
-				{5, 1}, {5, 2}, {5, 3},
-			},
-			16, 40, 25,
-		},
 		{
 			"Bad",
 			[]Point{
@@ -113,13 +129,10 @@ func TestGrid_FindNumberedCells(t *testing.T) {
 				{5, 1}, {5, 2}, {5, 3},
 				{7, 1},
 			},
-			20, 34, 27,
+			20, 32, 29,
 		},
 	}
-	for i, tt := range tests {
-		if i == 0 {
-			continue
-		}
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			grid := getTestGrid(tt.blackCells)
 			have_nBC := 0
@@ -139,10 +152,60 @@ func TestGrid_FindNumberedCells(t *testing.T) {
 					}
 				}
 			}
-			dumpGrid(grid)
+			//dumpGrid(grid)
 			assert.Equal(t, tt.nBC, have_nBC)
 			assert.Equal(t, tt.nLC, have_nLC)
 			assert.Equal(t, tt.nNC, have_nNC)
+		})
+	}
+
+}
+
+func TestGrid_FindNumberedCells_Good(t *testing.T) {
+	tests := []struct {
+		name       string
+		blackCells []Point
+		nBC        int
+		nLC        int
+		nNC        int
+	}{
+		// Add test cases
+		{
+			"Good",
+			[]Point{
+				{1, 1}, {1, 5},
+				{2, 5},
+				{3, 5},
+				{4, 9},
+				{5, 1}, {5, 2}, {5, 3},
+			},
+			16, 40, 25,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			grid := getTestGrid(tt.blackCells)
+			dumpGrid(grid)
+			have_nBC := 0
+			have_nLC := 0
+			have_nNC := 0
+			for r := 1; r <= grid.n; r++ {
+				for c := 1; c <= grid.n; c++ {
+					point := Point{r, c}
+					cell := grid.GetCell(point)
+					switch cell.(type) {
+					case BlackCell:
+						have_nBC++
+					case LetterCell:
+						have_nLC++
+					case NumberedCell:
+						have_nNC++
+					}
+				}
+			}
+			assert.Equal(t, tt.nBC, have_nBC, "Black cell count")
+			assert.Equal(t, tt.nLC, have_nLC, "Letter cell count")
+			assert.Equal(t, tt.nNC, have_nNC, "Numbered cell count")
 		})
 	}
 

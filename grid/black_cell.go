@@ -23,17 +23,17 @@ func NewBlackCell(point Point) BlackCell {
 // Methods
 // ---------------------------------------------------------------------
 
-// AddBlack cell sets the cell at the specifed point and at the
+// AddBlack cell sets the cells at the specifed point and at the
 // symmetric point to be black cells.
-// TODO: push this cell onto the undo stack?
 func (grid *Grid) AddBlackCell(point Point) {
-
 	cell := NewBlackCell(point)
 	grid.SetCell(point, cell)
 
 	symPoint := grid.SymmetricPoint(point)
 	symCell := BlackCell{point: symPoint}
 	grid.SetCell(grid.SymmetricPoint(point), symCell)
+
+	grid.RenumberCells()
 }
 
 // GetPoint returns the location of this cell (for the Cell interface).
@@ -52,9 +52,23 @@ func (grid *Grid) IsBlackCell(point Point) bool {
 	}
 }
 
+// RemoveBlackCell sets the cells at the specified point and at the
+// symmetric point to be letter cells.
+func (grid *Grid) RemoveBlackCell(point Point) {
+	cell := NewLetterCell(point)
+	grid.SetCell(point, cell)
+
+	symPoint := grid.SymmetricPoint(point)
+	symCell := NewLetterCell(symPoint)
+	grid.SetCell(grid.SymmetricPoint(point), symCell)
+
+	grid.RenumberCells()
+
+}
+
 // String returns a string representation of this black cell.
 func (bc *BlackCell) String() string {
-	sb := "bc"
+	sb := bc.point.String()
 	return sb
 }
 
