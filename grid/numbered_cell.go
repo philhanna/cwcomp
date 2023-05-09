@@ -13,23 +13,10 @@ import (
 // NumberedCell is a letter cell that is the beginning of an across word
 // and/or a down word.
 type NumberedCell struct {
-	point  Point  // Location of this cell
+	LetterCell
 	seq    int    // The word number
 	aLen   int    // Length of the across word (if any)
 	dLen   int    // Length of the down word (if any)
-	letter string // Character in the cell
-}
-
-// ---------------------------------------------------------------------
-// Constructor
-// ---------------------------------------------------------------------
-
-// NewNumberedCell creates a new NumberedCell at the specified location
-// and returns a pointer to it.
-func NewNumberedCell(point Point) *NumberedCell {
-	p := new(NumberedCell)
-	p.point = point
-	return p
 }
 
 // ---------------------------------------------------------------------
@@ -63,6 +50,7 @@ func (grid *Grid) FindNumberedCells() {
 
 			// Get the current point
 			startingPoint := Point{r, c}
+			startingCell := grid.GetCell(startingPoint)
 
 			// Ignore black cells
 			if grid.IsBlackCell(startingPoint) {
@@ -74,7 +62,15 @@ func (grid *Grid) FindNumberedCells() {
 			// do this because this grid calculation may be done when
 			// some letters have already been entered in the grid
 			// (EDITING_PUZZLE).
-			nc := NewNumberedCell(startingPoint)
+			nc := new(NumberedCell)
+			switch startingCell.(type) {
+			case LetterCell:
+				nc.LetterCell = startingCell.(LetterCell)
+			case BlackCell:
+				nc.LetterCell = NewLetterCell(startingPoint)
+			case NumberedCell:
+				nc.LetterCell = NewLetterCell(startingPoint)
+			}
 
 			// This is the beginning point of an across word if either:
 			//  - It is in the first column
