@@ -28,6 +28,7 @@ func dumpGrid(grid *Grid) {
 			}
 		}
 	}
+	fmt.Println(grid.String())
 }
 
 func getGoodGrid() *Grid {
