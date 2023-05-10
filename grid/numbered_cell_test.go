@@ -43,7 +43,6 @@ func TestNumberedCell_assignNumberedCells(t *testing.T) {
 
 	assert.Equal(t, expected, actual)
 }
-
 func TestNumberedCell_String(t *testing.T) {
 	tests := []struct {
 		name string
