@@ -19,3 +19,34 @@ func TestBlackCell_String(t *testing.T) {
 		})
 	}
 }
+
+func TestGrid_AddBlackCell(t *testing.T) {
+	tests := []struct {
+		p  Point
+		sp Point
+	}{
+		{Point{1, 1}, Point{9, 9}},
+		{Point{3, 5}, Point{7, 5}},
+		{Point{5, 5}, Point{5, 5}},
+	}
+	for _, tt := range tests {
+		grid := NewGrid(9)
+		point := tt.p
+		grid.AddBlackCell(point)
+
+		cell := grid.GetCell(point)
+		switch cellType := cell.(type) {
+		case BlackCell: // OK
+		default:
+			t.Errorf("Point %v should be black cell, not %v", point, cellType)
+		}
+
+		symPoint := tt.sp
+		symCell := grid.GetCell(symPoint)
+		switch cellType := symCell.(type) {
+		case BlackCell: // OK
+		default:
+			t.Errorf("Symmetric point %v should be black cell, not %v", symPoint, cellType)
+		}
+	}
+}
