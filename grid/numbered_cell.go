@@ -2,8 +2,13 @@ package grid
 
 import (
 	"fmt"
+	"log"
 	"strings"
 )
+
+func init() {
+	log.SetFlags(log.Ltime | log.Lshortfile)
+}
 
 // ---------------------------------------------------------------------
 // Type definitions
@@ -28,8 +33,6 @@ type NumberedCell struct {
 func (grid *Grid) assignNumberedCells() {
 
 	wordNumber := 0 // Next available word number
-	var nc NumberedCell
-	var ncAcross, ncDown *Point
 
 	for point := range grid.PointIterator() {
 
@@ -45,85 +48,100 @@ func (grid *Grid) assignNumberedCells() {
 		startDown := point.Row == 1 || grid.IsBlackCell(Point{r - 1, c})
 
 		switch {
-
-		case startAcross && startDown:
-			ncAcross = &point
-			ncDown = &point
+		case startAcross, startDown:
 			wordNumber++
-			nc = createNumberedCell(wordNumber, point, ncAcross, ncDown)
-
-		case startAcross:
-			ncAcross = &point
-			ncDown = nil
-			wordNumber++
-			nc = createNumberedCell(wordNumber, point, ncAcross, ncDown)
-
-		case startDown:
-			ncAcross = nil
-			ncDown = &point
-			wordNumber++
-			nc = createNumberedCell(wordNumber, point, ncAcross, ncDown)
+			nc := grid.createNumberedCell(wordNumber, point, startAcross, startDown)
+			grid.SetCell(point, *nc)
 
 		default:
 			// Not a word starting point. Just assign a letter cell for
 			// this point.
-			grid.SetCell(point, LetterCell{point: point})
+			lc := new(LetterCell)
+			lc.point = point
+			lc.ncAcross = nil
+			lc.ncDown = nil
+			grid.SetCell(point, *lc)
 			continue
 		}
+	}
 
-		// Only if this was a new NumberedCell
-		grid.SetCell(point, nc)
+	// Now go through the numbered cells.  For each one, go through its
+	// across and/or down word cells and set their back pointers
+	// (ncAcross and ncDown) to the numbered cell.
+
+	for nc := range grid.NumberedCellIterator() {
+		pnc := new(Point)
+		pnc.Row = nc.point.Row
+		pnc.Col = nc.point.Col
+		if nc.aLen > 0 {
+			// There is an across word. Skip the initial (numbered) cell.
+			for i := 1; i < nc.aLen; i++ {
+				point := Point{nc.point.Row, nc.point.Col + i}
+				cell := grid.GetCell(point)
+				switch cell.(type) {
+					case LetterCell:
+						cellLc := cell.(LetterCell)
+						cellLc.ncAcross = pnc
+						grid.SetCell(cellLc.GetPoint(), cellLc)
+					case NumberedCell:
+						cellNc := cell.(NumberedCell)
+						cellNc.ncAcross = pnc
+						grid.SetCell(cellNc.GetPoint(), cellNc)
+				}
+			}
+		}
+		if nc.dLen > 0 {
+			// There is a down word. Skip the initial (numbered) cell.
+			for i := 1; i < nc.dLen; i++ {
+				point := Point{nc.point.Row + i, nc.point.Col}
+				cell := grid.GetCell(point)
+				switch cell.(type) {
+				case LetterCell:
+					cellLc := cell.(LetterCell)
+					cellLc.ncDown = pnc
+					grid.SetCell(cellLc.GetPoint(), cellLc)
+				case NumberedCell:
+					cellNc := cell.(NumberedCell)
+					cellNc.ncDown = pnc
+					grid.SetCell(cellNc.GetPoint(), cellNc)
+			}
+		}
+		}
 	}
 }
 
 // createNumberedCell is an internal function to create a numbered cell
 // and find the lengths of its across and down words. Used only in
 // assignNumberedCells.
-func createNumberedCell(wordNumber int, point Point, ncAcross *Point, ncDown *Point) NumberedCell {
-	lc := LetterCell{point: point}
-	if ncAcross != nil {
-		lc.ncAcross = ncAcross
+func (grid *Grid) createNumberedCell(wordNumber int, point Point, startAcross bool, startDown bool) *NumberedCell {
+
+	var ncAcross *Point
+	var ncDown *Point
+
+	if startAcross {
+		ncAcross = new(Point)
+		ncAcross.Row = point.Row
+		ncAcross.Col = point.Col
 	}
-	if ncDown != nil {
-		lc.ncDown = ncDown
+
+	if startDown {
+		ncDown = new(Point)
+		ncDown.Row = point.Row
+		ncDown.Col = point.Col
 	}
-	nc := NumberedCell{LetterCell: lc, wordNumber: wordNumber}
+
+	nc := new(NumberedCell)
+	nc.LetterCell.point = point
+	nc.LetterCell.ncAcross = ncAcross
+	nc.LetterCell.ncDown = ncDown
+	nc.wordNumber = wordNumber
+	if startAcross {
+		nc.aLen = grid.GetAcrossWordLength(ncAcross)
+	}
+	if startDown {
+		nc.dLen = grid.GetDownWordLength(ncDown)
+	}
 	return nc
-}
-
-// GetAcrossWordLength returns the length of the across word for this
-// numbered cell.
-func (grid *Grid) GetAcrossWordLength(nc NumberedCell) int {
-	if nc.ncAcross == nil {
-		return 0
-	}
-	n := grid.n
-	length := 0
-	point := nc.point
-	point.Col++
-	for point.Col <= n && !grid.IsBlackCell(point) {
-		length++
-		point.Col++
-	}
-	return length
-}
-
-// GetDownWordLength returns the length of the down word for this
-// numbered cell.
-func (grid *Grid) GetDownWordLength(nc NumberedCell) int {
-	if nc.ncDown == nil {
-		return 0
-	}
-	n := grid.n
-	length := 0
-	point := nc.point
-	point.Row++
-	for point.Row <= n && !grid.IsBlackCell(point) {
-		length++
-		point.Row++
-	}
-	return length
-
 }
 
 // GetPoint returns the location of this cell (for the Cell interface)
@@ -139,34 +157,26 @@ func (grid *Grid) RenumberCells() {
 	grid.assignNumberedCells()
 
 	// Now fill in the lengths for each word
-	for cell := range grid.CellIterator() {
-		switch cell.(type) {
+	for nc := range grid.NumberedCellIterator() {
+		pnc := &nc
 
-		case NumberedCell:
-			nc := cell.(NumberedCell)
-
-			// Set the across length value in the starting numbered cell
-			nc.aLen = grid.GetAcrossWordLength(nc)
-
-			// Copy the pointer into the rest of the across word cells
-			if nc.aLen > 0 {
-				nc.LetterCell.ncAcross = &nc.point
-				for i := 1; i < nc.aLen; i++ {
-					cellPoint := cell.GetPoint()
-					cellPoint.Col++
-					grid.SetNumberedCellAcross(cellPoint, nc)
-				}
+		// Set the across length value in the starting numbered cell
+		if pnc.aLen > 0 {
+			pnc.LetterCell.ncAcross = &nc.point
+			for i := 1; i < pnc.aLen; i++ {
+				cellPoint := pnc.GetPoint()
+				cellPoint.Col++
+				grid.SetNumberedCellAcross(cellPoint, pnc)
 			}
+		}
 
-			// Set the down length value in the starting numbered cell
-			nc.dLen = grid.GetDownWordLength(nc)
-			if nc.dLen > 0 {
-				nc.LetterCell.ncDown = &nc.point
-				for i := 1; i < nc.dLen; i++ {
-					cellPoint := cell.GetPoint()
-					cellPoint.Row++
-					grid.SetNumberedCellDown(cellPoint, nc)
-				}
+		// Set the down length value in the starting numbered cell
+		if pnc.dLen > 0 {
+			pnc.LetterCell.ncDown = &nc.point
+			for i := 1; i < pnc.dLen; i++ {
+				cellPoint := nc.GetPoint()
+				cellPoint.Row++
+				grid.SetNumberedCellDown(cellPoint, pnc)
 			}
 		}
 	}
@@ -174,7 +184,7 @@ func (grid *Grid) RenumberCells() {
 
 // SetNumberedCellAcross sets the "ncAcross" pointer in this cell to the
 // specified starting word number cell.
-func (grid *Grid) SetNumberedCellAcross(point Point, nc NumberedCell) {
+func (grid *Grid) SetNumberedCellAcross(point Point, nc *NumberedCell) {
 	cell := grid.GetCell(point)
 	switch cell.(type) {
 	case LetterCell:
@@ -190,7 +200,7 @@ func (grid *Grid) SetNumberedCellAcross(point Point, nc NumberedCell) {
 
 // SetNumberedCellDown sets the "ncDown" pointer in this cell to the
 // specified starting word number cell.
-func (grid *Grid) SetNumberedCellDown(point Point, nc NumberedCell) {
+func (grid *Grid) SetNumberedCellDown(point Point, nc *NumberedCell) {
 	cell := grid.GetCell(point)
 	switch cell.(type) {
 	case LetterCell:
@@ -205,7 +215,7 @@ func (grid *Grid) SetNumberedCellDown(point Point, nc NumberedCell) {
 }
 
 // String returns a string representation of the structure.
-func (nc *NumberedCell) String() string {
+func (nc NumberedCell) String() string {
 	return strings.Join([]string{
 		fmt.Sprintf("LetterCell:{%v}", nc.LetterCell.String()),
 		fmt.Sprintf("seq:%d", nc.wordNumber),

@@ -32,8 +32,6 @@ func (grid *Grid) AddBlackCell(point Point) {
 	symPoint := grid.SymmetricPoint(point)
 	symCell := BlackCell{point: symPoint}
 	grid.SetCell(grid.SymmetricPoint(point), symCell)
-
-	grid.RenumberCells()
 }
 
 // GetPoint returns the location of this cell (for the Cell interface).
@@ -62,12 +60,10 @@ func (grid *Grid) RemoveBlackCell(point Point) {
 	symCell := NewLetterCell(symPoint)
 	grid.SetCell(grid.SymmetricPoint(point), symCell)
 
-	grid.RenumberCells()
-
 }
 
 // String returns a string representation of this black cell.
-func (bc *BlackCell) String() string {
+func (bc BlackCell) String() string {
 	sb := bc.point.String()
 	return sb
 }

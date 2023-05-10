@@ -2,9 +2,33 @@ package grid
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/philhanna/stack"
 )
+
+func DumpGrid(grid *Grid) {
+	n := grid.n
+	for r := 1; r <= n; r++ {
+		for c := 1; c <= n; c++ {
+			point := Point{r, c}
+			cell := grid.GetCell(point)
+			switch cellType := cell.(type) {
+			case BlackCell:
+				bc := cell.(BlackCell)
+				log.Printf("BlackCell    at %v has value %v\n", point, bc.String())
+			case LetterCell:
+				lc := cell.(LetterCell)
+				log.Printf("LetterCell   at %v has value %v\n", point, lc.String())
+			case NumberedCell:
+				nc := cell.(NumberedCell)
+				log.Printf("NumberedCell at %v has value %v\n", point, nc.String())
+			default:
+				log.Printf("???????????  at %v is type %s, value %v\n", point, cellType, cell)
+			}
+		}
+	}
+}
 
 // ---------------------------------------------------------------------
 // Type definitions
@@ -94,6 +118,39 @@ func (grid *Grid) CellIterator() <-chan Cell {
 	return out
 }
 
+// GetAcrossWordLength returns the length of the across word for this
+// numbered cell.
+func (grid *Grid) GetAcrossWordLength(ncAcross *Point) int {
+	if ncAcross == nil {
+		return 0
+	}
+	n := grid.n
+	length := 0
+	point := Point{ncAcross.Row, ncAcross.Col}
+	for point.Col <= n && !grid.IsBlackCell(point) {
+		length++
+		point.Col++
+	}
+	return length
+}
+
+// GetDownWordLength returns the length of the down word for this
+// numbered cell.
+func (grid *Grid) GetDownWordLength(ncDown *Point) int {
+	if ncDown == nil {
+		return 0
+	}
+	n := grid.n
+	length := 0
+	point := Point{ncDown.Row, ncDown.Col}
+	for point.Row <= n && !grid.IsBlackCell(point) {
+		length++
+		point.Row++
+	}
+	return length
+
+}
+
 // GetCell returns the cell at the specified point, which may be a black
 // cell, a letter cell, or a numbered cell.
 func (grid *Grid) GetCell(point Point) Cell {
@@ -165,14 +222,14 @@ func (grid *Grid) String() string {
 	// Row of column numbers at the top
 	sb := "    " // indent for row numbers
 	for c := 1; c <= n; c++ {
-		sb += fmt.Sprintf(" %2d", c)
+		sb += fmt.Sprintf(" %2d ", c)
 	}
 	sb += "\n"
 
 	// Separator line
 	sep := "    " // indent for row numbers
 	for c := 1; c <= n; c++ {
-		sep += "+--"
+		sep += "+---"
 	}
 	sep += "+"
 
@@ -185,12 +242,12 @@ func (grid *Grid) String() string {
 			cell := grid.GetCell(point)
 			switch cell.(type) {
 			case BlackCell:
-				sb += "|xx"
+				sb += "|***"
 			case LetterCell:
-				sb += "|  "
+				sb += "|   "
 			case NumberedCell:
 				nc := cell.(NumberedCell)
-				sb += fmt.Sprintf("|%2d", nc.wordNumber)
+				sb += fmt.Sprintf("|%2d ", nc.wordNumber)
 			}
 		}
 		sb += "|"

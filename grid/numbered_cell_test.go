@@ -43,6 +43,106 @@ func TestNumberedCell_assignNumberedCells(t *testing.T) {
 
 	assert.Equal(t, expected, actual)
 }
+
+func TestGrid_RenumberCells_Bad(t *testing.T) {
+	tests := []struct {
+		name       string
+		blackCells []Point
+		nBC        int
+		nLC        int
+		nNC        int
+	}{
+		{
+			"Bad",
+			[]Point{
+				{1, 1}, {1, 5},
+				{2, 5},
+				{3, 5},
+				{4, 6},
+				{4, 9},
+				{5, 1}, {5, 2}, {5, 3},
+				{7, 1},
+			},
+			20, 32, 29,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			grid := getTestGrid(tt.blackCells)
+			have_nBC := 0
+			have_nLC := 0
+			have_nNC := 0
+			for r := 1; r <= grid.n; r++ {
+				for c := 1; c <= grid.n; c++ {
+					point := Point{r, c}
+					cell := grid.GetCell(point)
+					switch cell.(type) {
+					case BlackCell:
+						have_nBC++
+					case LetterCell:
+						have_nLC++
+					case NumberedCell:
+						have_nNC++
+					}
+				}
+			}
+			assert.Equal(t, tt.nBC, have_nBC)
+			assert.Equal(t, tt.nLC, have_nLC)
+			assert.Equal(t, tt.nNC, have_nNC)
+		})
+	}
+
+}
+
+func TestGrid_RenumberCells_Good(t *testing.T) {
+	tests := []struct {
+		name       string
+		blackCells []Point
+		nBC        int
+		nLC        int
+		nNC        int
+	}{
+		// Add test cases
+		{
+			"Good",
+			[]Point{
+				{1, 1}, {1, 5},
+				{2, 5},
+				{3, 5},
+				{4, 9},
+				{5, 1}, {5, 2}, {5, 3},
+			},
+			16, 40, 25,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			grid := getTestGrid(tt.blackCells)
+			have_nBC := 0
+			have_nLC := 0
+			have_nNC := 0
+			for r := 1; r <= grid.n; r++ {
+				for c := 1; c <= grid.n; c++ {
+					point := Point{r, c}
+					cell := grid.GetCell(point)
+					switch cell.(type) {
+					case BlackCell:
+						have_nBC++
+					case LetterCell:
+						have_nLC++
+					case NumberedCell:
+						have_nNC++
+					}
+				}
+			}
+			assert.Equal(t, tt.nBC, have_nBC, "Black cell count")
+			assert.Equal(t, tt.nLC, have_nLC, "Letter cell count")
+			assert.Equal(t, tt.nNC, have_nNC, "Numbered cell count")
+		})
+	}
+
+}
+
 func TestNumberedCell_String(t *testing.T) {
 	tests := []struct {
 		name string
