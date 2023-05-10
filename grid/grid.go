@@ -1,6 +1,8 @@
 package grid
 
 import (
+	"fmt"
+
 	"github.com/philhanna/stack"
 )
 
@@ -154,4 +156,49 @@ func (grid *Grid) PointIterator() <-chan Point {
 func (grid *Grid) SetCell(point Point, cell Cell) {
 	x, y := point.ToXY()
 	grid.cells[y][x] = cell
+}
+
+// String returns a string representation of the grid
+func (grid *Grid) String() string {
+	n := grid.n
+
+	// Row of column numbers at the top
+	sb := "    " // indent for row numbers
+	for c := 1; c <= n; c++ {
+		sb += fmt.Sprintf(" %2d", c)
+	}
+	sb += "\n"
+
+	// Separator line
+	sep := "    " // indent for row numbers
+	for c := 1; c <= n; c++ {
+		sep += "+--"
+	}
+	sep += "+"
+
+	// Each row
+	for r := 1; r <= n; r++ {
+		sb += sep + "\n"
+		sb += fmt.Sprintf(" %2d ", r)
+		for c := 1; c <= n; c++ {
+			point := Point{r, c}
+			cell := grid.GetCell(point)
+			switch cell.(type) {
+			case BlackCell:
+				sb += "|xx"
+			case LetterCell:
+				sb += "|  "
+			case NumberedCell:
+				nc := cell.(NumberedCell)
+				sb += fmt.Sprintf("|%2d", nc.wordNumber)
+			}
+		}
+		sb += "|"
+		sb += "\n"
+	}
+
+	// Bottom separator line
+	sb += sep + "\n"
+
+	return sb
 }
