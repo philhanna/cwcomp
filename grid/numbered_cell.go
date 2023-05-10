@@ -79,14 +79,14 @@ func (grid *Grid) assignNumberedCells() {
 				point := Point{nc.point.Row, nc.point.Col + i}
 				cell := grid.GetCell(point)
 				switch cell.(type) {
-					case LetterCell:
-						cellLc := cell.(LetterCell)
-						cellLc.ncAcross = pnc
-						grid.SetCell(cellLc.GetPoint(), cellLc)
-					case NumberedCell:
-						cellNc := cell.(NumberedCell)
-						cellNc.ncAcross = pnc
-						grid.SetCell(cellNc.GetPoint(), cellNc)
+				case LetterCell:
+					cellLc := cell.(LetterCell)
+					cellLc.ncAcross = pnc
+					grid.SetCell(cellLc.GetPoint(), cellLc)
+				case NumberedCell:
+					cellNc := cell.(NumberedCell)
+					cellNc.ncAcross = pnc
+					grid.SetCell(cellNc.GetPoint(), cellNc)
 				}
 			}
 		}
@@ -104,8 +104,8 @@ func (grid *Grid) assignNumberedCells() {
 					cellNc := cell.(NumberedCell)
 					cellNc.ncDown = pnc
 					grid.SetCell(cellNc.GetPoint(), cellNc)
+				}
 			}
-		}
 		}
 	}
 }
