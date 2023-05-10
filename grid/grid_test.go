@@ -113,7 +113,7 @@ func TestGrid_LetterCellIterator(t *testing.T) {
 	for range grid.LetterCellIterator() {
 		nlc++
 	}
-	assert.Equal(t, 9*9 - 25 - 16, nlc)
+	assert.Equal(t, 9*9-25-16, nlc)
 }
 
 func TestGrid_NumberCellIterator(t *testing.T) {
