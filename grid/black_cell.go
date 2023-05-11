@@ -23,7 +23,7 @@ func NewBlackCell(point Point) BlackCell {
 // Methods
 // ---------------------------------------------------------------------
 
-// AddBlack cell sets the cells at the specifed point and at the
+// AddBlack cell sets the cells at the specified point and at the
 // symmetric point to be black cells.
 func (grid *Grid) AddBlackCell(point Point) {
 	cell := NewBlackCell(point)
