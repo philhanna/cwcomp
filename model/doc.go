@@ -1,6 +1,7 @@
-// Types and functions that support the grid itself.
+// Types and functions that support the internal workings of the
+// application.
 //
-// The grid consists of an nxn matrix of cells, which are of three types:
+// A grid consists of an nxn matrix of cells, which are of three types:
 //   - Black cells: Blocks in the grid
 //   - Letter cells: Ordinary cells where letters of words can be placed.
 //     They also contain a pair of pointers: one to the numbered cell that
@@ -10,4 +11,4 @@
 //     and/or down word.
 //
 // The grid also supports undo/redo for black cells in this grid.
-package grid
+package model

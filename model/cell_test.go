@@ -1,4 +1,4 @@
-package grid
+package model
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	PACKAGE_NAME = "grid"
+	PACKAGE_NAME = "model"
 	PREFIX       = PACKAGE_NAME + "."
 )
 
