@@ -40,6 +40,15 @@ func (grid *Grid) BlackCellIterator() <-chan BlackCell {
 	return out
 }
 
+// CountBlackCells returns the number of black cells in the grid
+func (grid *Grid) CountBlackCells() int {
+	nbr := 0
+	for range grid.BlackCellIterator() {
+		nbr++
+	}
+	return nbr
+}
+
 // GetPoint returns the location of this cell (for the Cell interface).
 func (bc BlackCell) GetPoint() Point {
 	return bc.point
@@ -56,28 +65,45 @@ func (grid *Grid) IsBlackCell(point Point) bool {
 	}
 }
 
+// RedoBlackCell pops a point from the redo stack and toggles the black
+// cell at that point.
+func (grid *Grid) RedoBlackCell() {
+	if grid.redoStack.IsEmpty() {
+		// Nothing to redo
+		return
+	}
+
+	// Pop the point at the top of the redo stack
+	point, _ := grid.redoStack.Pop()
+
+	// Push that point onto the undo stack
+	grid.undoStack.Push(point)
+
+	// Toggle that point and its symmetric twin.
+	grid.togglePoint(point)
+}
+
 // String returns a string representation of this black cell.
 func (bc BlackCell) String() string {
 	sb := bc.point.String()
 	return sb
 }
 
-// SymmetricPoint returns the point of the cell at 180 degrees rotation.
-func (grid *Grid) SymmetricPoint(point Point) Point {
-	r := point.Row
-	c := point.Col
-	return Point{grid.n + 1 - r, grid.n + 1 - c}
-}
-
 // Toggle switches a point between black cell and letter cell.
 // Does so also to the symmetric point.
 func (grid *Grid) Toggle(point Point) {
-
 	if err := grid.ValidIndex(point); err != nil {
 		panic(err)
 	}
 	grid.undoStack.Push(point)
+	grid.togglePoint(point)
+}
 
+// togglePoint is an internal method that changes the specified cell
+// from a letter cell to a black cell or vice versa.  Separated here
+// because we need to handle the undo/redo stacks differently in
+// different cases.
+func (grid *Grid) togglePoint(point Point) {
 	cell := grid.GetCell(point)
 
 	switch cell.(type) {
@@ -99,4 +125,24 @@ func (grid *Grid) Toggle(point Point) {
 
 	// Renumber the cells
 	grid.RenumberCells()
+}
+
+// UndoBlackCell pops a point from the undo stack and toggles the black
+// cell at that point.
+func (grid *Grid) UndoBlackCell() {
+	if grid.undoStack.IsEmpty() {
+		// Nothing to undo
+		return
+	}
+
+	// Pop the point at the top of the undo stack
+	point, _ := grid.undoStack.Pop()
+
+	// Push that point onto the redo stack
+	grid.redoStack.Push(point)
+
+	// Toggle that point and its symmetric twin.  Note that this is the
+	// same as the Toggle() method except that it doesn't push the
+	// action onto the undo stack.
+	grid.togglePoint(point)
 }
