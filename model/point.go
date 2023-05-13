@@ -42,6 +42,13 @@ func (p *Point) Equal(other Point) bool {
 	return *p == other
 }
 
+// SymmetricPoint returns the point of the cell at 180 degrees rotation.
+func (grid *Grid) SymmetricPoint(point Point) Point {
+	r := point.Row
+	c := point.Col
+	return Point{grid.n + 1 - r, grid.n + 1 - c}
+}
+
 // ToXY converts a point (that uses 1-based coordinates) to a pair (x,
 // y) that uses zero-based ones.
 func (p *Point) ToXY() (int, int) {

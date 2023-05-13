@@ -56,6 +56,18 @@ func TestGrid_BlackCellIterator(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
+func TestGrid_CountBlackCells(t *testing.T) {
+	grid := NewGrid(9)
+	assert.Equal(t, 0, grid.CountBlackCells())
+
+	grid = getGoodGrid()
+	assert.Equal(t, 16, grid.CountBlackCells())
+
+	grid.Toggle(Point{1, 6})
+	assert.Equal(t, 18, grid.CountBlackCells())
+	// 18 because we added a point and its symmetric point
+}
+
 func TestGrid_GetAcrossWordLength(t *testing.T) {
 	grid := getGoodGrid()
 	point := Point{1, 2}
