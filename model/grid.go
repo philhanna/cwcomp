@@ -28,10 +28,11 @@ import (
 // (from load to save).  Any black cell additions or deletions are
 // pushed on an undo stack.
 type Grid struct {
-	n         int                // Size of the grid (n x n square)
-	cells     [][]Cell           // Black cells, Letter cells, Numbered cells
-	undoStack stack.Stack[Point] // Undo stack
-	redoStack stack.Stack[Point] // Redo stack
+	n             int                 // Size of the grid (n x n square)
+	cells         [][]Cell            // Black cells and letter cells
+	wordNumberMap map[int]*WordNumber // Word number pointers
+	undoStack     stack.Stack[Point]  // Undo stack
+	redoStack     stack.Stack[Point]  // Redo stack
 }
 
 // ---------------------------------------------------------------------
@@ -54,6 +55,7 @@ func NewGrid(n int) *Grid {
 		}
 	}
 
+	g.wordNumberMap = make(map[int]*WordNumber)
 	g.undoStack = stack.NewStack[Point]()
 	g.redoStack = stack.NewStack[Point]()
 	return g
@@ -63,46 +65,12 @@ func NewGrid(n int) *Grid {
 // Methods
 // ---------------------------------------------------------------------
 
-// BlackCellIterator is a generator for all the black cells in the grid.
-func (grid *Grid) BlackCellIterator() <-chan BlackCell {
-	out := make(chan BlackCell)
-	go func() {
-		defer close(out)
-		for point := range grid.PointIterator() {
-			cell := grid.GetCell(point)
-			switch cell.(type) {
-			case BlackCell:
-				bc := cell.(BlackCell)
-				out <- bc
-			}
-		}
-	}()
-	return out
-}
-
-// CellIterator is a generator for all the cells in the grid, from top
-// to bottom, left to right (same as PointIterator).
-func (grid *Grid) CellIterator() <-chan Cell {
-	out := make(chan Cell)
-	go func() {
-		defer close(out)
-		for point := range grid.PointIterator() {
-			cell := grid.GetCell(point)
-			out <- cell
-		}
-	}()
-	return out
-}
-
 // GetAcrossWordLength returns the length of the across word for this
 // numbered cell.
-func (grid *Grid) GetAcrossWordLength(ncAcross *Point) int {
-	if ncAcross == nil {
-		return 0
-	}
+func (grid *Grid) GetAcrossWordLength(pnc *Point) int {
 	n := grid.n
 	length := 0
-	point := Point{ncAcross.Row, ncAcross.Col}
+	point := Point{pnc.Row, pnc.Col}
 	for point.Col <= n && !grid.IsBlackCell(point) {
 		length++
 		point.Col++
@@ -112,13 +80,10 @@ func (grid *Grid) GetAcrossWordLength(ncAcross *Point) int {
 
 // GetDownWordLength returns the length of the down word for this
 // numbered cell.
-func (grid *Grid) GetDownWordLength(ncDown *Point) int {
-	if ncDown == nil {
-		return 0
-	}
+func (grid *Grid) GetDownWordLength(pnc *Point) int {
 	n := grid.n
 	length := 0
-	point := Point{ncDown.Row, ncDown.Col}
+	point := Point{pnc.Row, pnc.Col}
 	for point.Row <= n && !grid.IsBlackCell(point) {
 		length++
 		point.Row++
@@ -132,40 +97,6 @@ func (grid *Grid) GetDownWordLength(ncDown *Point) int {
 func (grid *Grid) GetCell(point Point) Cell {
 	x, y := point.ToXY()
 	return grid.cells[y][x]
-}
-
-// LetterCellIterator is a generator for all the LetterCells in the grid.
-func (grid *Grid) LetterCellIterator() <-chan LetterCell {
-	out := make(chan LetterCell)
-	go func() {
-		defer close(out)
-		for point := range grid.PointIterator() {
-			cell := grid.GetCell(point)
-			switch cell.(type) {
-			case LetterCell:
-				lc := cell.(LetterCell)
-				out <- lc
-			}
-		}
-	}()
-	return out
-}
-
-// NumberedCellIterator is a generator for all the NumberedCells in the grid.
-func (grid *Grid) NumberedCellIterator() <-chan NumberedCell {
-	out := make(chan NumberedCell)
-	go func() {
-		defer close(out)
-		for point := range grid.PointIterator() {
-			cell := grid.GetCell(point)
-			switch cell.(type) {
-			case NumberedCell:
-				nc := cell.(NumberedCell)
-				out <- nc
-			}
-		}
-	}()
-	return out
 }
 
 // PointIterator is a generator for all the points in the grid, from
@@ -183,6 +114,72 @@ func (grid *Grid) PointIterator() <-chan Point {
 		}
 	}()
 	return out
+}
+
+// RenumberCells assigns the word numbers based on the locations of the
+// black cells.
+func (grid *Grid) RenumberCells() {
+	seq := 0 // Next available word number
+
+	// Reset the list to empty
+	grid.wordNumberMap = make(map[int]*WordNumber)
+
+	// Look through all the letter cells
+	for lc := range grid.LetterCellIterator() {
+
+		point := lc.GetPoint()
+
+		var wn *WordNumber
+		var aStart bool
+		var dStart bool
+
+		// Determine if this cell is the beginning of an across or a
+		// down word, setting a boolean variable for either case.
+		aStart = point.Col == 1 || grid.IsBlackCell(Point{point.Row, point.Col - 1})
+		dStart = point.Row == 1 || grid.IsBlackCell(Point{point.Row - 1, point.Col})
+
+		// If not a new word, skip to the next cell
+		if !aStart && !dStart {
+			continue
+		}
+
+		// If either is true, create a new WordNumber
+		if aStart || dStart {
+			seq++
+			wn = NewWordNumber(seq, point, 0, 0)
+		}
+
+		// Then if this is the start of an across word, calculate the
+		// length and store that in the WordNumber
+		if aStart {
+			wn.aLen = 0
+			aPoint := Point{point.Row, point.Col}
+			for aPoint.Col <= grid.n && !grid.IsBlackCell(aPoint) {
+				cell := grid.GetCell(aPoint).(LetterCell)
+				cell.ncAcross = wn
+				grid.SetCell(aPoint, cell)
+				wn.aLen++
+				aPoint.Col++
+			}
+		}
+
+		// Or if this is the start of a down word, calculate the
+		// length and store that in the WordNumber
+		if dStart {
+			wn.dLen = 0
+			dPoint := Point{point.Row, point.Col}
+			for dPoint.Row <= grid.n && !grid.IsBlackCell(dPoint) {
+				cell := grid.GetCell(dPoint).(LetterCell)
+				cell.ncDown = wn
+				grid.SetCell(dPoint, cell)
+				wn.dLen++
+				dPoint.Row++
+			}
+		}
+
+		// Store the new word number in the word number map
+		grid.wordNumberMap[seq] = wn
+	}
 }
 
 // SetCell sets the cell at the specified point
@@ -221,9 +218,6 @@ func (grid *Grid) String() string {
 				sb += "|***"
 			case LetterCell:
 				sb += "|   "
-			case NumberedCell:
-				nc := cell.(NumberedCell)
-				sb += fmt.Sprintf("|%2d ", nc.wordNumber)
 			}
 		}
 		sb += "|"

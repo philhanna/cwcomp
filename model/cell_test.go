@@ -18,15 +18,15 @@ func TestCell_GetPoint(t *testing.T) {
 	// Map out the cell types (abbreviations).
 
 	abbrev := []string{
-		"BNNNBNNNN",
-		"NLLLBNLLL",
-		"NLLLBNLLL",
-		"NLLLNLLLB",
-		"BBBNLLBBB",
-		"BNNLLLNNN",
-		"NLLLBNLLL",
-		"NLLLBNLLL",
-		"NLLLBNLLB",
+		"BLLLBLLLL",
+		"LLLLBLLLL",
+		"LLLLBLLLL",
+		"LLLLLLLLB",
+		"BBBLLLBBB",
+		"BLLLLLLLL",
+		"LLLLBLLLL",
+		"LLLLBLLLL",
+		"LLLLBLLLB",
 	}
 
 	const n = 9
@@ -50,9 +50,6 @@ func TestCell_GetPoint(t *testing.T) {
 		case LetterCell:
 			point := actualCell.(LetterCell).GetPoint()
 			verify(t, point, "LetterCell")
-		case NumberedCell:
-			point := actualCell.(NumberedCell).GetPoint()
-			verify(t, point, "NumberedCell")
 		default:
 			t.Fatalf("Unknown type at %v\n", actualCell)
 		}

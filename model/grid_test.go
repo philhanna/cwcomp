@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,13 +15,17 @@ func getGoodGrid() *Grid {
 		{4, 9},
 		{5, 1}, {5, 2}, {5, 3},
 	}
-	return getTestGrid(points)
+	grid := getTestGrid(points)
+	dumpGrid(grid)
+	fmt.Println("DEBUG")
+	fmt.Println(grid.String())
+	return grid
 }
 
 func getTestGrid(points []Point) *Grid {
 	grid := NewGrid(9)
 	for _, point := range points {
-		grid.AddBlackCell(point)
+		grid.Toggle(point)
 	}
 	grid.RenumberCells()
 	return grid
@@ -34,7 +39,7 @@ func TestGrid_BlackCellIterator(t *testing.T) {
 	}
 	grid := NewGrid(9)
 	for _, point := range points {
-		grid.AddBlackCell(point)
+		grid.Toggle(point)
 	}
 
 	expected := []Point{
@@ -54,11 +59,13 @@ func TestGrid_BlackCellIterator(t *testing.T) {
 func TestGrid_GetAcrossWordLength(t *testing.T) {
 	grid := getGoodGrid()
 	point := Point{1, 2}
-	nc := grid.GetCell(point).(NumberedCell)
-	assert.Equal(t, 3, grid.GetAcrossWordLength(&nc.point))
+	assert.Equal(t, 3, grid.GetAcrossWordLength(&point))
 }
 
 func TestGrid_GetDownWordLength(t *testing.T) {
+	grid := getGoodGrid()
+	point := Point{1, 2}
+	assert.Equal(t, 4, grid.GetDownWordLength(&point))
 }
 
 func TestGrid_LetterCellIterator(t *testing.T) {
@@ -67,16 +74,7 @@ func TestGrid_LetterCellIterator(t *testing.T) {
 	for range grid.LetterCellIterator() {
 		nlc++
 	}
-	assert.Equal(t, 9*9-25-16, nlc)
-}
-
-func TestGrid_NumberCellIterator(t *testing.T) {
-	grid := getGoodGrid()
-	nnc := 0
-	for range grid.NumberedCellIterator() {
-		nnc++
-	}
-	assert.Equal(t, 25, nnc)
+	assert.Equal(t, 9*9-16, nlc)
 }
 
 func TestGrid_PointIterator(t *testing.T) {

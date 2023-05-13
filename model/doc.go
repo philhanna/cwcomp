@@ -12,3 +12,10 @@
 //
 // The grid also supports undo/redo for black cells in this grid.
 package model
+
+import "log"
+
+// Initialization function
+func init() {
+	log.SetFlags(log.Ltime | log.Lshortfile)
+}

@@ -1,6 +1,9 @@
 package model
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // ---------------------------------------------------------------------
 // Type definitions
@@ -45,6 +48,29 @@ func (p *Point) ToXY() (int, int) {
 	x := p.Col - 1
 	y := p.Row - 1
 	return x, y
+}
+
+// ValidIndex whether a point is a valid index in this grid.
+func (grid *Grid) ValidIndex(point Point) error {
+	r, c := point.Row, point.Col
+	validRow := r >= 1 && r <= grid.n
+	validCol := c >= 1 && c <= grid.n
+	if validRow && validCol {
+		return nil
+	}
+
+	var errmsg string
+
+	if !validRow && !validCol {
+		errmsg = fmt.Sprintf("Invalid row %d and column %d\n", r, c)
+	} else if !validRow {
+		errmsg = fmt.Sprintf("Invalid row %d\n", r)
+	} else if !validCol {
+		errmsg = fmt.Sprintf("Invalid column %d\n", c)
+	}
+
+	err := errors.New(errmsg)
+	return err
 }
 
 // String returns a string representation of this type

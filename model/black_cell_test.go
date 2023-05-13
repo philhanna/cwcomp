@@ -24,38 +24,26 @@ func TestBlackCell_String(t *testing.T) {
 	}
 }
 
-func TestGrid_AddBlackCell(t *testing.T) {
-	tests := []struct {
-		p  Point
-		sp Point
-	}{
-		{Point{1, 1}, Point{9, 9}},
-		{Point{3, 5}, Point{7, 5}},
-		{Point{5, 5}, Point{5, 5}},
-	}
-	for _, tt := range tests {
-		grid := NewGrid(9)
-		point := tt.p
-		grid.AddBlackCell(point)
+func TestGrid_ToggleBad(t *testing.T) {
+	grid := NewGrid(9)
 
-		cell := grid.GetCell(point)
-		switch cellType := cell.(type) {
-		case BlackCell: // OK
-		default:
-			t.Errorf("Point %v should be black cell, not %v", point, cellType)
-		}
+	point := Point{0, 0}
+	assert.Panics(t, func() {
+		grid.Toggle(point)
+	})
 
-		symPoint := tt.sp
-		symCell := grid.GetCell(symPoint)
-		switch cellType := symCell.(type) {
-		case BlackCell: // OK
-		default:
-			t.Errorf("Symmetric point %v should be black cell, not %v", symPoint, cellType)
-		}
-	}
+	point = Point{1, 0}
+	assert.Panics(t, func() {
+		grid.Toggle(point)
+	})
+
+	point = Point{0, 1}
+	assert.Panics(t, func() {
+		grid.Toggle(point)
+	})
 }
 
-func TestGrid_RemoveBlackCell(t *testing.T) {
+func TestGrid_Toggle(t *testing.T) {
 	grid := NewGrid(9)
 	points := []Point{
 		{1, 1},
@@ -63,7 +51,7 @@ func TestGrid_RemoveBlackCell(t *testing.T) {
 		{5, 5},
 	}
 	for _, point := range points {
-		grid.AddBlackCell(point)
+		grid.Toggle(point)
 	}
 
 	expected := []Point{
@@ -73,7 +61,7 @@ func TestGrid_RemoveBlackCell(t *testing.T) {
 	}
 
 	actual := []Point{}
-	grid.RemoveBlackCell(points[0])
+	grid.Toggle(points[0])
 	for point := range grid.PointIterator() {
 		if grid.IsBlackCell(point) {
 			actual = append(actual, point)

@@ -14,10 +14,10 @@ import (
 //   - A pointer to the numbered cell for the down word (if any)
 //   - The character in the cell
 type LetterCell struct {
-	point    Point  // Location of this letter cell
-	ncAcross *Point // Pointer to the numbered cell in the across direction
-	ncDown   *Point // Pointer to the numbered cell in the down direction
-	letter   string // Character in the cell
+	point    Point       // Location of this letter cell
+	ncAcross *WordNumber // Pointer to the numbered cell in the across direction
+	ncDown   *WordNumber // Pointer to the numbered cell in the down direction
+	letter   string      // Character in the cell
 }
 
 // ---------------------------------------------------------------------
@@ -40,7 +40,24 @@ func (lc LetterCell) GetPoint() Point {
 	return lc.point
 }
 
-// LetterCell returns a string representation of this letter cell.
+// LetterCellIterator is a generator for all the LetterCells in the grid.
+func (grid *Grid) LetterCellIterator() <-chan LetterCell {
+	out := make(chan LetterCell)
+	go func() {
+		defer close(out)
+		for point := range grid.PointIterator() {
+			cell := grid.GetCell(point)
+			switch cell.(type) {
+			case LetterCell:
+				lc := cell.(LetterCell)
+				out <- lc
+			}
+		}
+	}()
+	return out
+}
+
+// String returns a string representation of this letter cell.
 func (lc LetterCell) String() string {
 	parts := make([]string, 0)
 	parts = append(parts, fmt.Sprintf(`point:{%d,%d}`, lc.point.Row, lc.point.Col))

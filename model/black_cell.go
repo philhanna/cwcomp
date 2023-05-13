@@ -23,15 +23,21 @@ func NewBlackCell(point Point) BlackCell {
 // Methods
 // ---------------------------------------------------------------------
 
-// AddBlack cell sets the cells at the specified point and at the
-// symmetric point to be black cells.
-func (grid *Grid) AddBlackCell(point Point) {
-	cell := NewBlackCell(point)
-	grid.SetCell(point, cell)
-
-	symPoint := grid.SymmetricPoint(point)
-	symCell := BlackCell{point: symPoint}
-	grid.SetCell(grid.SymmetricPoint(point), symCell)
+// BlackCellIterator is a generator for all the black cells in the grid.
+func (grid *Grid) BlackCellIterator() <-chan BlackCell {
+	out := make(chan BlackCell)
+	go func() {
+		defer close(out)
+		for point := range grid.PointIterator() {
+			cell := grid.GetCell(point)
+			switch cell.(type) {
+			case BlackCell:
+				bc := cell.(BlackCell)
+				out <- bc
+			}
+		}
+	}()
+	return out
 }
 
 // GetPoint returns the location of this cell (for the Cell interface).
@@ -50,18 +56,6 @@ func (grid *Grid) IsBlackCell(point Point) bool {
 	}
 }
 
-// RemoveBlackCell sets the cells at the specified point and at the
-// symmetric point to be letter cells.
-func (grid *Grid) RemoveBlackCell(point Point) {
-	cell := NewLetterCell(point)
-	grid.SetCell(point, cell)
-
-	symPoint := grid.SymmetricPoint(point)
-	symCell := NewLetterCell(symPoint)
-	grid.SetCell(grid.SymmetricPoint(point), symCell)
-
-}
-
 // String returns a string representation of this black cell.
 func (bc BlackCell) String() string {
 	sb := bc.point.String()
@@ -73,4 +67,36 @@ func (grid *Grid) SymmetricPoint(point Point) Point {
 	r := point.Row
 	c := point.Col
 	return Point{grid.n + 1 - r, grid.n + 1 - c}
+}
+
+// Toggle switches a point between black cell and letter cell.
+// Does so also to the symmetric point.
+func (grid *Grid) Toggle(point Point) {
+
+	if err := grid.ValidIndex(point); err != nil {
+		panic(err)
+	}
+	grid.undoStack.Push(point)
+
+	cell := grid.GetCell(point)
+
+	switch cell.(type) {
+
+	case BlackCell:
+		cell = NewLetterCell(point)
+		grid.SetCell(point, cell)
+		symPoint := grid.SymmetricPoint(point)
+		symCell := NewLetterCell(symPoint)
+		grid.SetCell(symPoint, symCell)
+
+	case LetterCell:
+		cell = NewBlackCell(point)
+		grid.SetCell(point, cell)
+		symPoint := grid.SymmetricPoint(point)
+		symCell := NewBlackCell(symPoint)
+		grid.SetCell(symPoint, symCell)
+	}
+
+	// Renumber the cells
+	grid.RenumberCells()
 }
