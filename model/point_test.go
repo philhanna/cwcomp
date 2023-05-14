@@ -1,6 +1,7 @@
 package model
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -100,6 +101,30 @@ func TestPoint_Equal(t *testing.T) {
 			this := tt.this
 			that := tt.that
 			assert.Equal(t, tt.want, this.Equal(that))
+		})
+	}
+}
+
+func TestPoint_NewPoint(t *testing.T) {
+	type args struct {
+		r int
+		c int
+	}
+	tests := []struct {
+		name string
+		args args
+		want Point
+	}{
+		{"1, 3", args{1, 3}, Point{1, 3}},
+		{"Bad row", args{0, 3}, Point{0, 3}},
+		{"Bad column", args{3, 0}, Point{3, 0}},
+		{"Bad both", args{-0, -1}, Point{-0, -1}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewPoint(tt.args.r, tt.args.c); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewPoint() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
