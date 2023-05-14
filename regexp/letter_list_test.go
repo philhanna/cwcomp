@@ -4,8 +4,16 @@ package model
 import (
 	"testing"
 
+	"github.com/philhanna/cwcomp"
+	"github.com/stretchr/testify/assert"
 	"golang.org/x/exp/slices"
 )
+
+func TestGetPackage(t *testing.T) {
+	want := "regexp"
+	have := cwcomp.GetPackageName()
+	assert.Equal(t, want, have)
+}
 
 func TestLetterList_Complement(t *testing.T) {
 
