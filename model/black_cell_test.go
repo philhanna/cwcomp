@@ -26,17 +26,17 @@ func TestBlackCell_String(t *testing.T) {
 
 func TestGrid_ToggleBad(t *testing.T) {
 	grid := NewGrid(9)
-	
+
 	point := Point{0, 0}
 	assert.Panics(t, func() {
 		grid.Toggle(point)
 	})
-	
+
 	point = Point{1, 0}
 	assert.Panics(t, func() {
 		grid.Toggle(point)
 	})
-	
+
 	point = Point{0, 1}
 	assert.Panics(t, func() {
 		grid.Toggle(point)
@@ -54,18 +54,18 @@ func TestGrid_RedoBlackCell(t *testing.T) {
 	assert.Equal(t, 0, grid.CountBlackCells())
 	assert.Equal(t, 0, grid.undoStack.Len())
 	assert.Equal(t, 0, grid.redoStack.Len())
-	
+
 	// Add a black cell and then undo it
 	grid.Toggle(Point{1, 1})
 	grid.UndoBlackCell()
-	
+
 	// Should be zero cells
 	beforeCount := grid.CountBlackCells()
 	assert.Equal(t, 0, beforeCount)
-	
+
 	// Now redo the add black cell
 	grid.RedoBlackCell()
-	
+
 	// Should be two black cells (symmetric twin, too)
 	afterCount := grid.CountBlackCells()
 	assert.Equal(t, 2, afterCount)
