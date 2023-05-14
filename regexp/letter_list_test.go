@@ -1,5 +1,5 @@
 // Unit tests for LetterList
-package model
+package regexp
 
 import (
 	"testing"

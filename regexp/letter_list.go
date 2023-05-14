@@ -1,4 +1,4 @@
-package model
+package regexp
 
 /***********************************************************************
  * LetterList is a utility class that forms a regular expression
