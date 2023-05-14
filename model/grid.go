@@ -78,6 +78,12 @@ func (grid *Grid) GetAcrossWordLength(pnc *Point) int {
 	return length
 }
 
+// GetAcrossWordText returns the text of the across word for the given
+// word number, always of length aLen.
+func (grid *Grid) GetAcrossWordText(seq int) string {
+	return grid.GetWordText(seq, ACROSS)
+}
+
 // GetDownWordLength returns the length of the down word for this
 // numbered cell.
 func (grid *Grid) GetDownWordLength(pnc *Point) int {
@@ -89,7 +95,6 @@ func (grid *Grid) GetDownWordLength(pnc *Point) int {
 		point.r++
 	}
 	return length
-
 }
 
 // GetCell returns the cell at the specified point, which may be a black
@@ -97,6 +102,73 @@ func (grid *Grid) GetDownWordLength(pnc *Point) int {
 func (grid *Grid) GetCell(point Point) Cell {
 	x, y := point.ToXY()
 	return grid.cells[y][x]
+}
+
+// GetDownWordText returns the text of the down word for the given
+// word number, always of length dLen.
+func (grid *Grid) GetDownWordText(seq int) string {
+	return grid.GetWordText(seq, DOWN)
+}
+
+// GetLetter returns the value of the cell at this point.  The length of
+// the returned value is always 1, unless the point refers to a black
+// cell, in which case the length is zero.
+func (grid *Grid) GetLetter(point Point) string {
+	letter := ""
+	cell := grid.GetCell(point)
+	switch cell.(type) {
+	case LetterCell:
+		lc := cell.(LetterCell)
+		letter = lc.letter
+		if letter == "" {
+			letter = " "
+		}
+	}
+	return letter
+}
+
+// GetWordText returns the text of the across or down word for the given
+// word sequence number and direction.
+func (grid *Grid) GetWordText(seq int, direction Direction) string {
+
+	// Get a pointer to the word number object for this word sequence
+	// number and direction, or die trying.
+
+	pwn := grid.wordNumberMap[seq]
+	if pwn == nil {
+		errmsg := fmt.Sprintf("No such word number as %d", seq)
+		panic(errmsg)
+	}
+
+	// Get the length of the word in the appropriate direction. If the
+	// length turns out to be zero (because there is no word in this
+	// direction), return "".
+
+	length := 0
+	switch direction {
+	case ACROSS:
+		length = pwn.aLen
+	case DOWN:
+		length = pwn.dLen
+	}
+	if length == 0 {
+		return ""
+	}
+
+	// Construct the text of the word
+	s := ""
+	var point Point
+	for i := 0; i < length; i++ {
+		switch direction {
+		case ACROSS:
+			point = Point{pwn.point.r, pwn.point.c + i}
+		case DOWN:
+			point = Point{pwn.point.r + i, pwn.point.c}
+		}
+		letter := grid.GetLetter(point)
+		s += letter
+	}
+	return s
 }
 
 // PointIterator is a generator for all the points in the grid, from
