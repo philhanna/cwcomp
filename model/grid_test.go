@@ -65,10 +65,31 @@ func TestGrid_CountBlackCells(t *testing.T) {
 	// 18 because we added a point and its symmetric point
 }
 
-func TestGrid_GetAcrossWordLength(t *testing.T) {
+func TestGrid_GetWordLength(t *testing.T) {
 	grid := getGoodGrid()
-	point := Point{1, 2}
-	assert.Equal(t, 3, grid.GetAcrossWordLength(&point))
+	tests := []struct{
+		name string
+		seq int
+		dir Direction
+		want int
+	}{
+		{"Good both(a)", 4, ACROSS, 4},
+		{"Good both(d)", 4, DOWN, 9},
+		{"Good across", 25, ACROSS, 3},
+		{"Good down", 19, DOWN, 3},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T){
+			assert.Equal(t, tt.want, grid.GetWordLength(tt.seq, tt.dir))
+		})
+	}
+}
+
+func TestGrid_GetWordLength_Bad(t *testing.T) {
+	grid := getGoodGrid()
+	assert.Panics(t, func() {
+		grid.GetWordLength(-3, ACROSS)
+	})
 }
 
 func TestGrid_GetAcrossWordText(t *testing.T) {

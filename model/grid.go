@@ -65,19 +65,6 @@ func NewGrid(n int) *Grid {
 // Methods
 // ---------------------------------------------------------------------
 
-// GetAcrossWordLength returns the length of the across word for this
-// numbered cell.
-func (grid *Grid) GetAcrossWordLength(pnc *Point) int {
-	n := grid.n
-	length := 0
-	point := Point{pnc.r, pnc.c}
-	for point.c <= n && !grid.IsBlackCell(point) {
-		length++
-		point.c++
-	}
-	return length
-}
-
 // GetAcrossWordText returns the text of the across word for the given
 // word number, always of length aLen.
 func (grid *Grid) GetAcrossWordText(seq int) string {
@@ -150,6 +137,28 @@ func (grid *Grid) GetWordClue(seq int, direction Direction) string {
 		clue = pwn.dClue
 	}
 	return clue
+}
+
+func (grid *Grid) GetWordLength(seq int, direction Direction) int {
+
+	// Get a pointer to the word number object for this word sequence
+	// number and direction, or die trying.
+
+	pwn := grid.wordNumberMap[seq]
+	if pwn == nil {
+		errmsg := fmt.Sprintf("No such word number as %d", seq)
+		panic(errmsg)
+	}
+
+	// Return the length of the word in the specified direction
+	length := 0
+	switch direction {
+	case ACROSS:
+		length = pwn.aLen
+	case DOWN:
+		length = pwn.dLen
+	}
+	return length
 }
 
 // GetWordText returns the text of the across or down word for the given
