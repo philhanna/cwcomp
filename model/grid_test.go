@@ -118,11 +118,11 @@ func TestGrid_GetDownWordText(t *testing.T) {
 
 func TestGrid_GetWordText(t *testing.T) {
 	tests := []struct {
-		name string
-		seq  int
-		dir  Direction
+		name       string
+		seq        int
+		dir        Direction
 		wantLength int
-		want string
+		want       string
 	}{
 		{"Good across", 21, ACROSS, 4, "    "},
 		{"Good down", 19, DOWN, 3, "   "},
