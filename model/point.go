@@ -42,6 +42,23 @@ func (p *Point) Equal(other Point) bool {
 	return *p == other
 }
 
+// PointIterator is a generator for all the points in the grid, from
+// top bottom and left to right (i.e, (1, 1), (1, 2), ..., (1, n),
+// (2, 1), (2, 2), ..., (2, n), ..., (n, 1) (n, 2), ..., (n, n)).
+func (grid *Grid) PointIterator() <-chan Point {
+	out := make(chan Point)
+	go func() {
+		defer close(out)
+		n := grid.n
+		for r := 1; r <= n; r++ {
+			for c := 1; c <= n; c++ {
+				out <- Point{r, c}
+			}
+		}
+	}()
+	return out
+}
+
 // SymmetricPoint returns the point of the cell at 180 degrees rotation.
 func (grid *Grid) SymmetricPoint(point Point) Point {
 	r := point.r

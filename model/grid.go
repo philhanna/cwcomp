@@ -180,23 +180,6 @@ func (grid *Grid) GetText(seq int, direction Direction) string {
 	return s
 }
 
-// PointIterator is a generator for all the points in the grid, from
-// top bottom and left to right (i.e, (1, 1), (1, 2), ..., (1, n),
-// (2, 1), (2, 2), ..., (2, n), ..., (n, 1) (n, 2), ..., (n, n)).
-func (grid *Grid) PointIterator() <-chan Point {
-	out := make(chan Point)
-	go func() {
-		defer close(out)
-		n := grid.n
-		for r := 1; r <= n; r++ {
-			for c := 1; c <= n; c++ {
-				out <- Point{r, c}
-			}
-		}
-	}()
-	return out
-}
-
 // RenumberCells assigns the word numbers based on the locations of the
 // black cells.
 func (grid *Grid) RenumberCells() {
