@@ -71,26 +71,9 @@ func (grid *Grid) GetCell(point Point) Cell {
 	return grid.cells[y][x]
 }
 
-// GetLetter returns the value of the cell at this point.  The length of
-// the returned value is always 1, unless the point refers to a black
-// cell, in which case the length is zero.
-func (grid *Grid) GetLetter(point Point) string {
-	letter := ""
-	cell := grid.GetCell(point)
-	switch cell.(type) {
-	case LetterCell:
-		lc := cell.(LetterCell)
-		letter = lc.letter
-		if letter == "" {
-			letter = " "
-		}
-	}
-	return letter
-}
-
-// GetWordClue returns the clue of the across or down word for the given
+// GetClue returns the clue of the across or down word for the given
 // word sequence number and direction.
-func (grid *Grid) GetWordClue(seq int, direction Direction) string {
+func (grid *Grid) GetClue(seq int, direction Direction) string {
 
 	// Get a pointer to the word number object for this word sequence
 	// number and direction, or die trying.
@@ -113,7 +96,8 @@ func (grid *Grid) GetWordClue(seq int, direction Direction) string {
 	return clue
 }
 
-func (grid *Grid) GetWordLength(seq int, direction Direction) int {
+// GetLength returns the length of the word for this sequence number and direction.
+func (grid *Grid) GetLength(seq int, direction Direction) int {
 
 	// Get a pointer to the word number object for this word sequence
 	// number and direction, or die trying.
@@ -135,9 +119,26 @@ func (grid *Grid) GetWordLength(seq int, direction Direction) int {
 	return length
 }
 
-// GetWordText returns the text of the across or down word for the given
+// GetLetter returns the value of the cell at this point.  The length of
+// the returned value is always 1, unless the point refers to a black
+// cell, in which case the length is zero.
+func (grid *Grid) GetLetter(point Point) string {
+	letter := ""
+	cell := grid.GetCell(point)
+	switch cell.(type) {
+	case LetterCell:
+		lc := cell.(LetterCell)
+		letter = lc.letter
+		if letter == "" {
+			letter = " "
+		}
+	}
+	return letter
+}
+
+// GetText returns the text of the across or down word for the given
 // word sequence number and direction.
-func (grid *Grid) GetWordText(seq int, direction Direction) string {
+func (grid *Grid) GetText(seq int, direction Direction) string {
 
 	// Get a pointer to the word number object for this word sequence
 	// number and direction, or die trying.
@@ -266,6 +267,17 @@ func (grid *Grid) RenumberCells() {
 func (grid *Grid) SetCell(point Point, cell Cell) {
 	x, y := point.ToXY()
 	grid.cells[y][x] = cell
+}
+
+// SetLetter sets the letter value of the cell at the specified point
+func (grid *Grid) SetLetter(point Point, letter string) {
+	cell := grid.GetCell(point)
+	switch cell.(type) {
+	case LetterCell:
+		lc := cell.(LetterCell)
+		lc.letter = letter
+		grid.SetCell(point, lc)
+	}
 }
 
 // String returns a string representation of the grid
