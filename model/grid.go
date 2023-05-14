@@ -127,6 +127,31 @@ func (grid *Grid) GetLetter(point Point) string {
 	return letter
 }
 
+// GetWordClue returns the clue of the across or down word for the given
+// word sequence number and direction.
+func (grid *Grid) GetWordClue(seq int, direction Direction) string {
+
+	// Get a pointer to the word number object for this word sequence
+	// number and direction, or die trying.
+
+	pwn := grid.wordNumberMap[seq]
+	if pwn == nil {
+		errmsg := fmt.Sprintf("No such word number as %d", seq)
+		panic(errmsg)
+	}
+
+	// Return the clue in the appropriate direction
+
+	var clue string
+	switch direction {
+	case ACROSS:
+		clue = pwn.aClue
+	case DOWN:
+		clue = pwn.dClue
+	}
+	return clue
+}
+
 // GetWordText returns the text of the across or down word for the given
 // word sequence number and direction.
 func (grid *Grid) GetWordText(seq int, direction Direction) string {
