@@ -64,24 +64,11 @@ func NewGrid(n int) *Grid {
 // ---------------------------------------------------------------------
 // Methods
 // ---------------------------------------------------------------------
-
-// GetAcrossWordText returns the text of the across word for the given
-// word number, always of length aLen.
-func (grid *Grid) GetAcrossWordText(seq int) string {
-	return grid.GetWordText(seq, ACROSS)
-}
-
 // GetCell returns the cell at the specified point, which may be a black
 // cell, a letter cell, or a numbered cell.
 func (grid *Grid) GetCell(point Point) Cell {
 	x, y := point.ToXY()
 	return grid.cells[y][x]
-}
-
-// GetDownWordText returns the text of the down word for the given
-// word number, always of length dLen.
-func (grid *Grid) GetDownWordText(seq int) string {
-	return grid.GetWordText(seq, DOWN)
 }
 
 // GetLetter returns the value of the cell at this point.  The length of
