@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,9 +15,6 @@ func getGoodGrid() *Grid {
 		{5, 1}, {5, 2}, {5, 3},
 	}
 	grid := getTestGrid(points)
-	dumpGrid(grid)
-	fmt.Println("DEBUG")
-	fmt.Println(grid.String())
 	return grid
 }
 
