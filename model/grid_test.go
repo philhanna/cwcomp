@@ -97,17 +97,17 @@ func TestGrid_GetAcrossWordText(t *testing.T) {
 
 	// It should fail if the word sequence number is invalid
 	assert.Panics(t, func() {
-		grid.GetAcrossWordText(-1)
+		grid.GetWordText(-1, ACROSS)
 	})
 	assert.Panics(t, func() {
-		grid.GetAcrossWordText(1000)
+		grid.GetWordText(1000, ACROSS)
 	})
 
 	// Should return a string of the correct length
 
 	wantLength := 3
 	want := strings.Repeat(" ", wantLength)
-	have := grid.GetAcrossWordText(14)
+	have := grid.GetWordText(14, ACROSS)
 	assert.Equal(t, wantLength, len(have))
 	assert.Equal(t, want, have)
 }
@@ -117,16 +117,16 @@ func TestGrid_GetDownWordText(t *testing.T) {
 
 	// It should fail if the word sequence number is invalid
 	assert.Panics(t, func() {
-		grid.GetDownWordText(-1)
+		grid.GetWordText(-1, DOWN)
 	})
 	assert.Panics(t, func() {
-		grid.GetDownWordText(1000)
+		grid.GetWordText(1000, DOWN)
 	})
 
 	// Should return a string of the correct length
 	wantLength := 9
 	want := strings.Repeat(" ", wantLength)
-	have := grid.GetDownWordText(3)
+	have := grid.GetWordText(3, DOWN)
 	assert.Equal(t, wantLength, len(have))
 	assert.Equal(t, want, have)
 }
