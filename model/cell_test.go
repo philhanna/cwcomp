@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	PACKAGE_NAME = "model"
+var (
+	PACKAGE_NAME = GetPackageName()
 	PREFIX       = PACKAGE_NAME + "."
 )
 
