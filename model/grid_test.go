@@ -122,23 +122,30 @@ func TestGrid_GetWordClue(t *testing.T) {
 		seq        int
 		dir        Direction
 		want       string
-	}{
-		{"Good across", 21, ACROSS, ""},
-		{"Good down", 19, DOWN, ""},
-		{"No across word", 13, ACROSS, ""},
-		{"No down word", 21, DOWN, ""},
+		}{
+			{"Good across", 21, ACROSS, ""},
+			{"Good down", 19, DOWN, ""},
+			{"No across word", 13, ACROSS, ""},
+			{"No down word", 21, DOWN, ""},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				grid := getGoodGrid()
+				have := grid.GetWordClue(tt.seq, tt.dir)
+				assert.Equal(t, tt.want, have)
+			})
+		}
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			grid := getGoodGrid()
-			have := grid.GetWordClue(tt.seq, tt.dir)
-			assert.Equal(t, tt.want, have)
+	
+	func TestGrid_GetWordClue_Bad(t *testing.T) {
+		grid := getGoodGrid()
+		assert.Panics(t, func() {
+			grid.GetWordClue(-1, ACROSS)
 		})
 	}
-}
-
-func TestGrid_GetWordText(t *testing.T) {
-	tests := []struct {
+	
+	func TestGrid_GetWordText(t *testing.T) {
+		tests := []struct {
 		name       string
 		seq        int
 		dir        Direction
