@@ -293,7 +293,7 @@ func (grid *Grid) String() string {
 				sb += "|***"
 			case LetterCell:
 				letter := grid.GetLetter(point)
-				sb += fmt.Sprintf("| %s ", letter) 
+				sb += fmt.Sprintf("| %s ", letter)
 			}
 		}
 		sb += "|"
