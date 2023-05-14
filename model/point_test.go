@@ -33,6 +33,22 @@ func TestGrid_PointIterator(t *testing.T) {
 	assert.Equal(t, list1, list2)
 }
 
+func TestGrid_SymmetricPoint(t *testing.T) {
+	grid := NewGrid(9)
+	tests := []struct {
+		p  Point
+		sp Point
+	}{
+		{Point{1, 1}, Point{9, 9}},
+		{Point{3, 5}, Point{7, 5}},
+	}
+	for _, tt := range tests {
+		want := tt.sp
+		have := grid.SymmetricPoint(tt.p)
+		assert.Equal(t, want, have)
+	}
+}
+
 func TestPoint_Compare(t *testing.T) {
 	tests := []struct {
 		name string

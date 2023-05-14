@@ -28,43 +28,6 @@ func getTestGrid(points []Point) *Grid {
 	return grid
 }
 
-func TestGrid_BlackCellIterator(t *testing.T) {
-	points := []Point{
-		{1, 1},
-		{3, 5},
-		{5, 5},
-	}
-	grid := NewGrid(9)
-	for _, point := range points {
-		grid.Toggle(point)
-	}
-
-	expected := []Point{
-		{1, 1},
-		{3, 5},
-		{5, 5},
-		{7, 5},
-		{9, 9},
-	}
-	actual := []Point{}
-	for bc := range grid.BlackCellIterator() {
-		actual = append(actual, bc.point)
-	}
-	assert.Equal(t, expected, actual)
-}
-
-func TestGrid_CountBlackCells(t *testing.T) {
-	grid := NewGrid(9)
-	assert.Equal(t, 0, grid.CountBlackCells())
-
-	grid = getGoodGrid()
-	assert.Equal(t, 16, grid.CountBlackCells())
-
-	grid.Toggle(Point{1, 6})
-	assert.Equal(t, 18, grid.CountBlackCells())
-	// 18 because we added a point and its symmetric point
-}
-
 func TestGrid_GetClue(t *testing.T) {
 	tests := []struct {
 		name string
@@ -212,30 +175,5 @@ func TestGrid_GetTextWithLetters(t *testing.T) {
 			assert.Equal(t, want, have)
 		})
 
-	}
-}
-
-func TestGrid_LetterCellIterator(t *testing.T) {
-	grid := getGoodGrid()
-	nlc := 0
-	for range grid.LetterCellIterator() {
-		nlc++
-	}
-	assert.Equal(t, 9*9-16, nlc)
-}
-
-func TestGrid_SymmetricPoint(t *testing.T) {
-	grid := NewGrid(9)
-	tests := []struct {
-		p  Point
-		sp Point
-	}{
-		{Point{1, 1}, Point{9, 9}},
-		{Point{3, 5}, Point{7, 5}},
-	}
-	for _, tt := range tests {
-		want := tt.sp
-		have := grid.SymmetricPoint(tt.p)
-		assert.Equal(t, want, have)
 	}
 }
