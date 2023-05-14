@@ -72,7 +72,7 @@ func (grid *Grid) PointIterator() <-chan Point {
 func (grid *Grid) SymmetricPoint(point Point) Point {
 	r := point.r
 	c := point.c
-	return NewPoint(grid.n + 1 - r, grid.n + 1 - c)
+	return NewPoint(grid.n+1-r, grid.n+1-c)
 }
 
 // ToXY converts a point (that uses 1-based coordinates) to a pair (x,

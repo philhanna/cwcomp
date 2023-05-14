@@ -2,6 +2,7 @@
 // application.
 //
 // A grid consists of an nxn matrix of cells, which are of two types:
+//
 //   - Black cells: Blocks in the grid
 //
 //   - Letter cells: Ordinary cells where letters of words can be placed.

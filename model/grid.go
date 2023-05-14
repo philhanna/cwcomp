@@ -170,9 +170,9 @@ func (grid *Grid) GetText(seq int, direction Direction) string {
 	for i := 0; i < length; i++ {
 		switch direction {
 		case ACROSS:
-			point = NewPoint(pwn.point.r, pwn.point.c + i)
+			point = NewPoint(pwn.point.r, pwn.point.c+i)
 		case DOWN:
-			point = NewPoint(pwn.point.r + i, pwn.point.c)
+			point = NewPoint(pwn.point.r+i, pwn.point.c)
 		}
 		letter := grid.GetLetter(point)
 		s += letter
@@ -199,8 +199,8 @@ func (grid *Grid) RenumberCells() {
 
 		// Determine if this cell is the beginning of an across or a
 		// down word, setting a boolean variable for either case.
-		aStart = point.c == 1 || grid.IsBlackCell(NewPoint(point.r, point.c - 1))
-		dStart = point.r == 1 || grid.IsBlackCell(NewPoint(point.r - 1, point.c))
+		aStart = point.c == 1 || grid.IsBlackCell(NewPoint(point.r, point.c-1))
+		dStart = point.r == 1 || grid.IsBlackCell(NewPoint(point.r-1, point.c))
 
 		// If not a new word, skip to the next cell
 		if !aStart && !dStart {
