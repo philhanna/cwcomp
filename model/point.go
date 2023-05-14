@@ -82,5 +82,5 @@ func (grid *Grid) ValidIndex(point Point) error {
 
 // String returns a string representation of this type
 func (p *Point) String() string {
-	return fmt.Sprintf("(%d,%d)", p.Row, p.Col)
+	return fmt.Sprintf("{Row:%d,Col:%d}", p.Row, p.Col)
 }

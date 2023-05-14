@@ -7,21 +7,10 @@ import (
 )
 
 func TestBlackCell_String(t *testing.T) {
-	tests := []struct {
-		name string
-		bc   *BlackCell
-		want string
-	}{
-		{"simple", &BlackCell{}, "(0,0)"},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			bc := &BlackCell{}
-			if got := bc.String(); got != tt.want {
-				t.Errorf("BlackCell.String() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	bc := NewBlackCell(Point{0,0})
+	want := "{Row:0,Col:0}"
+	have := bc.String()
+	assert.Equal(t, want, have)
 }
 
 func TestGrid_ToggleBad(t *testing.T) {

@@ -1,5 +1,10 @@
 package model
 
+import (
+	"fmt"
+	"strings"
+)
+
 // ---------------------------------------------------------------------
 // Type definitions
 // ---------------------------------------------------------------------
@@ -33,3 +38,14 @@ func NewWordNumber(seq int, point Point, aLen int, dLen int) *WordNumber {
 // ---------------------------------------------------------------------
 // Methods
 // ---------------------------------------------------------------------
+
+// String returns a string representation of this word number
+func (wn *WordNumber) String() string {
+	parts := []string{}
+	parts = append(parts, fmt.Sprintf("seq:%d", wn.seq))
+	parts = append(parts, fmt.Sprintf("point:%v", wn.point.String()))
+	parts = append(parts, fmt.Sprintf("aLen:%d", wn.aLen))
+	parts = append(parts, fmt.Sprintf("dLen:%d", wn.dLen))
+	s := strings.Join(parts, ",")
+	return s
+}

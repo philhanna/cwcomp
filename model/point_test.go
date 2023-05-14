@@ -72,7 +72,7 @@ func TestPoint_FromJSON(t *testing.T) {
 }
 
 func TestPoint_String(t *testing.T) {
-	want := `(1,3)`
+	want := `{Row:1,Col:3}`
 	point := Point{Row: 1, Col: 3}
 	have := point.String()
 	assert.Equal(t, want, have)
