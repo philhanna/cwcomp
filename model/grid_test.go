@@ -1,6 +1,7 @@
 package model
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -70,10 +71,73 @@ func TestGrid_GetAcrossWordLength(t *testing.T) {
 	assert.Equal(t, 3, grid.GetAcrossWordLength(&point))
 }
 
+func TestGrid_GetAcrossWordText(t *testing.T) {
+	grid := getGoodGrid()
+
+	// It should fail if the word sequence number is invalid
+	assert.Panics(t, func() {
+		grid.GetAcrossWordText(-1)
+	})
+	assert.Panics(t, func() {
+		grid.GetAcrossWordText(1000)
+	})
+
+	// Should return a string of the correct length
+
+	wantLength := 3
+	want := strings.Repeat(" ", wantLength)
+	have := grid.GetAcrossWordText(14)
+	assert.Equal(t, wantLength, len(have))
+	assert.Equal(t, want, have)
+}
+
 func TestGrid_GetDownWordLength(t *testing.T) {
 	grid := getGoodGrid()
 	point := Point{1, 2}
 	assert.Equal(t, 4, grid.GetDownWordLength(&point))
+}
+
+func TestGrid_GetDownWordText(t *testing.T) {
+	grid := getGoodGrid()
+
+	// It should fail if the word sequence number is invalid
+	assert.Panics(t, func() {
+		grid.GetDownWordText(-1)
+	})
+	assert.Panics(t, func() {
+		grid.GetDownWordText(1000)
+	})
+
+	// Should return a string of the correct length
+	wantLength := 9
+	want := strings.Repeat(" ", wantLength)
+	have := grid.GetDownWordText(3)
+	assert.Equal(t, wantLength, len(have))
+	assert.Equal(t, want, have)
+}
+
+func TestGrid_GetWordText(t *testing.T) {
+	tests := []struct {
+		name string
+		seq  int
+		dir  Direction
+		wantLength int
+		want string
+	}{
+		{"Good across", 21, ACROSS, 4, "    "},
+		{"Good down", 19, DOWN, 3, "   "},
+		{"No across word", 13, ACROSS, 0, ""},
+		{"No down word", 21, DOWN, 0, ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			grid := getGoodGrid()
+			want := tt.want
+			have := grid.GetWordText(tt.seq, tt.dir)
+			assert.Equal(t, tt.wantLength, len(have))
+			assert.Equal(t, want, have)
+		})
+	}
 }
 
 func TestGrid_LetterCellIterator(t *testing.T) {
