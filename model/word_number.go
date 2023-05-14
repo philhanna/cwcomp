@@ -14,10 +14,12 @@ import (
 // grid, and the lengths of its across and/or down words, either of
 // which can be zero.
 type WordNumber struct {
-	seq   int   // The word number (1, 2, ...)
-	point Point // The location of the head cell
-	aLen  int   // Length of the across word (0 = no across word)
-	dLen  int   // Length of the down word (0 = no down word)
+	seq   int    // The word number (1, 2, ...)
+	point Point  // The location of the head cell
+	aLen  int    // Length of the across word (0 = no across word)
+	dLen  int    // Length of the down word (0 = no down word)
+	aClue string // Clue for the across word
+	dClue string // Clue for the down word
 }
 
 // ---------------------------------------------------------------------
@@ -30,8 +32,8 @@ func NewWordNumber(seq int, point Point, aLen int, dLen int) *WordNumber {
 	p := new(WordNumber)
 	p.seq = seq
 	p.point = point
-	p.aLen = 0
-	p.dLen = 0
+	p.aLen = aLen
+	p.dLen = dLen
 	return p
 }
 
@@ -46,6 +48,8 @@ func (wn *WordNumber) String() string {
 	parts = append(parts, fmt.Sprintf("point:%v", wn.point.String()))
 	parts = append(parts, fmt.Sprintf("aLen:%d", wn.aLen))
 	parts = append(parts, fmt.Sprintf("dLen:%d", wn.dLen))
+	parts = append(parts, fmt.Sprintf("aClue:%q", wn.aClue))
+	parts = append(parts, fmt.Sprintf("dClue:%q", wn.dClue))
 	s := strings.Join(parts, ",")
 	return s
 }
