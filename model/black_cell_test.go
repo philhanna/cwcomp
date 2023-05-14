@@ -7,7 +7,7 @@ import (
 )
 
 func TestBlackCell_String(t *testing.T) {
-	bc := NewBlackCell(Point{0, 0})
+	bc := NewBlackCell(NewPoint(0, 0))
 	want := "{r:0,c:0}"
 	have := bc.String()
 	assert.Equal(t, want, have)
@@ -20,7 +20,7 @@ func TestGrid_CountBlackCells(t *testing.T) {
 	grid = getGoodGrid()
 	assert.Equal(t, 16, grid.CountBlackCells())
 
-	grid.Toggle(Point{1, 6})
+	grid.Toggle(NewPoint(1, 6))
 	assert.Equal(t, 18, grid.CountBlackCells())
 	// 18 because we added a point and its symmetric point
 }
@@ -53,17 +53,17 @@ func TestGrid_BlackCellIterator(t *testing.T) {
 func TestGrid_ToggleBad(t *testing.T) {
 	grid := NewGrid(9)
 
-	point := Point{0, 0}
+	point := NewPoint(0, 0)
 	assert.Panics(t, func() {
 		grid.Toggle(point)
 	})
 
-	point = Point{1, 0}
+	point = NewPoint(1, 0)
 	assert.Panics(t, func() {
 		grid.Toggle(point)
 	})
 
-	point = Point{0, 1}
+	point = NewPoint(0, 1)
 	assert.Panics(t, func() {
 		grid.Toggle(point)
 	})
@@ -82,7 +82,7 @@ func TestGrid_RedoBlackCell(t *testing.T) {
 	assert.Equal(t, 0, grid.redoStack.Len())
 
 	// Add a black cell and then undo it
-	grid.Toggle(Point{1, 1})
+	grid.Toggle(NewPoint(1, 1))
 	grid.UndoBlackCell()
 
 	// Should be zero cells
@@ -137,11 +137,10 @@ func TestGrid_UndoBlackCell(t *testing.T) {
 	assert.Equal(t, 0, grid.undoStack.Len())
 	assert.Equal(t, 0, grid.redoStack.Len())
 
-	grid.Toggle(Point{1, 1})
+	grid.Toggle(NewPoint(1, 1))
 	beforeCount := grid.CountBlackCells()
 	assert.Equal(t, 2, beforeCount)
 	grid.UndoBlackCell()
 	afterCount := grid.CountBlackCells()
 	assert.Equal(t, 0, afterCount)
-
 }

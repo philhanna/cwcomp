@@ -49,7 +49,7 @@ func NewGrid(n int) *Grid {
 	for i := 0; i < n; i++ {
 		g.cells[i] = make([]Cell, n)
 		for j := 0; j < n; j++ {
-			point := Point{r: i + 1, c: j + 1}
+			point := NewPoint(i+1, j+1)
 			cell := NewLetterCell(point)
 			g.cells[i][j] = cell
 		}
@@ -170,9 +170,9 @@ func (grid *Grid) GetText(seq int, direction Direction) string {
 	for i := 0; i < length; i++ {
 		switch direction {
 		case ACROSS:
-			point = Point{pwn.point.r, pwn.point.c + i}
+			point = NewPoint(pwn.point.r, pwn.point.c + i)
 		case DOWN:
-			point = Point{pwn.point.r + i, pwn.point.c}
+			point = NewPoint(pwn.point.r + i, pwn.point.c)
 		}
 		letter := grid.GetLetter(point)
 		s += letter
@@ -199,8 +199,8 @@ func (grid *Grid) RenumberCells() {
 
 		// Determine if this cell is the beginning of an across or a
 		// down word, setting a boolean variable for either case.
-		aStart = point.c == 1 || grid.IsBlackCell(Point{point.r, point.c - 1})
-		dStart = point.r == 1 || grid.IsBlackCell(Point{point.r - 1, point.c})
+		aStart = point.c == 1 || grid.IsBlackCell(NewPoint(point.r, point.c - 1))
+		dStart = point.r == 1 || grid.IsBlackCell(NewPoint(point.r - 1, point.c))
 
 		// If not a new word, skip to the next cell
 		if !aStart && !dStart {
@@ -217,7 +217,7 @@ func (grid *Grid) RenumberCells() {
 		// length and store that in the WordNumber
 		if aStart {
 			wn.aLen = 0
-			aPoint := Point{point.r, point.c}
+			aPoint := NewPoint(point.r, point.c)
 			for aPoint.c <= grid.n && !grid.IsBlackCell(aPoint) {
 				cell := grid.GetCell(aPoint).(LetterCell)
 				cell.ncAcross = wn
@@ -231,7 +231,7 @@ func (grid *Grid) RenumberCells() {
 		// length and store that in the WordNumber
 		if dStart {
 			wn.dLen = 0
-			dPoint := Point{point.r, point.c}
+			dPoint := NewPoint(point.r, point.c)
 			for dPoint.r <= grid.n && !grid.IsBlackCell(dPoint) {
 				cell := grid.GetCell(dPoint).(LetterCell)
 				cell.ncDown = wn
@@ -286,7 +286,7 @@ func (grid *Grid) String() string {
 		sb += sep + "\n"
 		sb += fmt.Sprintf(" %2d ", r)
 		for c := 1; c <= n; c++ {
-			point := Point{r, c}
+			point := NewPoint(r, c)
 			cell := grid.GetCell(point)
 			switch cell.(type) {
 			case BlackCell:

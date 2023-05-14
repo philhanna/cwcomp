@@ -8,7 +8,7 @@ func dumpGrid(grid *Grid) {
 	n := grid.n
 	for r := 1; r <= n; r++ {
 		for c := 1; c <= n; c++ {
-			point := Point{r, c}
+			point := NewPoint(r, c)
 			cell := grid.GetCell(point)
 			switch cell.(type) {
 			case BlackCell:

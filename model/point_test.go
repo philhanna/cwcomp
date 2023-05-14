@@ -25,7 +25,7 @@ func TestGrid_PointIterator(t *testing.T) {
 	index = 0
 	for r := 1; r <= n; r++ {
 		for c := 1; c <= n; c++ {
-			list2[index] = Point{r, c}
+			list2[index] = NewPoint(r, c)
 			index++
 		}
 	}
@@ -40,8 +40,8 @@ func TestGrid_SymmetricPoint(t *testing.T) {
 		p  Point
 		sp Point
 	}{
-		{Point{1, 1}, Point{9, 9}},
-		{Point{3, 5}, Point{7, 5}},
+		{NewPoint(1, 1), NewPoint(9, 9)},
+		{NewPoint(3, 5), NewPoint(7, 5)},
 	}
 	for _, tt := range tests {
 		want := tt.sp
@@ -57,15 +57,15 @@ func TestPoint_Compare(t *testing.T) {
 		that Point
 		want int
 	}{
-		{"same point", Point{r: 1, c: 3}, Point{r: 1, c: 3}, 0},
-		{"this column is greater", Point{r: 1, c: 3}, Point{r: 1, c: 2}, 1},
-		{"this column is less", Point{r: 1, c: 3}, Point{r: 1, c: 4}, -1},
-		{"this row is greater", Point{r: 1, c: 3}, Point{r: 0, c: 4}, 1},
-		{"this row is less", Point{r: 0, c: 3}, Point{r: 1, c: 0}, -1},
-		{"same row, col less", Point{r: 0, c: 0}, Point{r: 0, c: 4}, -1},
-		{"same row, col more", Point{r: 0, c: 0}, Point{r: 0, c: -4}, 1},
-		{"same col, row less", Point{2, 3}, Point{3, 3}, -1},
-		{"same col, row more", Point{4, 3}, Point{3, 3}, 1},
+		{"same point", NewPoint(1, 3), NewPoint(1, 3), 0},
+		{"this column is greater", NewPoint(1, 3), NewPoint(1, 2), 1},
+		{"this column is less", NewPoint(1, 3), NewPoint(1, 4), -1},
+		{"this row is greater", NewPoint(1, 3), NewPoint(0, 4), 1},
+		{"this row is less", NewPoint(0, 3), NewPoint(1, 0), -1},
+		{"same row, col less", NewPoint(0, 0), NewPoint(0, 4), -1},
+		{"same row, col more", NewPoint(0, 0), NewPoint(0, -4), 1},
+		{"same col, row less", NewPoint(2, 3), NewPoint(3, 3), -1},
+		{"same col, row more", NewPoint(4, 3), NewPoint(3, 3), 1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,9 +77,9 @@ func TestPoint_Compare(t *testing.T) {
 }
 
 func TestPoint_Equal(t *testing.T) {
-	p1 := Point{r: 1, c: 3}
+	p1 := NewPoint(1, 3)
 	p2 := p1
-	p3 := Point{}
+	p3 := NewPoint(0, 0)
 	p3.r++
 	p3.c++
 	p3.c++
@@ -91,8 +91,8 @@ func TestPoint_Equal(t *testing.T) {
 		that Point
 		want bool
 	}{
-		{"same point", Point{r: 1, c: 3}, Point{r: 1, c: 3}, true},
-		{"this column is greater", Point{r: 1, c: 3}, Point{r: 1, c: 2}, false},
+		{"same point", NewPoint(1, 3), NewPoint(1, 3), true},
+		{"this column is greater", NewPoint(1, 3), NewPoint(1, 2), false},
 		{"identical objects", p1, p2, true},
 		{"same values", p1, p3, true},
 	}
@@ -115,10 +115,10 @@ func TestPoint_NewPoint(t *testing.T) {
 		args args
 		want Point
 	}{
-		{"1, 3", args{1, 3}, Point{1, 3}},
-		{"Bad row", args{0, 3}, Point{0, 3}},
-		{"Bad column", args{3, 0}, Point{3, 0}},
-		{"Bad both", args{-0, -1}, Point{-0, -1}},
+		{"1, 3", args{1, 3}, NewPoint(1, 3)},
+		{"Bad row", args{0, 3}, NewPoint(0, 3)},
+		{"Bad column", args{3, 0}, NewPoint(3, 0)},
+		{"Bad both", args{-0, -1}, NewPoint(-0, -1)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -131,7 +131,7 @@ func TestPoint_NewPoint(t *testing.T) {
 
 func TestPoint_String(t *testing.T) {
 	want := `{r:1,c:3}`
-	point := Point{r: 1, c: 3}
+	point := NewPoint(1, 3)
 	have := point.String()
 	assert.Equal(t, want, have)
 }
@@ -143,8 +143,8 @@ func TestPoint_ToXY(t *testing.T) {
 		x     int
 		y     int
 	}{
-		{"simple", Point{1, 7}, 6, 0},
-		{"zeros", Point{0, 0}, -1, -1},
+		{"simple", NewPoint(1, 7), 6, 0},
+		{"zeros", NewPoint(0, 0), -1, -1},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -156,9 +156,9 @@ func TestGrid_GetTextWithLetters(t *testing.T) {
 		want       string
 	}
 	grid := getGoodGrid()
-	grid.SetLetter(Point{5, 4}, "O")
-	grid.SetLetter(Point{5, 5}, "A")
-	grid.SetLetter(Point{5, 6}, "F")
+	grid.SetLetter(NewPoint(5, 4), "O")
+	grid.SetLetter(NewPoint(5, 5), "A")
+	grid.SetLetter(NewPoint(5, 6), "F")
 
 	tests := []test{
 		{"14 across", 14, ACROSS, 3, "OAF"},
@@ -181,9 +181,9 @@ func TestGrid_GetTextWithLetters(t *testing.T) {
 
 func TestGrid_String(t *testing.T) {
 	grid := getGoodGrid()
-	grid.SetLetter(Point{5, 4}, "O")
-	grid.SetLetter(Point{5, 5}, "A")
-	grid.SetLetter(Point{5, 6}, "F")
+	grid.SetLetter(NewPoint(5, 4), "O")
+	grid.SetLetter(NewPoint(5, 5), "A")
+	grid.SetLetter(NewPoint(5, 6), "F")
 	gridString := grid.String()
 	substring := "| O | A | F |"
 	assert.Contains(t, gridString, substring)
