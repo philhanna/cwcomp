@@ -112,12 +112,6 @@ func TestGrid_GetAcrossWordText(t *testing.T) {
 	assert.Equal(t, want, have)
 }
 
-func TestGrid_GetDownWordLength(t *testing.T) {
-	grid := getGoodGrid()
-	point := Point{1, 2}
-	assert.Equal(t, 4, grid.GetDownWordLength(&point))
-}
-
 func TestGrid_GetDownWordText(t *testing.T) {
 	grid := getGoodGrid()
 

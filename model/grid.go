@@ -71,19 +71,6 @@ func (grid *Grid) GetAcrossWordText(seq int) string {
 	return grid.GetWordText(seq, ACROSS)
 }
 
-// GetDownWordLength returns the length of the down word for this
-// numbered cell.
-func (grid *Grid) GetDownWordLength(pnc *Point) int {
-	n := grid.n
-	length := 0
-	point := Point{pnc.r, pnc.c}
-	for point.r <= n && !grid.IsBlackCell(point) {
-		length++
-		point.r++
-	}
-	return length
-}
-
 // GetCell returns the cell at the specified point, which may be a black
 // cell, a letter cell, or a numbered cell.
 func (grid *Grid) GetCell(point Point) Cell {
