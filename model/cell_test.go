@@ -5,11 +5,12 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/philhanna/cwcomp"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	PACKAGE_NAME = GetPackageName()
+	PACKAGE_NAME = cwcomp.GetPackageName()
 	PREFIX       = PACKAGE_NAME + "."
 )
 
