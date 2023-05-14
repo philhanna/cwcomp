@@ -8,7 +8,7 @@ import (
 
 func TestBlackCell_String(t *testing.T) {
 	bc := NewBlackCell(Point{0,0})
-	want := "{Row:0,Col:0}"
+	want := "{r:0,c:0}"
 	have := bc.String()
 	assert.Equal(t, want, have)
 }

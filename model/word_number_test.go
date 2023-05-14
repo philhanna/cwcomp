@@ -14,7 +14,7 @@ func TestWordNumber_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"1 across", fields{1, Point{1, 2}, 3, 4}, `seq:1,point:{Row:1,Col:2},aLen:3,dLen:4`},
+		{"1 across", fields{1, Point{1, 2}, 3, 4}, `seq:1,point:{r:1,c:2},aLen:3,dLen:4`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

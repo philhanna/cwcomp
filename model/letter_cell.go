@@ -60,7 +60,7 @@ func (grid *Grid) LetterCellIterator() <-chan LetterCell {
 // String returns a string representation of this letter cell.
 func (lc LetterCell) String() string {
 	parts := make([]string, 0)
-	parts = append(parts, fmt.Sprintf(`point:{%d,%d}`, lc.point.Row, lc.point.Col))
+	parts = append(parts, fmt.Sprintf(`point:{%d,%d}`, lc.point.r, lc.point.c))
 	parts = append(parts, fmt.Sprintf(`ncAcross:%v`, lc.ncAcross))
 	parts = append(parts, fmt.Sprintf(`ncDown:%v`, lc.ncDown))
 	parts = append(parts, fmt.Sprintf("letter:%q", lc.letter))

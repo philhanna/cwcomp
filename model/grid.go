@@ -49,7 +49,7 @@ func NewGrid(n int) *Grid {
 	for i := 0; i < n; i++ {
 		g.cells[i] = make([]Cell, n)
 		for j := 0; j < n; j++ {
-			point := Point{Row: i + 1, Col: j + 1}
+			point := Point{r: i + 1, c: j + 1}
 			cell := NewLetterCell(point)
 			g.cells[i][j] = cell
 		}
@@ -70,10 +70,10 @@ func NewGrid(n int) *Grid {
 func (grid *Grid) GetAcrossWordLength(pnc *Point) int {
 	n := grid.n
 	length := 0
-	point := Point{pnc.Row, pnc.Col}
-	for point.Col <= n && !grid.IsBlackCell(point) {
+	point := Point{pnc.r, pnc.c}
+	for point.c <= n && !grid.IsBlackCell(point) {
 		length++
-		point.Col++
+		point.c++
 	}
 	return length
 }
@@ -83,10 +83,10 @@ func (grid *Grid) GetAcrossWordLength(pnc *Point) int {
 func (grid *Grid) GetDownWordLength(pnc *Point) int {
 	n := grid.n
 	length := 0
-	point := Point{pnc.Row, pnc.Col}
-	for point.Row <= n && !grid.IsBlackCell(point) {
+	point := Point{pnc.r, pnc.c}
+	for point.r <= n && !grid.IsBlackCell(point) {
 		length++
-		point.Row++
+		point.r++
 	}
 	return length
 
@@ -135,8 +135,8 @@ func (grid *Grid) RenumberCells() {
 
 		// Determine if this cell is the beginning of an across or a
 		// down word, setting a boolean variable for either case.
-		aStart = point.Col == 1 || grid.IsBlackCell(Point{point.Row, point.Col - 1})
-		dStart = point.Row == 1 || grid.IsBlackCell(Point{point.Row - 1, point.Col})
+		aStart = point.c == 1 || grid.IsBlackCell(Point{point.r, point.c - 1})
+		dStart = point.r == 1 || grid.IsBlackCell(Point{point.r - 1, point.c})
 
 		// If not a new word, skip to the next cell
 		if !aStart && !dStart {
@@ -153,13 +153,13 @@ func (grid *Grid) RenumberCells() {
 		// length and store that in the WordNumber
 		if aStart {
 			wn.aLen = 0
-			aPoint := Point{point.Row, point.Col}
-			for aPoint.Col <= grid.n && !grid.IsBlackCell(aPoint) {
+			aPoint := Point{point.r, point.c}
+			for aPoint.c <= grid.n && !grid.IsBlackCell(aPoint) {
 				cell := grid.GetCell(aPoint).(LetterCell)
 				cell.ncAcross = wn
 				grid.SetCell(aPoint, cell)
 				wn.aLen++
-				aPoint.Col++
+				aPoint.c++
 			}
 		}
 
@@ -167,13 +167,13 @@ func (grid *Grid) RenumberCells() {
 		// length and store that in the WordNumber
 		if dStart {
 			wn.dLen = 0
-			dPoint := Point{point.Row, point.Col}
-			for dPoint.Row <= grid.n && !grid.IsBlackCell(dPoint) {
+			dPoint := Point{point.r, point.c}
+			for dPoint.r <= grid.n && !grid.IsBlackCell(dPoint) {
 				cell := grid.GetCell(dPoint).(LetterCell)
 				cell.ncDown = wn
 				grid.SetCell(dPoint, cell)
 				wn.dLen++
-				dPoint.Row++
+				dPoint.r++
 			}
 		}
 

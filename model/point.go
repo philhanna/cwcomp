@@ -11,8 +11,8 @@ import (
 
 // Point is a row and column pair
 type Point struct {
-	Row int `json:"r"`
-	Col int `json:"c"`
+	r int
+	c int
 }
 
 // ---------------------------------------------------------------------
@@ -23,13 +23,13 @@ type Point struct {
 // less than, equal to, or greater than another.
 func (p *Point) Compare(other Point) int {
 	switch {
-	case p.Row < other.Row:
+	case p.r < other.r:
 		return -1
-	case p.Row > other.Row:
+	case p.r > other.r:
 		return 1
-	case p.Col < other.Col:
+	case p.c < other.c:
 		return -1
-	case p.Col > other.Col:
+	case p.c > other.c:
 		return 1
 	default:
 		return 0
@@ -44,22 +44,22 @@ func (p *Point) Equal(other Point) bool {
 
 // SymmetricPoint returns the point of the cell at 180 degrees rotation.
 func (grid *Grid) SymmetricPoint(point Point) Point {
-	r := point.Row
-	c := point.Col
+	r := point.r
+	c := point.c
 	return Point{grid.n + 1 - r, grid.n + 1 - c}
 }
 
 // ToXY converts a point (that uses 1-based coordinates) to a pair (x,
 // y) that uses zero-based ones.
 func (p *Point) ToXY() (int, int) {
-	x := p.Col - 1
-	y := p.Row - 1
+	x := p.c - 1
+	y := p.r - 1
 	return x, y
 }
 
 // ValidIndex whether a point is a valid index in this grid.
 func (grid *Grid) ValidIndex(point Point) error {
-	r, c := point.Row, point.Col
+	r, c := point.r, point.c
 	validRow := r >= 1 && r <= grid.n
 	validCol := c >= 1 && c <= grid.n
 	if validRow && validCol {
@@ -82,5 +82,5 @@ func (grid *Grid) ValidIndex(point Point) error {
 
 // String returns a string representation of this type
 func (p *Point) String() string {
-	return fmt.Sprintf("{Row:%d,Col:%d}", p.Row, p.Col)
+	return fmt.Sprintf("{r:%d,c:%d}", p.r, p.c)
 }
