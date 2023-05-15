@@ -10,5 +10,5 @@ type Direction string
 
 const (
 	ACROSS Direction = "A"
-	DOWN Direction = "D"
+	DOWN   Direction = "D"
 )
