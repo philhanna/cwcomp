@@ -47,7 +47,7 @@ const (
 )
 
 var (
-	PACKAGE_NAME   = GetPackageName()
+	PACKAGE_NAME = GetPackageName()
 )
 
 // ---------------------------------------------------------------------
