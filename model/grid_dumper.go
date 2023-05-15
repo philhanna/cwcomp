@@ -1,6 +1,9 @@
 package model
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 // dumpGrid is a diagnostic function that shows the exact composition of
 // each cell in the grid.
@@ -20,4 +23,5 @@ func dumpGrid(grid *Grid) {
 			}
 		}
 	}
+	fmt.Println(grid.String())
 }
