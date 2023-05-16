@@ -30,7 +30,6 @@ type configuration struct {
 
 type database struct {
 	NAME string `json:"name"`
-	DDL  string `json:"ddl"`
 }
 
 type server struct {

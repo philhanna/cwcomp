@@ -9,7 +9,7 @@ import (
 
 // Initialization function
 func init() {
-	log.SetFlags(log.Ltime | log.Lshortfile)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
 // GetPackageName returns the name of the package
