@@ -12,3 +12,19 @@ const (
 	ACROSS Direction = "A"
 	DOWN   Direction = "D"
 )
+
+// ---------------------------------------------------------------------
+// Methods
+// ---------------------------------------------------------------------
+
+// String returns a string representation of this object
+func (dir Direction) String() string {
+	var s string
+	switch dir {
+	case ACROSS:
+		s = "across"
+	case DOWN:
+		s = "down"
+	}
+	return s
+}

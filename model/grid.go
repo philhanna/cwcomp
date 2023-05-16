@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/philhanna/stack"
@@ -28,11 +29,12 @@ import (
 // (from load to save).  Any black cell additions or deletions are
 // pushed on an undo stack.
 type Grid struct {
-	n             int                 // Size of the grid (n x n square)
-	cells         [][]Cell            // Black cells and letter cells
-	wordNumberMap map[int]*WordNumber // Word number pointers
-	undoStack     stack.Stack[Point]  // Undo stack
-	redoStack     stack.Stack[Point]  // Redo stack
+	n           int                // Size of the grid (n x n square)
+	cells       [][]Cell           // Black cells and letter cells
+	words       []*Word            // Pointers to the words in this grid
+	wordNumbers []*WordNumber      // Word number pointers
+	undoStack   stack.Stack[Point] // Undo stack
+	redoStack   stack.Stack[Point] // Redo stack
 }
 
 // ---------------------------------------------------------------------
@@ -55,9 +57,9 @@ func NewGrid(n int) *Grid {
 		}
 	}
 
-	g.wordNumberMap = make(map[int]*WordNumber)
 	g.undoStack = stack.NewStack[Point]()
 	g.redoStack = stack.NewStack[Point]()
+
 	return g
 }
 
@@ -67,56 +69,31 @@ func NewGrid(n int) *Grid {
 // GetCell returns the cell at the specified point, which may be a black
 // cell, a letter cell, or a numbered cell.
 func (grid *Grid) GetCell(point Point) Cell {
+	err := grid.ValidIndex(point)
+	if err != nil {
+		errmsg := fmt.Sprintf("%s is not a valid point", point.String())
+		panic(errmsg)
+	}
 	x, y := point.ToXY()
 	return grid.cells[y][x]
 }
 
-// GetClue returns the clue of the across or down word for the given
-// word sequence number and direction.
-func (grid *Grid) GetClue(seq int, direction Direction) string {
-
-	// Get a pointer to the word number object for this word sequence
-	// number and direction, or die trying.
-
-	pwn := grid.wordNumberMap[seq]
-	if pwn == nil {
-		errmsg := fmt.Sprintf("No such word number as %d", seq)
-		panic(errmsg)
+// GetClue returns the clue for the word.
+func (grid *Grid) GetClue(word *Word) (string, error) {
+	err := grid.wordPointerIsValid(word)
+	if err != nil {
+		return "", err
 	}
-
-	// Return the clue in the appropriate direction
-
-	var clue string
-	switch direction {
-	case ACROSS:
-		clue = pwn.aClue
-	case DOWN:
-		clue = pwn.dClue
-	}
-	return clue
+	return word.clue, nil
 }
 
-// GetLength returns the length of the word for this sequence number and direction.
-func (grid *Grid) GetLength(seq int, direction Direction) int {
-
-	// Get a pointer to the word number object for this word sequence
-	// number and direction, or die trying.
-
-	pwn := grid.wordNumberMap[seq]
-	if pwn == nil {
-		errmsg := fmt.Sprintf("No such word number as %d", seq)
-		panic(errmsg)
+// GetLength returns the length of the word.
+func (grid *Grid) GetLength(word *Word) (int, error) {
+	err := grid.wordPointerIsValid(word)
+	if err != nil {
+		return 0, err
 	}
-
-	// Return the length of the word in the specified direction
-	length := 0
-	switch direction {
-	case ACROSS:
-		length = pwn.aLen
-	case DOWN:
-		length = pwn.dLen
-	}
-	return length
+	return word.length, nil
 }
 
 // GetLetter returns the value of the cell at this point.  The length of
@@ -136,113 +113,121 @@ func (grid *Grid) GetLetter(point Point) string {
 	return letter
 }
 
-// GetText returns the text of the across or down word for the given
-// word sequence number and direction.
-func (grid *Grid) GetText(seq int, direction Direction) string {
-
-	// Get a pointer to the word number object for this word sequence
-	// number and direction, or die trying.
-
-	pwn := grid.wordNumberMap[seq]
-	if pwn == nil {
-		errmsg := fmt.Sprintf("No such word number as %d", seq)
-		panic(errmsg)
+// GetText returns the text of the word.
+func (grid *Grid) GetText(word *Word) (string, error) {
+	err := grid.wordPointerIsValid(word)
+	if err != nil {
+		return "", err
 	}
 
-	// Get the length of the word in the appropriate direction. If the
-	// length turns out to be zero (because there is no word in this
-	// direction), return "".
+	length, _ := grid.GetLength(word)
 
-	length := 0
-	switch direction {
-	case ACROSS:
-		length = pwn.aLen
-	case DOWN:
-		length = pwn.dLen
-	}
-	if length == 0 {
-		return ""
-	}
-
-	// Construct the text of the word
-	s := ""
+	var s string
 	var point Point
 	for i := 0; i < length; i++ {
-		switch direction {
+		switch word.direction {
 		case ACROSS:
-			point = NewPoint(pwn.point.r, pwn.point.c+i)
+			point = NewPoint(word.point.r, word.point.c+i)
 		case DOWN:
-			point = NewPoint(pwn.point.r+i, pwn.point.c)
+			point = NewPoint(word.point.r+i, word.point.c)
 		}
 		letter := grid.GetLetter(point)
 		s += letter
 	}
-	return s
+	return s, nil
+}
+
+// LookupWord returns the word at this point and direction
+func (grid *Grid) LookupWord(point Point, dir Direction) *Word {
+	for _, word := range grid.words {
+		if word.point == point && word.direction == dir {
+			return word
+		}
+	}
+	return nil
+}
+
+// LookupWordByNumber returns the word at this point and direction
+func (grid *Grid) LookupWordByNumber(seq int, dir Direction) *Word {
+	wn := grid.LookupWordNumber(seq)
+	if wn == nil {
+		return nil
+	}
+	return grid.LookupWord(wn.point, dir)
+}
+
+// LookupWordNumber returns the WordNumber for this number
+func (grid *Grid) LookupWordNumber(seq int) *WordNumber {
+	for _, wn := range grid.wordNumbers {
+		if wn.seq == seq {
+			return wn
+		}
+	}
+	return nil
 }
 
 // RenumberCells assigns the word numbers based on the locations of the
 // black cells.
 func (grid *Grid) RenumberCells() {
-	seq := 0 // Next available word number
+
+	var (
+		seq    int         = 0 // Next available word number
+		wn     *WordNumber = nil
+		aStart bool        = false
+		dStart bool        = false
+	)
 
 	// Reset the list to empty
-	grid.wordNumberMap = make(map[int]*WordNumber)
+	// TODO save clues if word already existed
+	grid.wordNumbers = make([]*WordNumber, 0)
+	grid.words = make([]*Word, 0)
 
 	// Look through all the letter cells
-	for lc := range grid.LetterCellIterator() {
+	for point := range grid.PointIterator() {
 
-		point := lc.GetPoint()
-
-		var wn *WordNumber
-		var aStart bool
-		var dStart bool
+		// Skip black cells
+		if grid.IsBlackCell(point) {
+			continue
+		}
 
 		// Determine if this cell is the beginning of an across or a
 		// down word, setting a boolean variable for either case.
+
 		aStart = point.c == 1 || grid.IsBlackCell(NewPoint(point.r, point.c-1))
 		dStart = point.r == 1 || grid.IsBlackCell(NewPoint(point.r-1, point.c))
-
-		// If not a new word, skip to the next cell
-		if !aStart && !dStart {
-			continue
-		}
 
 		// If either is true, create a new WordNumber
 		if aStart || dStart {
 			seq++
-			wn = NewWordNumber(seq, point, 0, 0)
+			wn = NewWordNumber(seq, point)
+			grid.wordNumbers = append(grid.wordNumbers, wn)
 		}
+	}
 
-		// Then if this is the start of an across word, calculate the
-		// length and store that in the WordNumber
+	// Now calculate the word lengths
+
+	for _, wn := range grid.wordNumbers {
+
+		// Determine if this cell is the beginning of an across or a
+		// down word, setting a boolean variable for either case.
+		point := wn.point
+		aStart := point.c == 1 || grid.IsBlackCell(NewPoint(point.r, point.c-1))
+		dStart := point.r == 1 || grid.IsBlackCell(NewPoint(point.r-1, point.c))
+
 		if aStart {
-			wn.aLen = 0
-			aPoint := NewPoint(point.r, point.c)
-			for aPoint.c <= grid.n && !grid.IsBlackCell(aPoint) {
-				cell := grid.GetCell(aPoint).(LetterCell)
-				cell.ncAcross = wn
-				grid.SetCell(aPoint, cell)
-				wn.aLen++
-				aPoint.c++
+			word := NewWord(point, ACROSS, 0, "")
+			for range grid.WordIterator(point, ACROSS) {
+				word.length++
 			}
+			grid.words = append(grid.words, word)
 		}
-
-		// Or if this is the start of a down word, calculate the
-		// length and store that in the WordNumber
 		if dStart {
-			wn.dLen = 0
-			dPoint := NewPoint(point.r, point.c)
-			for dPoint.r <= grid.n && !grid.IsBlackCell(dPoint) {
-				cell := grid.GetCell(dPoint).(LetterCell)
-				cell.ncDown = wn
-				grid.SetCell(dPoint, cell)
-				wn.dLen++
-				dPoint.r++
+			word := NewWord(point, DOWN, 0, "")
+			for range grid.WordIterator(point, DOWN) {
+				word.length++
 			}
+			grid.words = append(grid.words, word)
 		}
-
-		// Store the new word number in the word number map
-		grid.wordNumberMap[seq] = wn
 	}
 }
 
@@ -261,6 +246,41 @@ func (grid *Grid) SetLetter(point Point, letter string) {
 		lc.letter = letter
 		grid.SetCell(point, lc)
 	}
+}
+
+// SetText sets the text in the grid for a specified word.
+func (grid *Grid) SetText(word *Word, text string) error {
+
+	// Make sure this is a valid word pointer
+	err := grid.wordPointerIsValid(word)
+	if err != nil {
+		return err
+	}
+
+	// Make sure the text is not longer than the word allows
+	if len(text) > word.length {
+		errmsg := fmt.Sprintf(`Text %q length > expected %d`, len(text), word.length)
+		err := errors.New(errmsg)
+		return err
+	}
+
+	// Pad the text with blanks if too short
+	for len(text) < word.length {
+		text += " "
+	}
+
+	// Iterate through the points of the word, storing the text into it
+	// letter by letter.
+	i := 0
+	for point := range grid.WordIterator(word.point, word.direction) {
+		ch := text[i]
+		i++
+		letter := string(ch)
+		grid.SetLetter(point, letter)
+	}
+
+	// OK
+	return nil
 }
 
 // String returns a string representation of the grid
@@ -304,4 +324,18 @@ func (grid *Grid) String() string {
 	sb += sep + "\n"
 
 	return sb
+}
+
+// wordPointerIsValid returns an error if the word pointer is nil,
+// or if it points to a nonexistent point in the grid.
+func (grid *Grid) wordPointerIsValid(word *Word) error {
+	if word == nil {
+		errmsg := "Word number pointer is nil"
+		err := errors.New(errmsg)
+		return err
+	}
+	if err := grid.ValidIndex(word.point); err != nil {
+		return err
+	}
+	return nil
 }

@@ -122,9 +122,6 @@ func (grid *Grid) togglePoint(point Point) {
 		symCell := NewBlackCell(symPoint)
 		grid.SetCell(symPoint, symCell)
 	}
-
-	// Renumber the cells
-	grid.RenumberCells()
 }
 
 // UndoBlackCell pops a point from the undo stack and toggles the black

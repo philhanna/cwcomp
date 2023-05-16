@@ -155,3 +155,33 @@ func TestPoint_ToXY(t *testing.T) {
 		})
 	}
 }
+
+func TestGrid_ValidIndex(t *testing.T) {
+	tests := []struct {
+		name    string
+		point   Point
+		wantErr bool
+	}{
+		{"simple point", NewPoint(2, 3), false},
+		{"head cell", NewPoint(6, 2), false},
+		{"black cell", NewPoint(4, 9), false},
+		{"bad row", NewPoint(-10, 3), true},
+		{"bad col", NewPoint(1, -10), true},
+		{"bad both", NewPoint(0, 0), true},
+	}
+
+	grid := getGoodGrid()
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			point := tt.point
+			err := grid.ValidIndex(point)
+			switch tt.wantErr {
+			case true:
+				assert.NotNil(t, err)
+			case false:
+				assert.Nil(t, err)
+			}
+		})
+	}
+}
