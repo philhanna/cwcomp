@@ -54,16 +54,16 @@ func main() {
 	}
 	log.Printf("Created %v\n", filename)
 
-	// Create the admin user
+	// Create the test user
 	sql := `INSERT INTO users (username, password, created) values(?, ?, ?);`
-	username := "admin"
+	username := "test"
 	password := db.Hash256(username)
 	created := time.Now().Format(time.RFC3339)
 	_, err = con.Exec(sql, username, password, created)
 	if err != nil {
-		log.Fatalf("Could not add admin user: %v\n", err)
+		log.Fatalf("Could not add test user: %v\n", err)
 	}
-	log.Printf("Added admin user\n")
+	log.Printf("Added test user\n")
 }
 
 // CopyFile copies src into dst (Note the order of the arguments!)

@@ -30,6 +30,7 @@ import (
 // pushed on an undo stack.
 type Grid struct {
 	n           int                // Size of the grid (n x n square)
+	gridName    string             // The grid name
 	cells       [][]Cell           // Black cells and letter cells
 	words       []*Word            // Pointers to the words in this grid
 	wordNumbers []*WordNumber      // Word number pointers
@@ -85,6 +86,11 @@ func (grid *Grid) GetClue(word *Word) (string, error) {
 		return "", err
 	}
 	return word.clue, nil
+}
+
+// GetGridName returns the grid name
+func (grid *Grid) GetGridName() string {
+	return grid.gridName
 }
 
 // GetLength returns the length of the word.
@@ -248,6 +254,11 @@ func (grid *Grid) SetLetter(point Point, letter string) {
 	}
 }
 
+// SetGridName sets the grid title
+func (grid *Grid) SetGridName(name string) {
+	grid.gridName = name
+}
+
 // SetText sets the text in the grid for a specified word.
 func (grid *Grid) SetText(word *Word, text string) error {
 
@@ -286,9 +297,16 @@ func (grid *Grid) SetText(word *Word, text string) error {
 // String returns a string representation of the grid
 func (grid *Grid) String() string {
 	n := grid.n
+	sb := ""
+	if grid.gridName == "" {
+		sb += "(Untitled)"
+	} else {
+		sb += grid.gridName
+	}
+	sb += "\n"
 
 	// Row of column numbers at the top
-	sb := "    " // indent for row numbers
+	sb += "    " // indent for row numbers
 	for c := 1; c <= n; c++ {
 		sb += fmt.Sprintf(" %2d ", c)
 	}

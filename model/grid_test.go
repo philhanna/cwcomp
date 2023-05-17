@@ -373,13 +373,29 @@ func TestGrid_SetText_Bad(t *testing.T) {
 }
 
 func TestGrid_String(t *testing.T) {
+
+	var (
+		gridString string
+	)
+
 	grid := getGoodGrid()
 	grid.SetLetter(NewPoint(5, 4), "O")
 	grid.SetLetter(NewPoint(5, 5), "A")
 	grid.SetLetter(NewPoint(5, 6), "F")
-	gridString := grid.String()
-	substring := "| O | A | F |"
-	assert.Contains(t, gridString, substring)
+
+	gridString = grid.String()
+	assert.Contains(t, gridString, "| O | A | F |")
+	assert.Equal(t, "", grid.GetGridName())
+	assert.Contains(t, gridString, "(Untitled)")
+
+	// Now set the title and see that it appears in the string
+	name := "MYGRID"
+	grid.SetGridName(name)
+	gridString = grid.String()
+
+	assert.Contains(t, gridString, name)
+	assert.Equal(t, name, grid.GetGridName())
+
 }
 
 func TestGrid_LookupWordByNumber(t *testing.T) {
