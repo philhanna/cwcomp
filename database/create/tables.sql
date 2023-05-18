@@ -1,6 +1,6 @@
 PRAGMA foreign_keys=OFF;
 CREATE TABLE users (
-    id              INTEGER PRIMARY KEY,    -- User ID
+    userid          INTEGER PRIMARY KEY,    -- User ID
     username        TEXT NOT NULL,          -- User name
     password        BLOB NOT NULL,          -- Encrypted password
     created         TEXT,                   -- Datetime this user was created
@@ -14,7 +14,7 @@ CREATE TABLE users (
     address_zip     TEXT                    -- Author zip code
 );
 CREATE TABLE grids (
-    id              INTEGER PRIMARY KEY,    -- Grid ID
+    gridid          INTEGER PRIMARY KEY,    -- Grid ID
     userid          INTEGER NOT NULL,       -- User who owns the grid
     gridname        TEXT NOT NULL,          -- Grid name
     created         TEXT,                   -- Datetime when created
@@ -26,7 +26,8 @@ CREATE TABLE cells (
     r               INTEGER,                -- Row number (1, 2, ..., n)
     c               INTEGER,                -- Column number (1, 2, ..., n)
     letter          TEXT,                   -- Cell value character
-    PRIMARY KEY (gridid, r, c)
+    PRIMARY KEY (gridid, r, c),
+    FOREIGN KEY (gridid) REFERENCES grids (gridid) ON DELETE CASCADE
 );
 CREATE TABLE words (
     gridid          INTEGER,                 -- Grid ID
@@ -35,5 +36,7 @@ CREATE TABLE words (
     dir             TEXT,                   -- Direction (Across="A",Down="D")
     length          INTEGER,                -- Length of word
     clue            TEXT,                   -- Text of clue
-    PRIMARY KEY (gridid, r, c, dir)
+    PRIMARY KEY (gridid, r, c, dir),
+    FOREIGN KEY (gridid) REFERENCES grids (gridid) ON DELETE CASCADE
 );
+
