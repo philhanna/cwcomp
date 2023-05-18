@@ -70,14 +70,14 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 
 // Save adds or updates a record for this grid in the database
 func (grid *Grid) Save(userid int) error {
-	
+
 	// Ensure the grid has been named
 	if grid.GetGridName() == "" {
 		errmsg := "Cannot save a grid without a name"
 		err := errors.New(errmsg)
 		return err
 	}
-	
+
 	// Open a connection
 	con, _ := db.Connect()
 	defer con.Close()
@@ -99,7 +99,6 @@ func (grid *Grid) Save(userid int) error {
 			}
 		}
 	}
-
 
 	// TODO finish me
 	return nil
