@@ -21,14 +21,14 @@ type GridTable struct {
 // GetGridList returns a list of grids for the specified user.
 func (grid *Grid) GetGridList(userid int) ([]string, error) {
 
-	gridNames := make([]string, 0)
+	gridnames := make([]string, 0)
 
 	// Get a database connection
 	con, err := db.Connect()
 	if err != nil {
 		errmsg := fmt.Sprintf("Unable to connect to database: %v\n", err)
 		err := errors.New(errmsg)
-		return gridNames, err
+		return gridnames, err
 	}
 	defer con.Close()
 
@@ -42,7 +42,7 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 	if err != nil {
 		errmsg := fmt.Sprintf("Unable to query grids table: %v\n", err)
 		err := errors.New(errmsg)
-		return gridNames, err
+		return gridnames, err
 	}
 	defer rows.Close()
 
@@ -52,18 +52,55 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 		if !more {
 			break
 		}
-		var gridName string
-		err = rows.Scan(&gridName)
+		var gridname string
+		err = rows.Scan(&gridname)
 		if err != nil {
 			errmsg := fmt.Sprintf("Unable to read gridname from grids table: %v\n", err)
 			err := errors.New(errmsg)
-			return gridNames, err
+			return gridnames, err
 		}
-		gridNames = append(gridNames, gridName)
+		gridnames = append(gridnames, gridname)
 	}
 
 	// Return the names of the grids
 
-	return gridNames, nil
+	return gridnames, nil
 
+}
+
+// Save adds or updates a record for this grid in the database
+func (grid *Grid) Save(userid int) error {
+	
+	// Ensure the grid has been named
+	if grid.GetGridName() == "" {
+		errmsg := "Cannot save a grid without a name"
+		err := errors.New(errmsg)
+		return err
+	}
+	
+	// Open a connection
+	con, _ := db.Connect()
+	defer con.Close()
+
+	// Delete any previous records for this grid
+	gridnames, err := grid.GetGridList(userid)
+	if err != nil {
+		return err
+	}
+	if len(gridnames) > 0 {
+		for _, gridname := range gridnames {
+			var sql string
+			sql = `DELETE FROM CELLS WHERE gridid = ?`
+			_, err := con.Exec(sql, userid, gridname)
+			if err != nil {
+				errmsg := fmt.Sprintf("Could not delete grid %s: %v\n", gridname, err)
+				err := errors.New(errmsg)
+				return err
+			}
+		}
+	}
+
+
+	// TODO finish me
+	return nil
 }
