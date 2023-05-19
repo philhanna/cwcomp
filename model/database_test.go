@@ -48,17 +48,21 @@ func createTestDatabase() {
 func fileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
-	   return false
+		return false
 	}
 	return !info.IsDir()
- }
+}
 
 func setUp() {
 	createTestDatabase()
 }
 
 func tearDown() {
-	return
+	tmp := os.TempDir()
+	dbName := filepath.Join(tmp, "cwcomp_test.db")
+	if fileExists(dbName) {
+		os.Remove(dbName)
+	}
 }
 
 func TestGrid_SaveGrid(t *testing.T) {
@@ -95,7 +99,7 @@ func TestGrid_SaveGrid(t *testing.T) {
 func TestGrid_GetGridList(t *testing.T) {
 	setUp()
 	defer tearDown()
-	
+
 	grid := getGoodGrid()
 	gridNames, err := grid.GetGridList(TEST_USERID)
 	assert.Nil(t, err)
