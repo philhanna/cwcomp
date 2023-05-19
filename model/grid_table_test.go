@@ -1,12 +1,46 @@
 package model
 
 import (
+	"log"
+	"os"
+	"path/filepath"
 	"testing"
+	"time"
 
+	"github.com/philhanna/cwcomp"
 	"github.com/stretchr/testify/assert"
 )
 
 const TEST_USERID = 1
+
+func createTestDatabase() {
+
+	// Set configuration to use the test database name
+	tmp := os.TempDir()
+	dbName := filepath.Join(tmp, "cwcomp_test.db")
+	config := cwcomp.Configuration
+	config.DATABASE.NAME = dbName
+	cwcomp.Configuration = config
+
+	// Create the test database
+	cwcomp.CreateDatabase()
+
+	// Connect to the test database
+	con, err := cwcomp.Connect()
+	defer con.Close()
+
+	// Create the test user
+	sql := `INSERT INTO users (username, password, created) values(?, ?, ?);`
+	username := "test"
+	password := cwcomp.Hash256(username)
+	created := time.Now().Format(time.RFC3339)
+	_, err = con.Exec(sql, username, password, created)
+	if err != nil {
+		log.Fatalf("Could not add test user: %v\n", err)
+	}
+	log.Printf("Added test user\n")
+
+}
 
 func TestGrid_SaveGrid(t *testing.T) {
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	db "github.com/philhanna/cwcomp/database"
+	"github.com/philhanna/cwcomp"
 )
 
 // ---------------------------------------------------------------------
@@ -21,7 +21,7 @@ type GridTable struct {
 
 // DeleteGrid deletes the specified grid
 func (grid *Grid) DeleteGrid(userid int, gridname string) error {
-	con, _ := db.Connect()
+	con, _ := cwcomp.Connect()
 	sql := `DELETE FROM grids WHERE userid = ? AND gridname = ?`
 	_, err := con.Exec(sql, userid, gridname)
 	return err
@@ -33,7 +33,7 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 	gridnames := make([]string, 0)
 
 	// Get a database connection
-	con, _ := db.Connect()
+	con, _ := cwcomp.Connect()
 	defer con.Close()
 
 	// Make the query
@@ -89,7 +89,7 @@ func (grid *Grid) SaveGrid(userid int) (int, error) {
 	}
 
 	// Open a connection
-	con, _ := db.Connect()
+	con, _ := cwcomp.Connect()
 	defer con.Close()
 
 	// Delete any previous records for this grid
