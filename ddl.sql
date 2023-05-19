@@ -30,7 +30,7 @@ CREATE TABLE cells (
     FOREIGN KEY (gridid) REFERENCES grids (gridid) ON DELETE CASCADE
 );
 CREATE TABLE words (
-    gridid          INTEGER,                 -- Grid ID
+    gridid          INTEGER,                -- Grid ID
     r               INTEGER,                -- Row number (1, 2, ..., n)
     c               INTEGER,                -- Column number (1, 2, ..., n)
     dir             TEXT,                   -- Direction (Across="A",Down="D")
