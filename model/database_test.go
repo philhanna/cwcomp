@@ -89,7 +89,7 @@ func TestGrid_SaveGrid(t *testing.T) {
 	}
 	grid.SetGridName("Rhyme")
 
-	_, err := grid.SaveGrid(TEST_USERID)
+	err := grid.SaveGrid(TEST_USERID)
 	assert.Nil(t, err)
 
 	// Done with the grid
@@ -101,7 +101,35 @@ func TestGrid_GetGridList(t *testing.T) {
 	defer tearDown()
 
 	grid := getGoodGrid()
-	gridNames, err := grid.GetGridList(TEST_USERID)
-	assert.Nil(t, err)
+	gridNames := grid.GetGridList(TEST_USERID)
 	assert.Equal(t, 0, len(gridNames))
+}
+
+func TestGrid_GridNameUsed(t *testing.T) {
+	setUp()
+	defer tearDown()
+
+	var (
+		err       error
+		gridNames []string
+		used      bool
+	)
+	grid := getGoodGrid()
+
+	gridNames = grid.GetGridList(TEST_USERID)
+	assert.Equal(t, 0, len(gridNames))
+
+	err = grid.SaveGrid(TEST_USERID)
+	assert.NotNilf(t, err, "save grid")
+
+	used = grid.GridNameUsed(TEST_USERID, "good9")
+	assert.False(t, used)
+
+	grid.SetGridName("good9")
+	grid.SaveGrid(TEST_USERID)
+	gridNames = grid.GetGridList(TEST_USERID)
+	assert.Equal(t, 1, len(gridNames))
+
+	used = grid.GridNameUsed(TEST_USERID, "good9")
+	assert.True(t, used)
 }

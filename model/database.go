@@ -21,7 +21,7 @@ func (grid *Grid) DeleteGrid(userid int, gridname string) error {
 }
 
 // GetGridList returns a list of grids for the specified user.
-func (grid *Grid) GetGridList(userid int) ([]string, error) {
+func (grid *Grid) GetGridList(userid int) []string {
 	gridnames := make([]string, 0)
 
 	// Get a database connection
@@ -34,11 +34,7 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 		FROM		grids
 		WHERE		userid = ?
 		ORDER BY	modified`
-	rows, err := con.Query(sql, userid)
-	if err != nil {
-		err := fmt.Errorf("unable to query grids table: %v", err)
-		return gridnames, err
-	}
+	rows, _ := con.Query(sql, userid)
 	defer rows.Close()
 
 	// Copy the names into the slice
@@ -48,24 +44,41 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 			break
 		}
 		var gridname string
-		err = rows.Scan(&gridname)
-		if err != nil {
-			err := fmt.Errorf("unable to read gridname from grids table: %v", err)
-			return gridnames, err
-		}
+		rows.Scan(&gridname)
 		gridnames = append(gridnames, gridname)
 	}
 
 	// Return the names of the grids
 
-	return gridnames, nil
+	return gridnames
 
 }
 
-// SaveGrid adds or updates a record for this grid in the database,
-// returning the newly added grid ID and any error.
-func (grid *Grid) SaveGrid(userid int) (int, error) {
+// GridNameUsed returns true if the specified grid name for this user is
+// already saved in the database
+func (grid *Grid) GridNameUsed(userid int, gridname string) bool {
+	// Open a connection
+	con, _ := cwcomp.Connect()
+	defer con.Close()
 
+	// Query for this user/gridname
+	sql := `SELECT COUNT(*) FROM grids WHERE userid=? AND gridname=?`
+	rows, _ := con.Query(sql, userid, gridname)
+	defer rows.Close()
+
+	// Get the count of saved grids with that name
+	rows.Next()
+	count := 0
+	rows.Scan(&count)
+
+	// Set the return value
+	used := (count > 0)
+	
+	return used
+}
+
+// SaveGrid adds or updates a record for this grid in the database
+func (grid *Grid) SaveGrid(userid int) error {
 	var (
 		err    error
 		gridid int
@@ -77,7 +90,7 @@ func (grid *Grid) SaveGrid(userid int) (int, error) {
 	gridname := grid.GetGridName()
 	if gridname == "" {
 		err = fmt.Errorf("cannot save a grid without a name")
-		return 0, err
+		return err
 	}
 
 	// Open a connection
@@ -98,10 +111,7 @@ func (grid *Grid) SaveGrid(userid int) (int, error) {
 	timenow := time.Now()
 	created := timenow.Format(time.RFC3339)
 	modified := created
-	_, err = con.Exec(sql, userid, gridname, created, modified, grid.n)
-	if err != nil {
-		return 0, err
-	}
+	con.Exec(sql, userid, gridname, created, modified, grid.n)
 	rows, err = con.Query("SELECT last_insert_rowid()")
 	rows.Next()
 	rows.Scan(&gridid) // Return this later
@@ -124,10 +134,7 @@ func (grid *Grid) SaveGrid(userid int) (int, error) {
 		case BlackCell:
 			letter = "\x00"
 		}
-		_, err = con.Exec(sql, gridid, r, c, letter)
-		if err != nil {
-			return 0, err
-		}
+		con.Exec(sql, gridid, r, c, letter)
 	}
 
 	// Save the word data in the words table
@@ -137,13 +144,9 @@ func (grid *Grid) SaveGrid(userid int) (int, error) {
 		`
 	for _, word := range grid.words {
 		point := word.point
-		_, err = con.Exec(sql, gridid, point.r, point.c,
-			word.direction, word.length, word.clue)
-		if err != nil {
-			return 0, err
-		}
+		con.Exec(sql, gridid, point.r, point.c, word.direction, word.length, word.clue)
 	}
 
 	// Successful completion
-	return gridid, nil
+	return nil
 }
