@@ -18,7 +18,7 @@ CREATE TABLE grids (
     userid          INTEGER NOT NULL,       -- User who owns the grid
     gridname        TEXT NOT NULL,          -- Grid name
     created         TEXT,                   -- Datetime when created
-    modified        TEXT,                    -- Datetime last modified
+    modified        TEXT,                   -- Datetime last modified
     n               INTEGER                 -- Grid size (width and height)
 );
 CREATE TABLE cells (
