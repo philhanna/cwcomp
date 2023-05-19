@@ -30,8 +30,6 @@ func TestCell_GetPoint(t *testing.T) {
 		"LLLLBLLLB",
 	}
 
-	const n = 9
-
 	grid := getGoodGrid()
 
 	verify := func(t *testing.T, point Point, name string) {
@@ -44,13 +42,11 @@ func TestCell_GetPoint(t *testing.T) {
 	}
 
 	for actualCell := range grid.CellIterator() {
-		switch actualCell.(type) {
+		switch cell := actualCell.(type) {
 		case BlackCell:
-			point := actualCell.(BlackCell).GetPoint()
-			verify(t, point, "BlackCell")
+			verify(t, cell.point, "BlackCell")
 		case LetterCell:
-			point := actualCell.(LetterCell).GetPoint()
-			verify(t, point, "LetterCell")
+			verify(t, cell.point, "LetterCell")
 		default:
 			t.Fatalf("Unknown type at %v\n", actualCell)
 		}

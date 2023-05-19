@@ -30,10 +30,9 @@ func (grid *Grid) BlackCellIterator() <-chan BlackCell {
 		defer close(out)
 		for point := range grid.PointIterator() {
 			cell := grid.GetCell(point)
-			switch cell.(type) {
+			switch cell := cell.(type) {
 			case BlackCell:
-				bc := cell.(BlackCell)
-				out <- bc
+				out <- cell
 			}
 		}
 	}()

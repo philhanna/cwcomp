@@ -13,13 +13,11 @@ func dumpGrid(grid *Grid) {
 		for c := 1; c <= n; c++ {
 			point := NewPoint(r, c)
 			cell := grid.GetCell(point)
-			switch cell.(type) {
+			switch typedCell := cell.(type) {
 			case BlackCell:
-				bc := cell.(BlackCell)
-				log.Printf("BlackCell    at %v has value %v\n", point, bc.String())
+				log.Printf("BlackCell    at %v has value %v\n", point, typedCell.String())
 			case LetterCell:
-				lc := cell.(LetterCell)
-				log.Printf("LetterCell   at %v has value %v\n", point, lc.String())
+				log.Printf("LetterCell   at %v has value %v\n", point, typedCell.String())
 			}
 		}
 	}

@@ -69,6 +69,9 @@ func main() {
 // CopyFile copies src into dst (Note the order of the arguments!)
 func CopyFile(dst, src string) (int64, error) {
 	source, err := os.Open(src)
+	if os.IsNotExist(err) {
+		return 0, nil
+	}
 	if err != nil {
 		return 0, err
 	}

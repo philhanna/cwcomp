@@ -108,10 +108,9 @@ func (grid *Grid) GetLength(word *Word) (int, error) {
 func (grid *Grid) GetLetter(point Point) string {
 	letter := ""
 	cell := grid.GetCell(point)
-	switch cell.(type) {
+	switch typedcell := cell.(type) {
 	case LetterCell:
-		lc := cell.(LetterCell)
-		letter = lc.letter
+		letter = typedcell.letter
 		if letter == "" {
 			letter = " "
 		}
@@ -246,11 +245,10 @@ func (grid *Grid) SetCell(point Point, cell Cell) {
 // SetLetter sets the letter value of the cell at the specified point
 func (grid *Grid) SetLetter(point Point, letter string) {
 	cell := grid.GetCell(point)
-	switch cell.(type) {
+	switch typedCell := cell.(type) {
 	case LetterCell:
-		lc := cell.(LetterCell)
-		lc.letter = letter
-		grid.SetCell(point, lc)
+		typedCell.letter = letter
+		grid.SetCell(point, typedCell)
 	}
 }
 

@@ -47,10 +47,9 @@ func (grid *Grid) LetterCellIterator() <-chan LetterCell {
 		defer close(out)
 		for point := range grid.PointIterator() {
 			cell := grid.GetCell(point)
-			switch cell.(type) {
+			switch typedCell := cell.(type) {
 			case LetterCell:
-				lc := cell.(LetterCell)
-				out <- lc
+				out <- typedCell
 			}
 		}
 	}()

@@ -3,6 +3,7 @@ package database
 import (
 	"crypto/sha256"
 	"database/sql"
+	"fmt"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/philhanna/cwcomp"
@@ -14,7 +15,9 @@ import (
 
 // Connect opens a connection to the cwcomp database.
 func Connect() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", cwcomp.Configuration.DATABASE.NAME)
+	dbName := cwcomp.Configuration.DATABASE.NAME
+	dataSourceName := fmt.Sprintf("file:%s?_foreign_keys=on", dbName)
+	db, err := sql.Open("sqlite3", dataSourceName)
 	if err != nil {
 		return nil, err
 	}

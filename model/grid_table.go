@@ -1,8 +1,9 @@
 package model
 
 import (
-	"errors"
+	"database/sql"
 	"fmt"
+	"time"
 
 	db "github.com/philhanna/cwcomp/database"
 )
@@ -18,18 +19,21 @@ type GridTable struct {
 // Functions
 // ---------------------------------------------------------------------
 
+// DeleteGrid deletes the specified grid
+func (grid *Grid) DeleteGrid(userid int, gridname string) error {
+	con, _ := db.Connect()
+	sql := `DELETE FROM grids WHERE userid = ? AND gridname = ?`
+	_, err := con.Exec(sql, userid, gridname)
+	return err
+}
+
 // GetGridList returns a list of grids for the specified user.
 func (grid *Grid) GetGridList(userid int) ([]string, error) {
 
 	gridnames := make([]string, 0)
 
 	// Get a database connection
-	con, err := db.Connect()
-	if err != nil {
-		errmsg := fmt.Sprintf("Unable to connect to database: %v\n", err)
-		err := errors.New(errmsg)
-		return gridnames, err
-	}
+	con, _ := db.Connect()
 	defer con.Close()
 
 	// Make the query
@@ -40,8 +44,7 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 		ORDER BY	modified`
 	rows, err := con.Query(sql, userid)
 	if err != nil {
-		errmsg := fmt.Sprintf("Unable to query grids table: %v\n", err)
-		err := errors.New(errmsg)
+		err := fmt.Errorf("unable to query grids table: %v", err)
 		return gridnames, err
 	}
 	defer rows.Close()
@@ -55,8 +58,7 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 		var gridname string
 		err = rows.Scan(&gridname)
 		if err != nil {
-			errmsg := fmt.Sprintf("Unable to read gridname from grids table: %v\n", err)
-			err := errors.New(errmsg)
+			err := fmt.Errorf("unable to read gridname from grids table: %v", err)
 			return gridnames, err
 		}
 		gridnames = append(gridnames, gridname)
@@ -68,14 +70,22 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 
 }
 
-// Save adds or updates a record for this grid in the database
-func (grid *Grid) Save(userid int) error {
+// Save adds or updates a record for this grid in the database,
+// returning the newly added grid ID and any error.
+func (grid *Grid) SaveGrid(userid int) (int, error) {
+
+	var (
+		err    error
+		gridid int
+		rows   *sql.Rows
+		sql    string
+	)
 
 	// Ensure the grid has been named
-	if grid.GetGridName() == "" {
-		errmsg := "Cannot save a grid without a name"
-		err := errors.New(errmsg)
-		return err
+	gridname := grid.GetGridName()
+	if gridname == "" {
+		err = fmt.Errorf("cannot save a grid without a name")
+		return 0, err
 	}
 
 	// Open a connection
@@ -83,23 +93,65 @@ func (grid *Grid) Save(userid int) error {
 	defer con.Close()
 
 	// Delete any previous records for this grid
-	gridnames, err := grid.GetGridList(userid)
+	// (should do cascading delete to other tables)
+	sql = `DELETE FROM grids WHERE gridname = ?`
+	con.Exec(sql, gridname)
+
+	// Save the data in the grids table
+	// and get the generated grid ID
+	sql = `
+		INSERT INTO grids(userid, gridname, created, modified, n)
+		VALUES(?, ?, ?, ?, ?)
+		`
+	timenow := time.Now()
+	created := timenow.Format(time.RFC3339)
+	modified := created
+	_, err = con.Exec(sql, userid, gridname, created, modified, grid.n)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	if len(gridnames) > 0 {
-		for _, gridname := range gridnames {
-			var sql string
-			sql = `DELETE FROM CELLS WHERE gridid = ?`
-			_, err := con.Exec(sql, userid, gridname)
-			if err != nil {
-				errmsg := fmt.Sprintf("Could not delete grid %s: %v\n", gridname, err)
-				err := errors.New(errmsg)
-				return err
-			}
+	rows, err = con.Query("SELECT last_insert_rowid()")
+	rows.Next()
+	rows.Scan(&gridid) // Return this later
+
+	// Save the cell data in the cells table
+	sql = `
+		INSERT INTO cells(gridid, r, c, letter)
+		VALUES(?, ?, ?, ?)
+		`
+	for cell := range grid.CellIterator() {
+		var (
+			r      int
+			c      int
+			letter string
+		)
+		r, c = cell.GetPoint().r, cell.GetPoint().c
+		switch typedCell := cell.(type) {
+		case LetterCell:
+			letter = typedCell.letter
+		case BlackCell:
+			letter = "\x00"
+		}
+		_, err = con.Exec(sql, gridid, r, c, letter)
+		if err != nil {
+			return 0, err
 		}
 	}
 
-	// TODO finish me
-	return nil
+	// Save the word data in the words table
+	sql = `
+		INSERT INTO words(gridid, r, c, dir, length, clue)
+		VALUES(?, ?, ?, ?, ?, ?)
+		`
+	for _, word := range grid.words {
+		point := word.point
+		_, err = con.Exec(sql, gridid, point.r, point.c,
+			word.direction, word.length, word.clue)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	// Successful completion
+	return gridid, nil
 }

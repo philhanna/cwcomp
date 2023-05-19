@@ -50,6 +50,16 @@ func TestGrid_CountBlackCells(t *testing.T) {
 	// 18 because we added a point and its symmetric point
 }
 
+func TestBlackCell_GetPoint(t *testing.T) {
+	bc := NewBlackCell(NewPoint(1, 2))
+	want := NewPoint(1, 2)
+	have := bc.GetPoint()
+	assert.Equal(t, want, have)
+
+	bc = *new(BlackCell)
+	assert.Equal(t, Point{0, 0}, bc.GetPoint())
+}
+
 func TestGrid_RedoBlackCell(t *testing.T) {
 	grid := NewGrid(9)
 

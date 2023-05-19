@@ -62,6 +62,7 @@ func newConfiguration() (*configuration, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Reading configuration from %v\n", configfile)
 
 	// Load its data
 	yamlBlob, err := os.ReadFile(configfile)
