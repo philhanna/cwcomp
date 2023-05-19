@@ -10,7 +10,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-//go:embed tables.sql
+//go:embed ddl.sql
 var _contents string
 
 // ---------------------------------------------------------------------
