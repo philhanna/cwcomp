@@ -1,7 +1,7 @@
 PRAGMA foreign_keys=OFF;
 CREATE TABLE users (
     userid          INTEGER PRIMARY KEY,    -- User ID
-    username        TEXT NOT NULL,          -- User name
+    username        TEXT NOT NULL UNIQUE,   -- User name
     password        BLOB NOT NULL,          -- Encrypted password
     created         TEXT,                   -- Datetime this user was created
     email           TEXT,                   -- User email
@@ -16,7 +16,7 @@ CREATE TABLE users (
 CREATE TABLE grids (
     gridid          INTEGER PRIMARY KEY,    -- Grid ID
     userid          INTEGER NOT NULL,       -- User who owns the grid
-    gridname        TEXT NOT NULL,          -- Grid name
+    gridname        TEXT NOT NULL UNIQUE,   -- Grid name
     created         TEXT,                   -- Datetime when created
     modified        TEXT,                   -- Datetime last modified
     n               INTEGER                 -- Grid size (width and height)
