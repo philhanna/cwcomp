@@ -14,18 +14,23 @@ import (
 // ---------------------------------------------------------------------
 
 // Connect opens a connection to the cwcomp database.
-func Connect() (*sql.DB, error) {
-	dbName := cwcomp.Configuration.DATABASE.NAME
+func Connect(filename ...string) (*sql.DB, error) {
+	var dbName string
+	if len(filename) > 0 {
+		dbName = filename[0]
+	} else {
+		dbName = cwcomp.Configuration.DATABASE.NAME
+	}
 	dataSourceName := fmt.Sprintf("file:%s?_foreign_keys=on", dbName)
-	db, err := sql.Open("sqlite3", dataSourceName)
+	con, err := sql.Open("sqlite3", dataSourceName)
 	if err != nil {
 		return nil, err
 	}
-	err = db.Ping()
+	err = con.Ping()
 	if err != nil {
 		return nil, err
 	}
-	return db, nil
+	return con, nil
 }
 
 // Hash256 returns the sha256 of the specified string
