@@ -84,8 +84,7 @@ func TestGrid_SaveGrid(t *testing.T) {
 
 func TestGrid_GetGridList(t *testing.T) {
 	grid := getGoodGrid()
-	userid := TEST_USERID
-	gridNames, err := grid.GetGridList(userid)
+	gridNames, err := grid.GetGridList(TEST_USERID)
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(gridNames))
 }
