@@ -9,13 +9,6 @@ import (
 )
 
 // ---------------------------------------------------------------------
-// Type definitions
-// ---------------------------------------------------------------------
-
-type GridTable struct {
-}
-
-// ---------------------------------------------------------------------
 // Functions
 // ---------------------------------------------------------------------
 
@@ -29,7 +22,6 @@ func (grid *Grid) DeleteGrid(userid int, gridname string) error {
 
 // GetGridList returns a list of grids for the specified user.
 func (grid *Grid) GetGridList(userid int) ([]string, error) {
-
 	gridnames := make([]string, 0)
 
 	// Get a database connection
