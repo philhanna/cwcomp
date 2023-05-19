@@ -62,7 +62,7 @@ func (grid *Grid) GetGridList(userid int) ([]string, error) {
 
 }
 
-// Save adds or updates a record for this grid in the database,
+// SaveGrid adds or updates a record for this grid in the database,
 // returning the newly added grid ID and any error.
 func (grid *Grid) SaveGrid(userid int) (int, error) {
 
