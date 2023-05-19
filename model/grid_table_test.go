@@ -17,8 +17,8 @@ func createTestDatabase() {
 
 	// Set configuration to use the test database name
 	tmp := os.TempDir()
-	dbName := filepath.Join(tmp, "cwcomp_test.db")
 	config := cwcomp.Configuration
+	dbName := filepath.Join(tmp, "cwcomp_test.db")
 	config.DATABASE.NAME = dbName
 	cwcomp.Configuration = config
 
@@ -42,7 +42,17 @@ func createTestDatabase() {
 
 }
 
+func setUp() {
+	createTestDatabase()
+}
+
+func tearDown() {
+	return
+}
+
 func TestGrid_SaveGrid(t *testing.T) {
+
+	setUp()
 
 	// Create a new grid and populate it with words
 	grid := getGoodGrid()
@@ -62,11 +72,14 @@ func TestGrid_SaveGrid(t *testing.T) {
 		grid.SetText(word, test.text)
 	}
 	grid.SetGridName("Rhyme")
+
 	_, err := grid.SaveGrid(TEST_USERID)
 	assert.Nil(t, err)
 
 	// Done with the grid
 	grid.DeleteGrid(TEST_USERID, "Rhyme")
+
+	tearDown()
 }
 
 func TestGrid_GetGridList(t *testing.T) {
