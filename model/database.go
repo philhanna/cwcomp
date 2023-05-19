@@ -73,7 +73,7 @@ func (grid *Grid) GridNameUsed(userid int, gridname string) bool {
 
 	// Set the return value
 	used := (count > 0)
-	
+
 	return used
 }
 
