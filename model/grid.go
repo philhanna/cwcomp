@@ -171,6 +171,16 @@ func (grid *Grid) LookupWordNumber(seq int) *WordNumber {
 	return nil
 }
 
+// LookupWordNumberByPoint returns the WordNumber starting at this point.
+func (grid *Grid) LookupWordNumberByPoint(point Point) *WordNumber {
+	for _, wn := range grid.wordNumbers {
+		if wn.point == point {
+			return wn
+		}
+	}
+	return nil
+}
+
 // RenumberCells assigns the word numbers based on the locations of the
 // black cells.
 func (grid *Grid) RenumberCells() {
