@@ -414,3 +414,16 @@ func TestGrid_LookupWordByNumber(t *testing.T) {
 	word = grid.LookupWordByNumber(30, ACROSS)
 	assert.Nil(t, word)
 }
+
+func TestGrid_LookupWordNumberByPoint(t *testing.T) {
+	grid := getGoodGrid()
+
+	point := NewPoint(5, 4)
+	want := NewWordNumber(14, point)
+	have := grid.LookupWordNumberByPoint(point)
+	assert.Equal(t, want, have)
+
+	point = Point{0, 0}
+	have = grid.LookupWordNumberByPoint(point)
+	assert.Nil(t, have)
+}

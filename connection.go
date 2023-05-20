@@ -10,8 +10,9 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// The DDL to create the tables
 //go:embed ddl.sql
-var _contents string
+var ddl string
 
 // ---------------------------------------------------------------------
 // Methods
@@ -54,7 +55,7 @@ func CreateDatabase() {
 
 // GetDDL returns a string containing the contents of the tables.sql file.
 func GetDDL() string {
-	return _contents
+	return ddl
 }
 
 // Hash256 returns the sha256 of the specified string

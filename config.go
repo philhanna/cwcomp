@@ -8,17 +8,6 @@ import (
 	"github.com/ghodss/yaml"
 )
 
-var Configuration *configuration
-
-func init() {
-	// Load the configuration
-	var err error
-	Configuration, err = newConfiguration()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 // ---------------------------------------------------------------------
 // Type definitions
 // ---------------------------------------------------------------------
@@ -38,16 +27,18 @@ type server struct {
 }
 
 // ---------------------------------------------------------------------
-// Constants
+// Constants and variables
 // ---------------------------------------------------------------------
 
-const (
-	YAML_FILE_NAME = "config.yaml"
-)
+// Name of the config.yaml file in the configuration directory
+const YAML_FILE_NAME = "config.yaml"
 
-var (
-	PACKAGE_NAME = GetPackageName()
-)
+// Name of this package. Used to specify the subdirectory for this
+// application in the configuration directory.
+var	PACKAGE_NAME = GetPackageName()
+
+// A pointer to the loaded instance of the configuration
+var Configuration *configuration
 
 // ---------------------------------------------------------------------
 // Constructor
@@ -101,4 +92,13 @@ func configurationFile() (string, error) {
 	configfile := filepath.Join(dirname, PACKAGE_NAME, YAML_FILE_NAME)
 
 	return configfile, nil
+}
+
+func init() {
+	// Load the configuration
+	var err error
+	Configuration, err = newConfiguration()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
