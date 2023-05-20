@@ -87,8 +87,9 @@ func TestGrid_SaveGrid(t *testing.T) {
 		word := grid.LookupWordByNumber(test.seq, test.dir)
 		grid.SetText(word, test.text)
 	}
-	grid.SetGridName("Rhyme")
 
+	// Save the grid as "Rhyme"
+	grid.SetGridName("Rhyme")
 	err := grid.SaveGrid(TEST_USERID)
 	assert.Nil(t, err)
 
