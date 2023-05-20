@@ -35,7 +35,7 @@ const YAML_FILE_NAME = "config.yaml"
 
 // Name of this package. Used to specify the subdirectory for this
 // application in the configuration directory.
-var	PACKAGE_NAME = GetPackageName()
+var PACKAGE_NAME = GetPackageName()
 
 // A pointer to the loaded instance of the configuration
 var Configuration *configuration

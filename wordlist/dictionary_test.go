@@ -3,7 +3,6 @@ package wordlist
 import (
 	_ "embed"
 	"testing"
-
 	//"github.com/stretchr/testify/assert"
 )
 

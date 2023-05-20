@@ -11,6 +11,7 @@ import (
 )
 
 // The DDL to create the tables
+//
 //go:embed ddl.sql
 var ddl string
 
