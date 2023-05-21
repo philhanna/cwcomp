@@ -90,12 +90,13 @@ func (grid *Grid) GetClue(word *Word) (string, error) {
 }
 
 // GetCrossingWords returns the words that intersect the specified word.
-
 func (grid *Grid) GetCrossingWords(word *Word) []*Word {
 	crossers := make([]*Word, 0)
-	//for point := range grid.WordIterator(word.point, word.direction) {
-	//grid.LookupWordNumber
-	//}
+	otherDir := word.direction.Other()
+	for point := range grid.WordIterator(word.point, word.direction) {
+		otherWord := grid.LookupWord(point, otherDir)
+		crossers = append(crossers, otherWord)
+	}
 	return crossers
 }
 
@@ -130,10 +131,10 @@ func (grid *Grid) GetLetter(point Point) string {
 }
 
 // GetText returns the text of the word.
-func (grid *Grid) GetText(word *Word) (string, error) {
+func (grid *Grid) GetText(word *Word) string {
 	err := grid.wordPointerIsValid(word)
 	if err != nil {
-		return "", err
+		return ""
 	}
 
 	length, _ := grid.GetLength(word)
@@ -150,7 +151,7 @@ func (grid *Grid) GetText(word *Word) (string, error) {
 		letter := grid.GetLetter(point)
 		s += letter
 	}
-	return s, nil
+	return s
 }
 
 // LookupWord returns the word containing this point and direction

@@ -196,21 +196,18 @@ func TestGrid_GetText(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			want := tt.want
 			word := grid.LookupWordByNumber(tt.seq, tt.dir)
-			have, err := grid.GetText(word)
+			have := grid.GetText(word)
 			switch tt.expectOK {
 			case true:
-				assert.Nil(t, err)
 				assert.Equal(t, tt.wantLength, len(have))
 				assert.Equal(t, want, have)
 			case false:
-				assert.NotNil(t, err)
 			}
 		})
 	}
 }
 
 func TestGrid_GetText_Across(t *testing.T) {
-	var err error
 	var word *Word
 
 	grid := getGoodGrid()
@@ -219,21 +216,20 @@ func TestGrid_GetText_Across(t *testing.T) {
 	word = new(Word)
 	word.point = NewPoint(-1, 3)
 	word.direction = ACROSS
-	_, err = grid.GetText(word)
-	assert.NotNil(t, err)
+	text := grid.GetText(word)
+	assert.Equal(t, "", text)
 
 	word = new(Word)
 	word.point = NewPoint(100, 3)
 	word.direction = ACROSS
-	_, err = grid.GetText(word)
-	assert.NotNil(t, err)
+	text = grid.GetText(word)
+	assert.Equal(t, "", text)
 
 	// Should return a string of the correct length
 	wantLength := 3
 	want := strings.Repeat(" ", wantLength)
 	word = grid.LookupWordByNumber(14, ACROSS)
-	have, err := grid.GetText(word)
-	assert.Nil(t, err)
+	have := grid.GetText(word)
 	assert.Equal(t, wantLength, len(have))
 	assert.Equal(t, want, have)
 }
@@ -252,16 +248,15 @@ func TestGrid_GetText_Down(t *testing.T) {
 	word = new(Word)
 	word.point = NewPoint(-1, 3)
 	word.direction = DOWN
-	_, err := grid.GetText(word)
-	assert.NotNil(t, err)
+	text := grid.GetText(word)
+	assert.Equal(t, "", text)
 
 	// Should return a string of the correct length
 	wantLength := 9
 	word = grid.LookupWordByNumber(3, DOWN)
 
 	want := strings.Repeat(" ", wantLength)
-	have, err := grid.GetText(word)
-	assert.Nil(t, err)
+	have := grid.GetText(word)
 	assert.Equal(t, wantLength, len(have))
 	assert.Equal(t, want, have)
 }
@@ -290,8 +285,7 @@ func TestGrid_GetTextWithLetters(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			want := tt.want
 			word := grid.LookupWordByNumber(tt.seq, tt.dir)
-			have, err := grid.GetText(word)
-			assert.Nil(t, err)
+			have := grid.GetText(word)
 			assert.Equal(t, tt.wantLength, len(have))
 			assert.Equal(t, want, have)
 		})
@@ -374,8 +368,7 @@ func TestGrid_SetText(t *testing.T) {
 	for _, tt := range values {
 		word = grid.LookupWordByNumber(tt.seq, tt.dir)
 		assert.NotNil(t, word)
-		have, err = grid.GetText(word)
-		assert.Nil(t, err)
+		have = grid.GetText(word)
 		want = tt.text
 		assert.Equalf(t, want, have, "%d %s", tt.seq, tt.dir)
 	}
@@ -400,16 +393,14 @@ func wordTestGrid_SetText_Bad(t *testing.T) {
 	word = grid.LookupWordByNumber(21, ACROSS)
 	err = grid.SetText(word, "X")
 	assert.Nil(t, err)
-	have, err = grid.GetText(word)
-	assert.Nil(t, err)
+	have = grid.GetText(word)
 	assert.Equal(t, "X   ", have)
 
 	// What happens if the text is longer than the word expects?
 	word = grid.LookupWordByNumber(21, ACROSS)
 	err = grid.SetText(word, "BOGUS")
 	assert.NotNil(t, err)
-	have, err = grid.GetText(word)
-	assert.Nil(t, err)
+	have = grid.GetText(word)
 	assert.Equal(t, "X   ", have)
 }
 
@@ -467,4 +458,34 @@ func TestGrid_LookupWordNumberByPoint(t *testing.T) {
 	point = Point{0, 0}
 	have = grid.LookupWordNumberForStartingPoint(point)
 	assert.Nil(t, have)
+}
+
+func TestGrid_GetCrossingWords(t *testing.T) {
+	grid := getGoodGrid()
+	tests := []struct {
+		name string
+		seq  int
+		dir  Direction
+		want []*Word
+	}{
+		{"14 across", 14, ACROSS, []*Word {
+			grid.LookupWordByNumber(3, DOWN),
+			grid.LookupWordByNumber(13, DOWN),
+			grid.LookupWordByNumber(4, DOWN),
+		}},
+		{"2 down", 2, DOWN, []*Word {
+			grid.LookupWordByNumber(1, ACROSS),
+			grid.LookupWordByNumber(8, ACROSS),
+			grid.LookupWordByNumber(10, ACROSS),
+			grid.LookupWordByNumber(12, ACROSS),
+		}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T){
+			word := grid.LookupWordByNumber(tt.seq, tt.dir)
+			crossers := grid.GetCrossingWords(word)
+			assert.Equal(t, tt.want, crossers)
+		})
+
+	}
 }
