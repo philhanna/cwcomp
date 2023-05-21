@@ -17,6 +17,18 @@ const (
 // Methods
 // ---------------------------------------------------------------------
 
+// Other returns the other direction
+func (dir Direction) Other() Direction {
+	var other Direction
+	switch dir {
+	case ACROSS:
+		other = DOWN
+	case DOWN:
+		other = ACROSS
+	}
+	return other
+}
+
 // String returns a string representation of this object
 func (dir Direction) String() string {
 	var s string
