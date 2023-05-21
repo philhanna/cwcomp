@@ -28,3 +28,12 @@ func TestGrid_WordIterator(t *testing.T) {
 	}
 	assert.Equal(t, expected, actual)
 }
+
+func TestGrid_GetWordNumber(t *testing.T) {
+	grid := getGoodGrid()
+	word := grid.LookupWord(NewPoint(8, 8), ACROSS)
+	wn := grid.GetWordNumber(word)
+	assert.NotNil(t, wn)
+	assert.Equal(t, 23, wn.seq)
+	assert.Equal(t, ACROSS, word.direction)
+}
