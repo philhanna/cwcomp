@@ -375,7 +375,7 @@ func TestGrid_SetText(t *testing.T) {
 	}
 }
 
-func wordTestGrid_SetText_Bad(t *testing.T) {
+func TestGrid_SetText_Bad(t *testing.T) {
 	var (
 		err  error
 		grid *Grid
@@ -385,6 +385,8 @@ func wordTestGrid_SetText_Bad(t *testing.T) {
 	)
 
 	grid = getGoodGrid()
+
+	// Try a non-existent word
 	word = NewWord(NewPoint(6, 18), ACROSS, 6, "")
 	text = "BOGUS"
 	err = grid.SetText(word, text)
