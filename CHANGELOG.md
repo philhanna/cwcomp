@@ -7,7 +7,10 @@ The format is based on [Keep a Changelog].
 
 ## [v0.5.0] - 2023-05-21
 Development version with a complete `model` package.
-
+- Added database support for saving and reloading grids
+- Added tool for creating initial database
+- Added support for suggesting words that match a pattern
+- Added support for finding the constraints imposed by crossing words
 
 ## [v0.4.0] - 2023-05-16
 Development version with a number of changes to the data model:
