@@ -200,9 +200,9 @@ func (grid *Grid) RenumberCells() {
 
 	var (
 		seq    int         = 0 // Next available word number
-		wn     *WordNumber = nil
-		aStart bool        = false
-		dStart bool        = false
+		wn     *WordNumber
+		aStart bool
+		dStart bool
 	)
 
 	// Reset the list to empty
