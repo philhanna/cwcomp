@@ -174,7 +174,14 @@ func (grid *Grid) LookupWordByNumber(seq int, dir Direction) *Word {
 	if wn == nil {
 		return nil
 	}
-	return grid.LookupWord(wn.point, dir)
+	for _, word := range grid.words {
+		if word.point == wn.point {
+			if word.direction == dir {
+				return word
+			}
+		}
+	}
+	return nil // No word for that seq+dir
 }
 
 // LookupWordNumber returns the WordNumber for this number
