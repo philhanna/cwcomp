@@ -67,16 +67,16 @@ func (grid *Grid) IsBlackCell(point Point) bool {
 // RedoBlackCell pops a point from the redo stack and toggles the black
 // cell at that point.
 func (grid *Grid) RedoBlackCell() {
-	if grid.redoStack.IsEmpty() {
+	if grid.redoPointStack.IsEmpty() {
 		// Nothing to redo
 		return
 	}
 
 	// Pop the point at the top of the redo stack
-	point, _ := grid.redoStack.Pop()
+	point, _ := grid.redoPointStack.Pop()
 
 	// Push that point onto the undo stack
-	grid.undoStack.Push(point)
+	grid.undoPointStack.Push(point)
 
 	// Toggle that point and its symmetric twin.
 	grid.togglePoint(point)
@@ -94,7 +94,7 @@ func (grid *Grid) Toggle(point Point) {
 	if err := grid.ValidIndex(point); err != nil {
 		panic(err)
 	}
-	grid.undoStack.Push(point)
+	grid.undoPointStack.Push(point)
 	grid.togglePoint(point)
 }
 
@@ -126,16 +126,16 @@ func (grid *Grid) togglePoint(point Point) {
 // UndoBlackCell pops a point from the undo stack and toggles the black
 // cell at that point.
 func (grid *Grid) UndoBlackCell() {
-	if grid.undoStack.IsEmpty() {
+	if grid.undoPointStack.IsEmpty() {
 		// Nothing to undo
 		return
 	}
 
 	// Pop the point at the top of the undo stack
-	point, _ := grid.undoStack.Pop()
+	point, _ := grid.undoPointStack.Pop()
 
 	// Push that point onto the redo stack
-	grid.redoStack.Push(point)
+	grid.redoPointStack.Push(point)
 
 	// Toggle that point and its symmetric twin.  Note that this is the
 	// same as the Toggle() method except that it doesn't push the

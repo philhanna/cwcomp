@@ -67,3 +67,88 @@ func TestGrid_GetWordNumber(t *testing.T) {
 	assert.Equal(t, 23, wn.seq)
 	assert.Equal(t, ACROSS, word.direction)
 }
+
+func TestGrid_RedoWord(t *testing.T) {
+	var (
+		word   *Word
+		doable Doable
+	)
+	grid := getGoodGrid()
+
+	// Stacks should be empty
+	assert.Equal(t, 0, grid.undoWordStack.Len())
+	assert.Equal(t, 0, grid.redoWordStack.Len())
+
+	// Now set the text in a word. Undo stack should contain the old
+	// value, and redo stack should be empty.
+	word = grid.LookupWord(NewPoint(8, 8), ACROSS)
+	grid.SetText(word, "GLOW")
+	assert.Equal(t, "GLOW", grid.GetText(word))
+	assert.Equal(t, 1, grid.undoWordStack.Len())
+	assert.Equal(t, 0, grid.redoWordStack.Len())
+	doable, _ = grid.undoWordStack.Peek()
+	assert.Equal(t, "    ", doable.text)
+
+	// Now do the undo. Undo stack should now be empty, and redo stack
+	// should contain the new value.
+	grid.UndoWord()
+
+	assert.Equal(t, "    ", grid.GetText(word))
+	assert.Equal(t, 0, grid.undoWordStack.Len())
+	assert.Equal(t, 1, grid.redoWordStack.Len())
+	doable, _ = grid.redoWordStack.Peek()
+	assert.Equal(t, "GLOW", doable.text)
+
+	// Do a redo, and the original grid should be there, with the last
+	// operation in the undo stack.
+	grid.RedoWord()
+
+	assert.Equal(t, "GLOW", grid.GetText(word))
+	assert.Equal(t, 1, grid.undoWordStack.Len())
+	assert.Equal(t, 0, grid.redoWordStack.Len())
+	doable, _ = grid.undoWordStack.Peek()
+	assert.Equal(t, "    ", doable.text)
+
+	// Do one more undo, and the grid should be empty
+	grid.UndoWord()
+
+	for _, word := range grid.words {
+		text := grid.GetText(word)
+		// All the letters should be spaces
+		for _, rune := range text {
+			char := byte(rune)
+			assert.Equal(t, byte(' '), char)
+		}
+	}
+}
+
+func TestGrid_UndoWord(t *testing.T) {
+	var (
+		word   *Word
+		doable Doable
+	)
+	grid := getGoodGrid()
+
+	// Stacks should be empty
+	assert.Equal(t, 0, grid.undoWordStack.Len())
+	assert.Equal(t, 0, grid.redoWordStack.Len())
+
+	// Now set the text in a word. UndoStack should contain the old
+	// value.
+	word = grid.LookupWord(NewPoint(8, 8), ACROSS)
+	grid.SetText(word, "GLOW")
+	assert.Equal(t, "GLOW", grid.GetText(word))
+	assert.Equal(t, 1, grid.undoWordStack.Len())
+	assert.Equal(t, 0, grid.redoWordStack.Len())
+	doable, _ = grid.undoWordStack.Peek()
+	assert.Equal(t, "    ", doable.text)
+
+	// Now do the undo. Undo stack should now be empty, and redo stack
+	// should contain the new value.
+	grid.UndoWord()
+
+	assert.Equal(t, 0, grid.undoWordStack.Len())
+	assert.Equal(t, 1, grid.redoWordStack.Len())
+	doable, _ = grid.redoWordStack.Peek()
+	assert.Equal(t, "GLOW", doable.text)
+}

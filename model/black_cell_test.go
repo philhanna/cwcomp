@@ -65,12 +65,12 @@ func TestGrid_RedoBlackCell(t *testing.T) {
 
 	// Redo should be a nop if the stack is empty
 	assert.Equal(t, 0, grid.CountBlackCells())
-	assert.Equal(t, 0, grid.undoStack.Len())
-	assert.Equal(t, 0, grid.redoStack.Len())
+	assert.Equal(t, 0, grid.undoPointStack.Len())
+	assert.Equal(t, 0, grid.redoPointStack.Len())
 	grid.RedoBlackCell()
 	assert.Equal(t, 0, grid.CountBlackCells())
-	assert.Equal(t, 0, grid.undoStack.Len())
-	assert.Equal(t, 0, grid.redoStack.Len())
+	assert.Equal(t, 0, grid.undoPointStack.Len())
+	assert.Equal(t, 0, grid.redoPointStack.Len())
 
 	// Add a black cell and then undo it
 	grid.Toggle(NewPoint(1, 1))
@@ -140,12 +140,12 @@ func TestGrid_UndoBlackCell(t *testing.T) {
 
 	// Undo should be a nop if the stack is empty
 	assert.Equal(t, 0, grid.CountBlackCells())
-	assert.Equal(t, 0, grid.undoStack.Len())
-	assert.Equal(t, 0, grid.redoStack.Len())
+	assert.Equal(t, 0, grid.undoPointStack.Len())
+	assert.Equal(t, 0, grid.redoPointStack.Len())
 	grid.UndoBlackCell()
 	assert.Equal(t, 0, grid.CountBlackCells())
-	assert.Equal(t, 0, grid.undoStack.Len())
-	assert.Equal(t, 0, grid.redoStack.Len())
+	assert.Equal(t, 0, grid.undoPointStack.Len())
+	assert.Equal(t, 0, grid.redoPointStack.Len())
 
 	grid.Toggle(NewPoint(1, 1))
 	beforeCount := grid.CountBlackCells()

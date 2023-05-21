@@ -59,6 +59,60 @@ func (word *Word) String() string {
 	return strings.Join(parts, ",")
 }
 
+// RedoWord gets the last word change to the grid and re-applies it
+func (grid *Grid) RedoWord() {
+
+	// Return immediately if the redo stack is empty
+	if grid.redoWordStack.IsEmpty() {
+		return
+	}
+
+	// Pop the old Doable from the redo stack. This will give us the
+	// point and direction of the word.
+	oldDoable, _ := grid.redoWordStack.Pop()
+	oldWord := &oldDoable.word
+	oldText := oldDoable.text
+
+	// Construct a new Doable from the current grid for the word in the
+	// doable.
+	newDoable := NewDoable(grid, oldWord)
+
+	// Push the new Doable onto the undo stack.
+	grid.undoWordStack.Push(newDoable)
+
+	// Set the text of the old Doable in the current grid, but do not
+	// use the SetText method, because it pushes the word back on the
+	// undo stack.
+	grid.SetTextWithoutPush(oldWord, oldText)
+}
+
+// UndoWord undoes the last push to the undoWordStack
+func (grid *Grid) UndoWord() {
+
+	// Return immediately if the undo stack is empty
+	if grid.undoWordStack.IsEmpty() {
+		return
+	}
+
+	// Pop the old Doable from the undo stack. This will give us the
+	// point and direction of the word.
+	oldDoable, _ := grid.undoWordStack.Pop()
+	oldWord := &oldDoable.word
+	oldText := oldDoable.text
+
+	// Construct a new Doable from the current grid for the word in the
+	// doable.
+	newDoable := NewDoable(grid, oldWord)
+
+	// Push the new Doable onto the redo stack.
+	grid.redoWordStack.Push(newDoable)
+
+	// Set the text of the old Doable in the current grid, but do not
+	// use the SetText method, because it pushes the word back on the
+	// undo stack.
+	grid.SetTextWithoutPush(oldWord, oldText)
+}
+
 // WordIterator iterates through the points in a word, stopping when it
 // encounters a black cell or the edge of the grid.
 func (grid *Grid) WordIterator(point Point, dir Direction) <-chan Point {

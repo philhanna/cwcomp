@@ -29,13 +29,15 @@ import (
 // (from load to save).  Any black cell additions or deletions are
 // pushed on an undo stack.
 type Grid struct {
-	n           int                // Size of the grid (n x n square)
-	gridName    string             // The grid name
-	cells       [][]Cell           // Black cells and letter cells
-	words       []*Word            // Pointers to the words in this grid
-	wordNumbers []*WordNumber      // Word number pointers
-	undoStack   stack.Stack[Point] // Undo stack
-	redoStack   stack.Stack[Point] // Redo stack
+	n              int                 // Size of the grid (n x n square)
+	gridName       string              // The grid name
+	cells          [][]Cell            // Black cells and letter cells
+	words          []*Word             // Pointers to the words in this grid
+	wordNumbers    []*WordNumber       // Word number pointers
+	undoPointStack stack.Stack[Point]  // Undo stack for black cells
+	redoPointStack stack.Stack[Point]  // Redo stack for black cells
+	undoWordStack  stack.Stack[Doable] // Undo stack for whole words
+	redoWordStack  stack.Stack[Doable] // Redo stack for whold words
 }
 
 // ---------------------------------------------------------------------
@@ -58,8 +60,8 @@ func NewGrid(n int) *Grid {
 		}
 	}
 
-	g.undoStack = stack.NewStack[Point]()
-	g.redoStack = stack.NewStack[Point]()
+	g.undoPointStack = stack.NewStack[Point]()
+	g.redoPointStack = stack.NewStack[Point]()
 
 	return g
 }
@@ -199,7 +201,7 @@ func (grid *Grid) LookupWordNumberForStartingPoint(point Point) *WordNumber {
 func (grid *Grid) RenumberCells() {
 
 	var (
-		seq    int         = 0 // Next available word number
+		seq    int = 0 // Next available word number
 		wn     *WordNumber
 		aStart bool
 		dStart bool
@@ -296,6 +298,10 @@ func (grid *Grid) SetText(word *Word, text string) error {
 		return err
 	}
 
+	// Create a new Doable for this word and push it on the undoWordStack
+	doable := NewDoable(grid, word)
+	grid.undoWordStack.Push(doable)
+
 	// Pad the text with blanks if too short
 	for len(text) < word.length {
 		text += " "
@@ -303,6 +309,13 @@ func (grid *Grid) SetText(word *Word, text string) error {
 
 	// Iterate through the points of the word, storing the text into it
 	// letter by letter.
+	grid.SetTextWithoutPush(word, text)
+
+	// OK
+	return nil
+}
+
+func (grid *Grid) SetTextWithoutPush(word *Word, text string) {
 	i := 0
 	for point := range grid.WordIterator(word.point, word.direction) {
 		ch := text[i]
@@ -310,9 +323,6 @@ func (grid *Grid) SetText(word *Word, text string) error {
 		letter := string(ch)
 		grid.SetLetter(point, letter)
 	}
-
-	// OK
-	return nil
 }
 
 // String returns a string representation of the grid

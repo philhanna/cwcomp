@@ -352,11 +352,12 @@ func TestGrid_SetText(t *testing.T) {
 		{14, ACROSS, "OAF"},
 		{13, DOWN, "TAP"},
 	}
-	for _, sw := range setupWords {
+	for i, sw := range setupWords {
 		word = grid.LookupWordByNumber(sw.seq, sw.dir)
 		assert.NotNil(t, word)
 		err = grid.SetText(word, sw.text)
 		assert.Nil(t, err)
+		assert.Equal(t, i+1, grid.undoWordStack.Len())
 	}
 
 	values := []testWord{
