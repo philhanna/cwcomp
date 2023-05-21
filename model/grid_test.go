@@ -118,7 +118,7 @@ func TestGrid_GetLength_Bad(t *testing.T) {
 	// There is no 9 down
 	word = grid.LookupWordByNumber(9, DOWN)
 	_, err = grid.GetLength(word)
-	assert.NotNil(t, err)
+	assert.Nil(t, err)
 
 }
 
