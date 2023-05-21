@@ -89,17 +89,6 @@ func (grid *Grid) GetClue(word *Word) (string, error) {
 	return word.clue, nil
 }
 
-// GetCrossingWords returns the words that intersect the specified word.
-func (grid *Grid) GetCrossingWords(word *Word) []*Word {
-	crossers := make([]*Word, 0)
-	otherDir := word.direction.Other()
-	for point := range grid.WordIterator(word.point, word.direction) {
-		otherWord := grid.LookupWord(point, otherDir)
-		crossers = append(crossers, otherWord)
-	}
-	return crossers
-}
-
 // GetGridName returns the grid name
 func (grid *Grid) GetGridName() string {
 	return grid.gridName

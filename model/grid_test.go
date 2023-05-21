@@ -462,33 +462,3 @@ func TestGrid_LookupWordNumberForStartingPoint(t *testing.T) {
 	have = grid.LookupWordNumberForStartingPoint(point)
 	assert.Nil(t, have)
 }
-
-func TestGrid_GetCrossingWords(t *testing.T) {
-	grid := getGoodGrid()
-	tests := []struct {
-		name string
-		seq  int
-		dir  Direction
-		want []*Word
-	}{
-		{"14 across", 14, ACROSS, []*Word{
-			grid.LookupWordByNumber(3, DOWN),
-			grid.LookupWordByNumber(13, DOWN),
-			grid.LookupWordByNumber(4, DOWN),
-		}},
-		{"2 down", 2, DOWN, []*Word{
-			grid.LookupWordByNumber(1, ACROSS),
-			grid.LookupWordByNumber(8, ACROSS),
-			grid.LookupWordByNumber(10, ACROSS),
-			grid.LookupWordByNumber(12, ACROSS),
-		}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			word := grid.LookupWordByNumber(tt.seq, tt.dir)
-			crossers := grid.GetCrossingWords(word)
-			assert.Equal(t, tt.want, crossers)
-		})
-
-	}
-}

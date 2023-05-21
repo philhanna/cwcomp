@@ -31,6 +31,17 @@ func NewWord(point Point, dir Direction, length int, clue string) *Word {
 	return p
 }
 
+// GetCrossingWords returns the words that intersect the specified word.
+func (word *Word) GetCrossingWords(grid *Grid) []*Word {
+	crossers := make([]*Word, 0)
+	otherDirection := word.direction.Other()
+	for point := range grid.WordIterator(word.point, word.direction) {
+		otherWord := grid.LookupWord(point, otherDirection)
+		crossers = append(crossers, otherWord)
+	}
+	return crossers
+}
+
 // Given a word, returns the word number for it
 func (grid *Grid) GetWordNumber(word *Word) *WordNumber {
 	wn := grid.LookupWordNumberForStartingPoint(word.point)
