@@ -17,7 +17,12 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-configdir
 
 # Go workspace file
 go.work
+
+# Skip the soft link to the configuration directory
+configdir
+
+# Skip the words.txt file
+words.txt
