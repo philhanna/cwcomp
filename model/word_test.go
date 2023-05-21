@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -88,6 +89,7 @@ func TestGrid_RedoWord(t *testing.T) {
 	assert.Equal(t, 0, grid.redoWordStack.Len())
 	doable, _ = grid.undoWordStack.Peek()
 	assert.Equal(t, "    ", doable.text)
+	fmt.Printf("DEBUG: doable=%s\n", doable.String())
 
 	// Now do the undo. Undo stack should now be empty, and redo stack
 	// should contain the new value.
@@ -120,6 +122,8 @@ func TestGrid_RedoWord(t *testing.T) {
 			assert.Equal(t, byte(' '), char)
 		}
 	}
+
+	grid.UndoWord() // Should do nothing
 }
 
 func TestGrid_UndoWord(t *testing.T) {
@@ -142,6 +146,7 @@ func TestGrid_UndoWord(t *testing.T) {
 	assert.Equal(t, 0, grid.redoWordStack.Len())
 	doable, _ = grid.undoWordStack.Peek()
 	assert.Equal(t, "    ", doable.text)
+	grid.RedoWord() // Should do nothing
 
 	// Now do the undo. Undo stack should now be empty, and redo stack
 	// should contain the new value.
@@ -151,4 +156,5 @@ func TestGrid_UndoWord(t *testing.T) {
 	assert.Equal(t, 1, grid.redoWordStack.Len())
 	doable, _ = grid.redoWordStack.Peek()
 	assert.Equal(t, "GLOW", doable.text)
+
 }

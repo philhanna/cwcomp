@@ -6,6 +6,13 @@ import (
 )
 
 func TestGrid_GetConstraints(t *testing.T) {
+
+	var (
+		word        *Word
+		constraints []*Constraint
+		overall     string
+	)
+
 	grid := getGoodGrid()
 
 	// Set the text of some words
@@ -19,19 +26,30 @@ func TestGrid_GetConstraints(t *testing.T) {
 		{10, ACROSS, "RA  "},
 	}
 	for _, sw := range someWords {
-		word := grid.LookupWordByNumber(sw.seq, sw.dir)
+		word = grid.LookupWordByNumber(sw.seq, sw.dir)
 		grid.SetText(word, sw.text)
 	}
-	dumpGrid(grid)
 
 	// Now find the constraints of a word in that grid
-	word := grid.LookupWordByNumber(2, DOWN)
-	constraints := grid.GetConstraints(word)
+	word = grid.LookupWordByNumber(2, DOWN)
+	constraints = grid.GetConstraints(word)
 	fmt.Printf("Constraints for 2 down:\n")
-	overall := ""
+	overall = ""
 	for i, constraint := range constraints {
 		fmt.Printf("%d: %v\n", i, constraint.ToJSON())
 		overall += constraint.Pattern
 	}
 	fmt.Printf("Overall pattern: %q\n", overall)
+
+	// Try 10 across
+	word = grid.LookupWordByNumber(10, ACROSS)
+	constraints = grid.GetConstraints(word)
+	fmt.Printf("Constraints for 10 across:\n")
+	overall = ""
+	for i, constraint := range constraints {
+		fmt.Printf("%d: %v\n", i, constraint.ToJSON())
+		overall += constraint.Pattern
+	}
+	fmt.Printf("Overall pattern: %q\n", overall)
+
 }

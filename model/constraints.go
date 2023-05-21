@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"log"
 	"regexp"
 
 	"github.com/philhanna/cwcomp/wordlist"
@@ -132,11 +131,7 @@ func (grid *Grid) GetConstraints(word *Word) []*Constraint {
 
 // ToJSON returns the JSON representation of a constraints object
 func (cst *Constraint) ToJSON() string {
-	jsonBlob, err := json.Marshal(*cst)
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
+	jsonBlob, _ := json.Marshal(*cst)
 	jsonstr := string(jsonBlob)
 	return jsonstr
 }
