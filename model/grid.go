@@ -67,6 +67,7 @@ func NewGrid(n int) *Grid {
 // ---------------------------------------------------------------------
 // Methods
 // ---------------------------------------------------------------------
+
 // GetCell returns the cell at the specified point, which may be a black
 // cell, a letter cell, or a numbered cell.
 func (grid *Grid) GetCell(point Point) Cell {
@@ -86,6 +87,16 @@ func (grid *Grid) GetClue(word *Word) (string, error) {
 		return "", err
 	}
 	return word.clue, nil
+}
+
+// GetCrossingWords returns the words that intersect the specified word.
+
+func (grid *Grid) GetCrossingWords(word *Word) []*Word {
+	crossers := make([]*Word, 0)
+	//for point := range grid.WordIterator(word.point, word.direction) {
+	//grid.LookupWordNumber
+	//}
+	return crossers
 }
 
 // GetGridName returns the grid name
@@ -142,11 +153,15 @@ func (grid *Grid) GetText(word *Word) (string, error) {
 	return s, nil
 }
 
-// LookupWord returns the word at this point and direction
+// LookupWord returns the word containing this point and direction
 func (grid *Grid) LookupWord(point Point, dir Direction) *Word {
 	for _, word := range grid.words {
-		if word.point == point && word.direction == dir {
-			return word
+		if word.direction == dir {
+			for wPoint := range grid.WordIterator(word.point, dir) {
+				if wPoint == point {
+					return word
+				}
+			}
 		}
 	}
 	return nil
@@ -171,8 +186,9 @@ func (grid *Grid) LookupWordNumber(seq int) *WordNumber {
 	return nil
 }
 
-// LookupWordNumberByPoint returns the WordNumber starting at this point.
-func (grid *Grid) LookupWordNumberByPoint(point Point) *WordNumber {
+// LookupWordNumberForStartingPoint returns the WordNumber starting at
+// this point.
+func (grid *Grid) LookupWordNumberForStartingPoint(point Point) *WordNumber {
 	for _, wn := range grid.wordNumbers {
 		if wn.point == point {
 			return wn
@@ -180,6 +196,7 @@ func (grid *Grid) LookupWordNumberByPoint(point Point) *WordNumber {
 	}
 	return nil
 }
+
 
 // RenumberCells assigns the word numbers based on the locations of the
 // black cells.

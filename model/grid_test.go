@@ -298,6 +298,47 @@ func TestGrid_GetTextWithLetters(t *testing.T) {
 	}
 }
 
+func TestGrid_LookupWord(t *testing.T) {
+	grid := getGoodGrid()
+	type Test struct {
+		name       string
+		point      Point
+		wantAcross int
+		wantDown   int
+		wantOK     bool
+	}
+	tests := []Test{
+		{"middle point", NewPoint(7, 8), 21, 18, true},
+		{"on word number", NewPoint(6, 2), 15, 15, true},
+		{"in black cell", NewPoint(1, 5), 0, 0, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			word := grid.LookupWord(tt.point, ACROSS)
+			if tt.wantOK {
+				assert.NotNil(t, word)
+				wn := grid.LookupWordNumberForStartingPoint(word.point)
+				assert.NotNil(t, wn)
+				assert.Equal(t, tt.wantAcross, wn.seq)
+			} else {
+				assert.Nil(t, word)
+			}
+
+			word = grid.LookupWord(tt.point, DOWN)
+			if tt.wantOK {
+				assert.NotNil(t, word)
+				wn := grid.LookupWordNumberForStartingPoint(word.point)
+				assert.NotNil(t, wn)
+				assert.Equal(t, tt.wantDown, wn.seq)
+			} else {
+				assert.Nil(t, word)
+			}
+		})
+	}
+
+}
+
 func TestGrid_SetText(t *testing.T) {
 	var (
 		err  error
@@ -340,7 +381,7 @@ func TestGrid_SetText(t *testing.T) {
 	}
 }
 
-func TestGrid_SetText_Bad(t *testing.T) {
+func wordTestGrid_SetText_Bad(t *testing.T) {
 	var (
 		err  error
 		grid *Grid
@@ -420,10 +461,10 @@ func TestGrid_LookupWordNumberByPoint(t *testing.T) {
 
 	point := NewPoint(5, 4)
 	want := NewWordNumber(14, point)
-	have := grid.LookupWordNumberByPoint(point)
+	have := grid.LookupWordNumberForStartingPoint(point)
 	assert.Equal(t, want, have)
 
 	point = Point{0, 0}
-	have = grid.LookupWordNumberByPoint(point)
+	have = grid.LookupWordNumberForStartingPoint(point)
 	assert.Nil(t, have)
 }
