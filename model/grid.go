@@ -205,7 +205,6 @@ func (grid *Grid) LookupWordNumberForStartingPoint(point Point) *WordNumber {
 	return nil
 }
 
-
 // RenumberCells assigns the word numbers based on the locations of the
 // black cells.
 func (grid *Grid) RenumberCells() {
