@@ -95,11 +95,11 @@ func (grid *Grid) ValidIndex(point Point) error {
 	var errmsg string
 
 	if !validRow && !validCol {
-		errmsg = fmt.Sprintf("Invalid row %d and column %d\n", r, c)
+		errmsg = fmt.Sprintf("invalid row %d and column %d", r, c)
 	} else if !validRow {
-		errmsg = fmt.Sprintf("Invalid row %d\n", r)
+		errmsg = fmt.Sprintf("invalid row %d", r)
 	} else if !validCol {
-		errmsg = fmt.Sprintf("Invalid column %d\n", c)
+		errmsg = fmt.Sprintf("invalid column %d", c)
 	}
 
 	err := errors.New(errmsg)
