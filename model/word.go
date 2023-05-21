@@ -31,6 +31,12 @@ func NewWord(point Point, dir Direction, length int, clue string) *Word {
 	return p
 }
 
+// Given a word, returns the word number for it
+func (grid *Grid) GetWordNumber(word *Word) *WordNumber {
+	wn := grid.LookupWordNumberForStartingPoint(word.point)
+	return wn
+}
+
 // String returns a string representation of this object.
 func (word *Word) String() string {
 	parts := []string{
