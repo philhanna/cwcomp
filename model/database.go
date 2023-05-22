@@ -224,3 +224,19 @@ func (grid *Grid) SaveGrid(userid int) error {
 	// Successful completion
 	return nil
 }
+
+// RenameGrid renames a grid in the database
+func (grid *Grid) RenameGrid(userid int, oldGridName, newGridName string) error {
+	// Connect to the database
+	con, _ := cwcomp.Connect()
+	defer con.Close()
+
+	// See if there is a grid by the old name
+	_, err := con.Exec(`
+		UPDATE	grids
+		SET		gridname=?
+		WHERE	userid=?
+		AND		gridname=?`,
+			newGridName, userid, oldGridName)
+	return err
+}
