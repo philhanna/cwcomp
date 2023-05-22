@@ -37,7 +37,7 @@ func createTestDatabase() {
 	username := "test"
 	password := cwcomp.Hash256(username)
 	created := time.Now().Format(time.RFC3339)
-	_, err = con.Exec(sql, username, password, created)
+	_, err := con.Exec(sql, username, password, created)
 	if err != nil {
 		log.Fatalf("Could not add test user: %v\n", err)
 	}
