@@ -49,6 +49,7 @@ func TestLetterList_GetBlocks(t *testing.T) {
 		ilist []int   // Just an array of integers
 		want  []Block // An array of pairs of integers
 	}{
+		{[]int{}, []Block{}},
 		{[]int{3, 2, 3, 4, 5, 1, 1, 2, 3}, []Block{{3, 3}, {2, 5}, {1, 1}, {1, 3}}},
 		{[]int{2, 3, 4, 5, 2}, []Block{{2, 5}, {2, 2}}},
 	}
