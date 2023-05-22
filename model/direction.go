@@ -1,5 +1,10 @@
 package model
 
+import (
+	"fmt"
+	"strings"
+)
+
 // ---------------------------------------------------------------------
 // Type definitions
 // ---------------------------------------------------------------------
@@ -14,10 +19,29 @@ const (
 )
 
 // ---------------------------------------------------------------------
+// Functions
+// ---------------------------------------------------------------------
+
+// DirectionFromString parses a string for a direction. It will accept
+// anything that starts with the direction letter value.
+// Panics if the parameter is not a valid direction.
+func DirectionFromString(s string) Direction {
+	switch {
+	case strings.HasPrefix(s, "A"), strings.HasPrefix(s, "a"):
+		return ACROSS
+	case strings.HasPrefix(s, "D"), strings.HasPrefix(s, "d"):
+		return DOWN
+	default:
+		errmsg := fmt.Sprintf("%q is not a valid direction string", s)
+		panic(errmsg)
+	}
+}
+
+// ---------------------------------------------------------------------
 // Methods
 // ---------------------------------------------------------------------
 
-// Other returns the other direction
+// Other returns the other direction.
 func (dir Direction) Other() Direction {
 	var other Direction
 	switch dir {

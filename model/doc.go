@@ -13,3 +13,13 @@
 //
 // The grid also supports undo/redo for black cells in this grid.
 package model
+
+import "os"
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}

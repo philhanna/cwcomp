@@ -40,6 +40,17 @@ func getTestGrid(points []Point) *Grid {
 // Unit tests
 // ---------------------------------------------------------------------
 
+func TestGrid_Equal(t *testing.T) {
+	grid := getGoodGrid()
+	assert.False(t, grid.Equal(nil))
+	assert.True(t, grid.Equal(grid))
+	bogusGrid := getTestGrid([]Point{
+		{1, 2},
+		{3, 4},
+	})
+	assert.False(t, grid.Equal(bogusGrid))
+}
+
 func TestGrid_GetCell(t *testing.T) {
 	grid := getGoodGrid()
 	grid.GetCell(NewPoint(4, 6)) // Good point

@@ -70,8 +70,18 @@ func NewGrid(n int) *Grid {
 // Methods
 // ---------------------------------------------------------------------
 
+// Equal returns true if this grid is essentially equal to the other.
+func (grid *Grid) Equal(other *Grid) bool {
+	if other == nil {
+		return false
+	}
+	thisString := grid.String()
+	thatString := other.String()
+	return thisString == thatString
+}
+
 // GetCell returns the cell at the specified point, which may be a black
-// cell, a letter cell, or a numbered cell.
+// cell or a letter cell.
 func (grid *Grid) GetCell(point Point) Cell {
 	err := grid.ValidIndex(point)
 	if err != nil {
@@ -208,7 +218,6 @@ func (grid *Grid) RenumberCells() {
 	)
 
 	// Reset the list to empty
-	// TODO save clues if word already existed
 	grid.wordNumbers = make([]*WordNumber, 0)
 	grid.words = make([]*Word, 0)
 

@@ -8,6 +8,9 @@ import (
 	"github.com/philhanna/cwcomp"
 )
 
+// Letter value of a black cell in the cells table
+const BLACK_CELL = "\x00"
+
 // ---------------------------------------------------------------------
 // Functions
 // ---------------------------------------------------------------------
@@ -77,6 +80,77 @@ func (grid *Grid) GridNameUsed(userid int, gridname string) bool {
 	return used
 }
 
+// LoadGrid reads grid data from the database and creates a Grid object from it.
+func LoadGrid(userid int, gridname string) (*Grid, error) {
+
+	// Connect to the database
+	con, _ := cwcomp.Connect()
+	defer con.Close()
+
+	// Get the grid record from the database
+	gridRows, _ := con.Query(`
+		SELECT COUNT(*), gridid, n FROM grids WHERE userid=? AND gridname=?`,
+		userid, gridname)
+	defer gridRows.Close()
+
+	var count, gridid, n int
+
+	for gridRows.Next() {
+		gridRows.Scan(&count, &gridid, &n)
+		if count == 0 {
+			return nil, fmt.Errorf("no grid named %q found", gridname)
+		}
+	}
+
+	// Create an empty grid and begin populating it from the database
+	grid := NewGrid(n)
+	grid.SetGridName(gridname)
+
+	// Populate the cells (black cells and other)
+	cellRows, _ := con.Query(`
+		SELECT r, c, letter FROM cells WHERE gridid=?`,
+		gridid)
+	defer cellRows.Close()
+
+	var r, c int
+	var letter string
+
+	for cellRows.Next() {
+		cellRows.Scan(&r, &c, &letter)
+		point := NewPoint(r, c)
+		switch letter {
+		case BLACK_CELL:
+			grid.SetCell(point, NewBlackCell(point))
+		default:
+			grid.SetLetter(point, letter)
+		}
+	}
+
+	// Renumber the grid to create the word and word number arrays
+	grid.RenumberCells()
+
+	// Populate the words
+	wordRows, _ := con.Query(`
+		SELECT r, c, dir, clue FROM words WHERE gridid=?`,
+		gridid)
+	defer wordRows.Close()
+
+	for wordRows.Next() {
+
+		var r, c int
+		var dir, clue string
+
+		wordRows.Scan(&r, &c, &dir, &clue)
+		point := NewPoint(r, c)
+		direction := DirectionFromString(dir)
+		word := grid.LookupWord(point, direction)
+		grid.SetClue(word, clue)
+	}
+
+	// Return the newly reconstituted grid with no error
+	return grid, nil
+}
+
 // SaveGrid adds or updates a record for this grid in the database
 func (grid *Grid) SaveGrid(userid int) error {
 	var (
@@ -132,7 +206,7 @@ func (grid *Grid) SaveGrid(userid int) error {
 		case LetterCell:
 			letter = typedCell.letter
 		case BlackCell:
-			letter = "\x00"
+			letter = BLACK_CELL
 		}
 		con.Exec(sql, gridid, r, c, letter)
 	}
