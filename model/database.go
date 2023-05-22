@@ -232,11 +232,27 @@ func (grid *Grid) RenameGrid(userid int, oldGridName, newGridName string) error 
 	defer con.Close()
 
 	// See if there is a grid by the old name
-	_, err := con.Exec(`
+	rows, _ := con.Query(`
+		SELECT	COUNT(*)
+		FROM	grids
+		WHERE	userid=?
+		AND		gridname=?`,
+			userid, oldGridName)
+	rows.Next()
+	var count int
+	rows.Scan(&count)
+
+	// If not, return error
+	if count == 0 {
+		return fmt.Errorf("no grid found for name=%q", oldGridName)
+	}
+
+	// Do the update and return no error
+	con.Exec(`
 		UPDATE	grids
 		SET		gridname=?
 		WHERE	userid=?
 		AND		gridname=?`,
 			newGridName, userid, oldGridName)
-	return err
+	return nil
 }

@@ -15,7 +15,7 @@ import (
 // Internal functions
 // ---------------------------------------------------------------------
 
-const test_userid = 1
+const TEST_USERID = 1
 
 // Creates a disposable database with a schema identical to the
 // production database
@@ -79,7 +79,7 @@ func saveGrid(grid *Grid, gridName string) error {
 	}
 
 	grid.SetGridName(gridName)
-	if err = grid.SaveGrid(test_userid); err != nil {
+	if err = grid.SaveGrid(TEST_USERID); err != nil {
 		return err
 	}
 
@@ -115,7 +115,7 @@ func TestGrid_GetGridList(t *testing.T) {
 	defer tearDown()
 
 	grid := getGoodGrid()
-	gridNames := grid.GetGridList(test_userid)
+	gridNames := grid.GetGridList(TEST_USERID)
 	assert.Equal(t, 0, len(gridNames))
 }
 
@@ -131,21 +131,21 @@ func TestGrid_GridNameUsed(t *testing.T) {
 	)
 	grid := getGoodGrid()
 
-	gridNames = grid.GetGridList(test_userid)
+	gridNames = grid.GetGridList(TEST_USERID)
 	assert.Equal(t, 0, len(gridNames))
 
-	err = grid.SaveGrid(test_userid)
+	err = grid.SaveGrid(TEST_USERID)
 	assert.NotNilf(t, err, "save grid")
 
-	used = grid.GridNameUsed(test_userid, "good9")
+	used = grid.GridNameUsed(TEST_USERID, "good9")
 	assert.False(t, used)
 
 	grid.SetGridName("good9")
-	grid.SaveGrid(test_userid)
-	gridNames = grid.GetGridList(test_userid)
+	grid.SaveGrid(TEST_USERID)
+	gridNames = grid.GetGridList(TEST_USERID)
 	assert.Equal(t, 1, len(gridNames))
 
-	used = grid.GridNameUsed(test_userid, "good9")
+	used = grid.GridNameUsed(TEST_USERID, "good9")
 	assert.True(t, used)
 }
 
@@ -161,7 +161,7 @@ func TestGrid_LoadGrid(t *testing.T) {
 		reloadedGrid *Grid
 	)
 
-	_, err = LoadGrid(test_userid, "BOGUS")
+	_, err = LoadGrid(TEST_USERID, "BOGUS")
 	assert.NotNil(t, err)
 
 	const gridName = "Rhyme"
@@ -171,12 +171,25 @@ func TestGrid_LoadGrid(t *testing.T) {
 	assert.Nil(t, err)
 
 	// Reload the grid from the database
-	reloadedGrid, err = LoadGrid(test_userid, gridName)
+	reloadedGrid, err = LoadGrid(TEST_USERID, gridName)
 	assert.Nil(t, err)
 
 	// Compare to the original grid
 
 	assert.True(t, grid.Equal(reloadedGrid))
+}
+
+func TestGrid_RenameGrid(t *testing.T) {
+	setUp()
+	defer tearDown()
+
+	grid := getGoodGrid()
+	grid.SetGridName("foo")
+	grid.SaveGrid(TEST_USERID)
+	err := grid.RenameGrid(TEST_USERID, "foo", "bar")
+	assert.Nil(t, err)
+	err = grid.RenameGrid(TEST_USERID, "baz", "bam")
+	assert.NotNil(t, err)
 }
 
 // Tests whether a grid can be saved correctly.
@@ -189,5 +202,5 @@ func TestGrid_SaveGrid(t *testing.T) {
 	grid := getGoodGrid()
 	err := saveGrid(grid, gridName)
 	assert.Nil(t, err)
-	grid.DeleteGrid(test_userid, gridName)
+	grid.DeleteGrid(TEST_USERID, gridName)
 }
