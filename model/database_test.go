@@ -29,7 +29,7 @@ func createTestDatabase() {
 	cwcomp.CreateDatabase()
 
 	// Connect to the test database
-	con, err := cwcomp.Connect()
+	con, _ := cwcomp.Connect()
 	defer con.Close()
 
 	// Create the test user

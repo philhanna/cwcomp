@@ -112,7 +112,7 @@ func (grid *Grid) SaveGrid(userid int) error {
 	created := timenow.Format(time.RFC3339)
 	modified := created
 	con.Exec(sql, userid, gridname, created, modified, grid.n)
-	rows, err = con.Query("SELECT last_insert_rowid()")
+	rows, _ = con.Query("SELECT last_insert_rowid()")
 	rows.Next()
 	rows.Scan(&gridid) // Return this later
 
