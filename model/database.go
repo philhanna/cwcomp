@@ -227,13 +227,13 @@ func (grid *Grid) SaveGrid(userid int) error {
 
 // RenameGrid renames a grid in the database
 func (grid *Grid) RenameGrid(userid int, oldGridName, newGridName string) error {
-	
+
 	// See if there is a grid by the old name
 
 	if !grid.GridNameUsed(userid, oldGridName) {
 		return fmt.Errorf("no grid found for name=%q", oldGridName)
 	}
-	
+
 	// Connect to the database
 
 	con, _ := cwcomp.Connect()
@@ -245,6 +245,6 @@ func (grid *Grid) RenameGrid(userid int, oldGridName, newGridName string) error 
 		SET		gridname=?
 		WHERE	userid=?
 		AND		gridname=?`,
-			newGridName, userid, oldGridName)
+		newGridName, userid, oldGridName)
 	return nil
 }
