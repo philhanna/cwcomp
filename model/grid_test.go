@@ -47,6 +47,7 @@ func TestGrid_GetCell(t *testing.T) {
 		grid.GetCell(NewPoint(10, -1))
 	})
 }
+
 func TestGrid_GetClue(t *testing.T) {
 	tests := []struct {
 		name string
@@ -332,6 +333,36 @@ func TestGrid_LookupWord(t *testing.T) {
 		})
 	}
 
+}
+func TestGrid_SetClue(t *testing.T) {
+	tests := []struct {
+		name   string
+		seq    int
+		dir    Direction
+		clue   string
+		wantOK bool
+	}{
+		{"Good across", 21, ACROSS, "21 across clue", true},
+		{"Good down", 19, DOWN, "19 down clue", true},
+		{"No across word", 13, ACROSS, "", false},
+		{"No down word", 21, DOWN, "", false},
+	}
+	grid := getGoodGrid()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			word := grid.LookupWordByNumber(tt.seq, tt.dir)
+			err := grid.SetClue(word, tt.clue)
+			switch tt.wantOK {
+			case true:
+				assert.Nil(t, err)
+				want, err := grid.GetClue(word)
+				assert.Nil(t, err)
+				assert.Equal(t, tt.clue, want)
+			case false:
+				assert.NotNil(t, err)
+			}
+		})
+	}
 }
 
 func TestGrid_SetText(t *testing.T) {

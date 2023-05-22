@@ -267,6 +267,15 @@ func (grid *Grid) SetCell(point Point, cell Cell) {
 	grid.cells[y][x] = cell
 }
 
+// SetClue sets the specified clue in the specified word.
+func (grid *Grid) SetClue(word *Word, clue string) error {
+	if word == nil {
+		return fmt.Errorf("word pointer is nil")
+	}
+	word.clue = clue
+	return nil
+}
+
 // SetLetter sets the letter value of the cell at the specified point
 func (grid *Grid) SetLetter(point Point, letter string) {
 	cell := grid.GetCell(point)

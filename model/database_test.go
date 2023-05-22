@@ -70,27 +70,35 @@ func TestGrid_SaveGrid(t *testing.T) {
 	setUp()
 	defer tearDown()
 
+	var (
+		err error
+	)
+
 	// Create a new grid and populate it with words
 	grid := getGoodGrid()
 	type test struct {
 		seq  int
 		dir  Direction
 		text string
+		clue string
 	}
 	testWords := []test{
-		{1, ACROSS, "NOW"},
-		{7, DOWN, "COW"},
-		{8, ACROSS, "BLUE"},
-		{20, DOWN, "HOW"},
+		{1, ACROSS, "NOW", "At this time"},
+		{7, DOWN, "COW", "Bovine"},
+		{8, ACROSS, "BLUE", "Azure"},
+		{20, DOWN, "HOW", "In what manner"},
 	}
 	for _, test := range testWords {
 		word := grid.LookupWordByNumber(test.seq, test.dir)
-		grid.SetText(word, test.text)
+		err = grid.SetText(word, test.text)
+		assert.Nil(t, err)
+		err = grid.SetClue(word, test.clue)
+		assert.Nil(t, err)
 	}
 
 	// Save the grid as "Rhyme"
 	grid.SetGridName("Rhyme")
-	err := grid.SaveGrid(TEST_USERID)
+	err = grid.SaveGrid(TEST_USERID)
 	assert.Nil(t, err)
 
 	// Done with the grid
