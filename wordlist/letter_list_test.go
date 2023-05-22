@@ -94,6 +94,7 @@ func TestLetterList_GetRegexp(t *testing.T) {
 		letters string
 		want    string
 	}{
+		{"", ""},                              // empty list
 		{"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "."},   // all
 		{"ABCD", "[A-D]"},                     // small straight
 		{"BCDKLMWXZ", "[^AE-JN-VY]"},          // with gaps

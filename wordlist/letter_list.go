@@ -51,6 +51,9 @@ func Blocks(ilist []int) <-chan Block {
 	c := make(chan Block)
 	go func() {
 		defer close(c)
+		if len(ilist) < 1 {
+			return
+		}
 		first := ilist[0]
 		last := first
 		for i := 1; i < len(ilist); i++ {
