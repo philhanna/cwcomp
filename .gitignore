@@ -25,4 +25,4 @@ go.work
 configdir
 
 # Skip the words.txt file
-words.txt
+#words.txt
