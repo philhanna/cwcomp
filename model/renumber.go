@@ -58,7 +58,13 @@ func GridToCells(grid *Grid) [][]byte {
 	for i := 0; i < n; i++ {
 		cells[i] = make([]byte, n)
 		for j := 0; j < n; j++ {
-			cells[i][j] = ' '
+			point := NewPoint(i+1, j+1)
+			if grid.IsBlackCell(point) {
+				cells[i][j] = '\x00'
+			} else {
+				letter := grid.GetLetter(point)
+				cells[i][j] = letter[0]
+			}
 		}
 	}
 	for bc := range grid.BlackCellIterator() {
