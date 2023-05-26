@@ -51,7 +51,7 @@ func GetNumberedCells(cells [][]byte) []NumberedCell {
 
 // GridToCells builds a simple representation of a grid as an n x n
 // matrix of bytes, where 0 represents a black cell, and the rest are
-// spaces.
+// the letters in that cell.
 func GridToCells(grid *Grid) [][]byte {
 	n := grid.n
 	cells := make([][]byte, n)
@@ -66,11 +66,6 @@ func GridToCells(grid *Grid) [][]byte {
 				cells[i][j] = letter[0]
 			}
 		}
-	}
-	for bc := range grid.BlackCellIterator() {
-		point := bc.GetPoint()
-		i, j := point.r-1, point.c-1
-		cells[i][j] = '\x00'
 	}
 	return cells
 }
