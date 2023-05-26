@@ -210,57 +210,29 @@ func (grid *Grid) LookupWordNumberForStartingPoint(point Point) *WordNumber {
 // black cells.
 func (grid *Grid) RenumberCells() {
 
-	var (
-		seq    int = 0 // Next available word number
-		wn     *WordNumber
-		aStart bool
-		dStart bool
-	)
-
-	// Reset the list to empty
-	grid.wordNumbers = make([]*WordNumber, 0)
-	grid.words = make([]*Word, 0)
-
-	// Look through all the letter cells
-	for point := range grid.PointIterator() {
-
-		// Skip black cells
-		if grid.IsBlackCell(point) {
-			continue
-		}
-
-		// Determine if this cell is the beginning of an across or a
-		// down word, setting a boolean variable for either case.
-
-		aStart = point.c == 1 || grid.IsBlackCell(NewPoint(point.r, point.c-1))
-		dStart = point.r == 1 || grid.IsBlackCell(NewPoint(point.r-1, point.c))
-
-		// If either is true, create a new WordNumber
-		if aStart || dStart {
-			seq++
-			wn = NewWordNumber(seq, point)
-			grid.wordNumbers = append(grid.wordNumbers, wn)
-		}
+	// Get the word numbers
+	cells := GridToCells(grid)
+	ncs := GetNumberedCells(cells)
+	grid.wordNumbers = make([]*WordNumber, len(ncs))
+	for i, nc := range ncs {
+		wn := new(WordNumber)
+		wn.seq = nc.Seq
+		wn.point = NewPoint(nc.Row, nc.Col)
+		grid.wordNumbers[i] = wn
 	}
 
-	// Now calculate the word lengths
-
-	for _, wn := range grid.wordNumbers {
-
-		// Determine if this cell is the beginning of an across or a
-		// down word, setting a boolean variable for either case.
-		point := wn.point
-		aStart := point.c == 1 || grid.IsBlackCell(NewPoint(point.r, point.c-1))
-		dStart := point.r == 1 || grid.IsBlackCell(NewPoint(point.r-1, point.c))
-
-		if aStart {
+	// Get the words list and add lengths
+	grid.words = make([]*Word, 0)
+	for _, nc := range ncs {
+		point := NewPoint(nc.Row, nc.Col)
+		if nc.StartA {
 			word := NewWord(point, ACROSS, 0, "")
 			for range grid.WordIterator(point, ACROSS) {
 				word.length++
 			}
 			grid.words = append(grid.words, word)
 		}
-		if dStart {
+		if nc.StartD {
 			word := NewWord(point, DOWN, 0, "")
 			for range grid.WordIterator(point, DOWN) {
 				word.length++
