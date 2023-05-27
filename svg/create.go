@@ -16,7 +16,6 @@ type SVG struct {
 	n       int      // Number of either rows or columns in the grid (assumed to be the same)
 	nPixels int      // Width or height of grid in pixels
 	cells   [][]byte // Simple matrix representation of the grid
-	scale   *float64 // The transformation scale (optional)
 }
 
 // ---------------------------------------------------------------------
@@ -91,19 +90,10 @@ func (svg *SVG) Root() string {
 		fmt.Sprintf("svg%dx%d", svg.n, svg.n),
 	))
 
-	// Add the width and height, as adjusted by the scaling factor
-	// if present
-	if svg.scale == nil {
-		sizeAttr := strconv.Itoa(svg.nPixels)
-		sb.WriteString(fmt.Sprintf(" width=%q", sizeAttr))
-		sb.WriteString(fmt.Sprintf(" height=%q", sizeAttr))
-	} else {
-		scale := *svg.scale
-		scaledSizeAttr := fmt.Sprintf("%.2f", float64(svg.nPixels)*scale)
-		sb.WriteString(fmt.Sprintf(" transform(scale=(%.2f))", scale))
-		sb.WriteString(fmt.Sprintf(" width=%q", scaledSizeAttr))
-		sb.WriteString(fmt.Sprintf(" height=%q", scaledSizeAttr))
-	}
+	// Add the width and height
+	sizeAttr := strconv.Itoa(svg.nPixels)
+	sb.WriteString(fmt.Sprintf(" width=%q", sizeAttr))
+	sb.WriteString(fmt.Sprintf(" height=%q", sizeAttr))
 
 	// Add the viewport
 	vattr := fmt.Sprintf("%d %d %d %d", 0, 0, svg.nPixels, svg.nPixels)
@@ -220,9 +210,4 @@ func (svg *SVG) WordNumbers() string {
 // EndRoot creates the closing </svg> element.
 func (svg *SVG) EndRoot() string {
 	return "\n</svg>\n"
-}
-
-// SetScale sets the (optional) transformation scale
-func (svg *SVG) SetScale(scale float64) {
-	svg.scale = &scale
 }

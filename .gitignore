@@ -26,4 +26,6 @@ configdir
 
 # Skip the words.txt file
 words.txt
-svg/test.svg
+
+# Skip test files
+testdata/
