@@ -24,18 +24,18 @@ type SVG struct {
 // ---------------------------------------------------------------------
 
 const (
-	XMLNS              = "http://www.w3.org/2000/svg"
-	XMLNS_XLINK        = "http://www.w3.org/1999/xlink"
-	BLACK_CELL         = '\x00'
-	BOXSIZE            = 32
+	XMLNS       = "http://www.w3.org/2000/svg"
+	XMLNS_XLINK = "http://www.w3.org/1999/xlink"
+	BLACK_CELL  = '\x00'
+	BOXSIZE     = 32
 
 	LETTER_X_OFFSET    = 8
 	LETTER_Y_OFFSET    = 28
 	LETTER_FONT_FAMILY = "monospace"
 	LETTER_FONT_SIZE   = "18pt"
 
-	NUMBER_X_OFFSET = 2
-	NUMBER_Y_OFFSET = 10
+	NUMBER_X_OFFSET  = 2
+	NUMBER_Y_OFFSET  = 10
 	NUMBER_FONT_SIZE = "8pt"
 )
 
