@@ -28,7 +28,7 @@ func TestSVG_GenerateSVG(t *testing.T) {
 	cells := getGoodGrid()
 	svg := NewSVG(cells)
 	have := svg.GenerateSVG()
-	if true { // Change this to true if you want to write the file
+	if false { // Change this to true if you want to write the file
 		os.WriteFile("testdata/simple_matrix.svg", []byte(have), 0644)
 	}
 }
@@ -48,7 +48,7 @@ func TestSVG_NewSVGFromGrid(t *testing.T) {
 	grid.SetLetter(model.NewPoint(5, 6), "F")
 	svg := NewSVGFromGrid(grid)
 	have := svg.GenerateSVG()
-	if true { // Change this to true if you want to write the file
+	if false { // Change this to true if you want to write the file
 		os.WriteFile("testdata/from_grid.svg", []byte(have), 0644)
 	}
 }
