@@ -57,7 +57,7 @@ func NewSVG(cells [][]byte) *SVG {
 // NewSVGFromGrid will create a new SVG object from a grid, delegating
 // that to NewSVG after creating the simple cell matrix it needs.
 func NewSVGFromGrid(grid *model.Grid) *SVG {
-	cells := model.GridToCells(grid)
+	cells := model.GridToSimpleMatrix(grid)
 	return NewSVG(cells)
 }
 

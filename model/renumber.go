@@ -49,10 +49,10 @@ func GetNumberedCells(cells [][]byte) []NumberedCell {
 	return ncs
 }
 
-// GridToCells builds a simple representation of a grid as an n x n
+// GridToSimpleMatrix builds a simple representation of a grid as an n x n
 // matrix of bytes, where 0 represents a black cell, and the rest are
 // the letters in that cell.
-func GridToCells(grid *Grid) [][]byte {
+func GridToSimpleMatrix(grid *Grid) [][]byte {
 	n := grid.n
 	cells := make([][]byte, n)
 	for i := 0; i < n; i++ {

@@ -211,7 +211,7 @@ func (grid *Grid) LookupWordNumberForStartingPoint(point Point) *WordNumber {
 func (grid *Grid) RenumberCells() {
 
 	// Get the word numbers
-	cells := GridToCells(grid)
+	cells := GridToSimpleMatrix(grid)
 	ncs := GetNumberedCells(cells)
 	grid.wordNumbers = make([]*WordNumber, len(ncs))
 	for i, nc := range ncs {

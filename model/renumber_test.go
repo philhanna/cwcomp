@@ -9,7 +9,7 @@ import (
 
 func TestGetNumberedCellsFromGrid(t *testing.T) {
 	grid := getGoodGrid()
-	cells := GridToCells(grid)
+	cells := GridToSimpleMatrix(grid)
 	ncs := GetNumberedCells(cells)
 	for _, nc := range ncs {
 		fmt.Printf("%v\n", nc)
