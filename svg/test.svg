@@ -27,19 +27,19 @@
 
 <!-- Cells -->
 <rect x="0" y="0" width="32" height="32" fill="black"></rect>
-<text x="34" y="10" font-size="8pt" font-family="monospace"></text>
-<text x="66" y="10" font-size="8pt" font-family="monospace"></text>
-<text x="98" y="10" font-size="8pt" font-family="monospace"></text>
+<text x="40" y="28" font-size="18pt" font-family="monospace">N</text>
+<text x="72" y="28" font-size="18pt" font-family="monospace">O</text>
+<text x="104" y="28" font-size="18pt" font-family="monospace">W</text>
 <rect x="128" y="0" width="32" height="32" fill="black"></rect>
-<text x="258" y="10" font-size="8pt" font-family="monospace"></text>
-<text x="2" y="42" font-size="8pt" font-family="monospace"></text>
-<text x="34" y="42" font-size="8pt" font-family="monospace"></text>
-<text x="66" y="42" font-size="8pt" font-family="monospace"></text>
-<text x="98" y="42" font-size="8pt" font-family="monospace"></text>
+<text x="264" y="28" font-size="18pt" font-family="monospace">C</text>
+<text x="8" y="60" font-size="18pt" font-family="monospace">B</text>
+<text x="40" y="60" font-size="18pt" font-family="monospace">L</text>
+<text x="72" y="60" font-size="18pt" font-family="monospace">U</text>
+<text x="104" y="60" font-size="18pt" font-family="monospace">E</text>
 <rect x="128" y="32" width="32" height="32" fill="black"></rect>
-<text x="258" y="42" font-size="8pt" font-family="monospace"></text>
+<text x="264" y="60" font-size="18pt" font-family="monospace">O</text>
 <rect x="128" y="64" width="32" height="32" fill="black"></rect>
-<text x="258" y="74" font-size="8pt" font-family="monospace"></text>
+<text x="264" y="92" font-size="18pt" font-family="monospace">W</text>
 <rect x="256" y="96" width="32" height="32" fill="black"></rect>
 <rect x="0" y="128" width="32" height="32" fill="black"></rect>
 <rect x="32" y="128" width="32" height="32" fill="black"></rect>
@@ -48,17 +48,38 @@
 <rect x="224" y="128" width="32" height="32" fill="black"></rect>
 <rect x="256" y="128" width="32" height="32" fill="black"></rect>
 <rect x="0" y="160" width="32" height="32" fill="black"></rect>
-<text x="2" y="202" font-size="8pt" font-family="monospace"></text>
-<text x="66" y="202" font-size="8pt" font-family="monospace"></text>
-<text x="98" y="202" font-size="8pt" font-family="monospace"></text>
+<text x="8" y="220" font-size="18pt" font-family="monospace">H</text>
 <rect x="128" y="192" width="32" height="32" fill="black"></rect>
-<text x="2" y="234" font-size="8pt" font-family="monospace"></text>
-<text x="66" y="234" font-size="8pt" font-family="monospace"></text>
-<text x="98" y="234" font-size="8pt" font-family="monospace"></text>
+<text x="8" y="252" font-size="18pt" font-family="monospace">O</text>
 <rect x="128" y="224" width="32" height="32" fill="black"></rect>
-<text x="2" y="266" font-size="8pt" font-family="monospace"></text>
-<text x="66" y="266" font-size="8pt" font-family="monospace"></text>
-<text x="98" y="266" font-size="8pt" font-family="monospace"></text>
+<text x="8" y="284" font-size="18pt" font-family="monospace">W</text>
 <rect x="128" y="256" width="32" height="32" fill="black"></rect>
 <rect x="256" y="256" width="32" height="32" fill="black"></rect>
+
+<!-- Word numbers -->
+<text x="34" y="10" font-size="8pt">1</text>
+<text x="66" y="10" font-size="8pt">2</text>
+<text x="98" y="10" font-size="8pt">3</text>
+<text x="162" y="10" font-size="8pt">4</text>
+<text x="194" y="10" font-size="8pt">5</text>
+<text x="226" y="10" font-size="8pt">6</text>
+<text x="258" y="10" font-size="8pt">7</text>
+<text x="2" y="42" font-size="8pt">8</text>
+<text x="162" y="42" font-size="8pt">9</text>
+<text x="2" y="74" font-size="8pt">10</text>
+<text x="162" y="74" font-size="8pt">11</text>
+<text x="2" y="106" font-size="8pt">12</text>
+<text x="130" y="106" font-size="8pt">13</text>
+<text x="98" y="138" font-size="8pt">14</text>
+<text x="34" y="170" font-size="8pt">15</text>
+<text x="66" y="170" font-size="8pt">16</text>
+<text x="194" y="170" font-size="8pt">17</text>
+<text x="226" y="170" font-size="8pt">18</text>
+<text x="258" y="170" font-size="8pt">19</text>
+<text x="2" y="202" font-size="8pt">20</text>
+<text x="162" y="202" font-size="8pt">21</text>
+<text x="2" y="234" font-size="8pt">22</text>
+<text x="162" y="234" font-size="8pt">23</text>
+<text x="2" y="266" font-size="8pt">24</text>
+<text x="162" y="266" font-size="8pt">25</text>
 </svg>

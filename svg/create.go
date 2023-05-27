@@ -28,10 +28,15 @@ const (
 	XMLNS_XLINK        = "http://www.w3.org/1999/xlink"
 	BLACK_CELL         = '\x00'
 	BOXSIZE            = 32
-	LETTER_X_OFFSET    = 2
-	LETTER_Y_OFFSET    = 10
+
+	LETTER_X_OFFSET    = 8
+	LETTER_Y_OFFSET    = 28
 	LETTER_FONT_FAMILY = "monospace"
-	LETTER_FONT_SIZE   = "8pt"
+	LETTER_FONT_SIZE   = "18pt"
+
+	NUMBER_X_OFFSET = 2
+	NUMBER_Y_OFFSET = 10
+	NUMBER_FONT_SIZE = "8pt"
 )
 
 // ---------------------------------------------------------------------
@@ -183,11 +188,12 @@ func (svg *SVG) Cells() string {
 				letter := svg.cells[r-1][c-1]
 				if letter != ' ' {
 					sb.WriteString(fmt.Sprintf(
-						"<text x=%q y=%q font-size=%q font-family=%q></text>\n",
+						"<text x=%q y=%q font-size=%q font-family=%q>%c</text>\n",
 						strconv.Itoa(xBase+LETTER_X_OFFSET),
 						strconv.Itoa(yBase+LETTER_Y_OFFSET),
 						LETTER_FONT_SIZE,
 						LETTER_FONT_FAMILY,
+						letter,
 					))
 				}
 			}
@@ -198,7 +204,17 @@ func (svg *SVG) Cells() string {
 
 // WordNumbers generates the word numbers of the grid.
 func (svg *SVG) WordNumbers() string {
-	return "" // TODO implement me
+	sb := strings.Builder{}
+	sb.WriteString("\n<!-- Word numbers -->\n")
+	for _, nc := range model.GetNumberedCells(svg.cells) {
+		seq := nc.Seq
+		xbase := (nc.Col-1)*BOXSIZE + NUMBER_X_OFFSET
+		ybase := (nc.Row-1)*BOXSIZE + NUMBER_Y_OFFSET
+		fmtstr := `<text x="%d" y="%d" font-size="%s">%d</text>`
+		line := fmt.Sprintf(fmtstr, xbase, ybase, NUMBER_FONT_SIZE, seq)
+		sb.WriteString(line + "\n")
+	}
+	return sb.String()
 }
 
 // EndRoot creates the closing </svg> element.
