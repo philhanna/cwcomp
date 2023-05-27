@@ -120,7 +120,7 @@ func (svg *SVG) BoundingRectangle() string {
 	sb := strings.Builder{}
 	sb.WriteString("\n<!-- Bounding rectangle -->\n")
 	sb.WriteString(fmt.Sprintf(
-		"<rect width=%q height=%q fill=%q stroke=%q stroke-width=%q></rect>\n",
+		"<rect width=%q height=%q fill=%q stroke=%q stroke-width=%q/>\n",
 		strconv.Itoa(svg.nPixels), // width
 		strconv.Itoa(svg.nPixels), // height
 		"white",                   // fill
@@ -136,7 +136,7 @@ func (svg *SVG) VerticalLines() string {
 	sb.WriteString("\n<!-- Vertical lines -->\n")
 	for x := 0; x < svg.n; x++ {
 		sb.WriteString(fmt.Sprintf(
-			"<line x1=%q x2=%q y1=%q y2=%q stroke=%q stroke-width=%q></line>\n",
+			"<line x1=%q x2=%q y1=%q y2=%q stroke=%q stroke-width=%q/>\n",
 			strconv.Itoa(x*BOXSIZE),   // x1
 			strconv.Itoa(x*BOXSIZE),   // x2
 			"0",                       // y1
@@ -154,7 +154,7 @@ func (svg *SVG) HorizontalLines() string {
 	sb.WriteString("\n<!-- Horizontal lines -->\n")
 	for x := 0; x < svg.n; x++ {
 		sb.WriteString(fmt.Sprintf(
-			"<line x1=%q x2=%q y1=%q y2=%q stroke=%q stroke-width=%q></line>\n",
+			"<line x1=%q x2=%q y1=%q y2=%q stroke=%q stroke-width=%q/>\n",
 			"0",                       // x1
 			strconv.Itoa(svg.nPixels), // x2
 			strconv.Itoa(x*BOXSIZE),   // y1
@@ -177,7 +177,7 @@ func (svg *SVG) Cells() string {
 			xBase := (c - 1) * BOXSIZE
 			if svg.cells[r-1][c-1] == BLACK_CELL {
 				sb.WriteString(fmt.Sprintf(
-					"<rect x=%q y=%q width=%q height=%q fill=%q></rect>\n",
+					"<rect x=%q y=%q width=%q height=%q fill=%q/>\n",
 					strconv.Itoa(xBase),
 					strconv.Itoa(yBase),
 					strconv.Itoa(BOXSIZE),
@@ -219,7 +219,7 @@ func (svg *SVG) WordNumbers() string {
 
 // EndRoot creates the closing </svg> element.
 func (svg *SVG) EndRoot() string {
-	return "</svg>\n"
+	return "\n</svg>\n"
 }
 
 // SetScale sets the (optional) transformation scale
