@@ -4,9 +4,9 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
-	//"github.com/stretchr/testify/assert"
 )
 
 func TestDictionary_GetMatchingWords(t *testing.T) {
@@ -26,9 +26,12 @@ func TestDictionary_GetMatchingWords(t *testing.T) {
 	close(stop)
 	elapsed := time.Since(stime)
 	fmt.Printf("%d words matched the pattern, elapsed time=%v\n", len(have), elapsed)
-	fp, _ := os.Create("/tmp/have.txt")
-	defer fp.Close()
-	for _, word := range have {
-		fmt.Fprintf(fp, "%s\n", word)
+	if false { // Change to true if output is desired
+		filename := filepath.Join(os.TempDir(), "have.txt")
+		fp, _ := os.Create(filename)
+		defer fp.Close()
+		for _, word := range have {
+			fmt.Fprintf(fp, "%s\n", word)
+		}
 	}
 }
