@@ -24,7 +24,7 @@ func TestSVG_GenerateSVG(t *testing.T) {
 	cells := getGoodGrid()
 	svg := NewSVG(cells)
 	have := svg.GenerateSVG()
-	if true { // Change this to true if you want to write the file
+	if false { // Change this to true if you want to write the file
 		os.WriteFile("test.svg", []byte(have), 0644)
 	}
 }
