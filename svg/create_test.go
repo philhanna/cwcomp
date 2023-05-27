@@ -35,7 +35,7 @@ func TestSVG_GenerateSVG(t *testing.T) {
 
 func TestSVG_NewSVGFromGrid(t *testing.T) {
 	grid := model.NewGrid(9)
-	blackCells := [][]int {
+	blackCells := [][]int{
 		{1, 1}, {1, 5}, {2, 5}, {3, 5}, {4, 9}, {5, 1}, {5, 2}, {5, 3},
 	}
 	for _, pair := range blackCells {
