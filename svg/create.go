@@ -183,7 +183,7 @@ func (svg *SVG) Cells() string {
 				letter := svg.cells[r-1][c-1]
 				if letter != ' ' {
 					sb.WriteString(fmt.Sprintf(
-						"<text x=%q y=%q font-size=%q font-family=%q></rect>\n",
+						"<text x=%q y=%q font-size=%q font-family=%q></text>\n",
 						strconv.Itoa(xBase+LETTER_X_OFFSET),
 						strconv.Itoa(yBase+LETTER_Y_OFFSET),
 						LETTER_FONT_SIZE,
