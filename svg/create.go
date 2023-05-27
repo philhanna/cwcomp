@@ -166,9 +166,9 @@ func (svg *SVG) HorizontalLines() string {
 func (svg *SVG) Cells() string {
 	sb := strings.Builder{}
 	sb.WriteString("\n<!-- Cells -->\n")
-	for r := 1; r < svg.n; r++ {
+	for r := 1; r <= svg.n; r++ {
 		yBase := (r - 1) * BOXSIZE
-		for c := 1; c < svg.n; c++ {
+		for c := 1; c <= svg.n; c++ {
 			xBase := (c - 1) * BOXSIZE
 			if svg.cells[r-1][c-1] == BLACK_CELL {
 				sb.WriteString(fmt.Sprintf(
