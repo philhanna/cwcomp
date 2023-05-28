@@ -1,4 +1,3 @@
-// Unit tests for LetterList
 package wordlist
 
 import (
