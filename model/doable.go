@@ -13,10 +13,10 @@ type Doable struct {
 }
 
 // NewDoable creates a Doable from the specified word in the grid
-func NewDoable(grid *Grid, word *Word) Doable {
+func NewDoable(puzzle *Puzzle, word *Word) Doable {
 	p := new(Doable)
 	p.word = *word
-	p.text = grid.GetText(word)
+	p.text = puzzle.GetText(word)
 	return *p
 }
 

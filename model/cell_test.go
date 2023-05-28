@@ -30,10 +30,10 @@ func TestCell_GetPoint(t *testing.T) {
 		"LLLLBLLLB",
 	}
 
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 
 	verify := func(t *testing.T, point Point, name string) {
-		cell := grid.GetCell(point)
+		cell := puzzle.GetCell(point)
 		fullType := fmt.Sprintf("%T", cell)
 		shortType := strings.TrimPrefix(fullType, PREFIX)
 		assert.Equal(t, name, shortType)
@@ -41,7 +41,7 @@ func TestCell_GetPoint(t *testing.T) {
 		assert.Equal(t, abbrev[y][x], name[0])
 	}
 
-	for actualCell := range grid.CellIterator() {
+	for actualCell := range puzzle.CellIterator() {
 		switch cell := actualCell.(type) {
 		case BlackCell:
 			verify(t, cell.point, "BlackCell")

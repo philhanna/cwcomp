@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestGrid_GetConstraints(t *testing.T) {
+func TestPuzzle_GetConstraints(t *testing.T) {
 
 	var (
 		word        *Word
@@ -13,7 +13,7 @@ func TestGrid_GetConstraints(t *testing.T) {
 		overall     string
 	)
 
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 
 	// Set the text of some words
 	someWords := []struct {
@@ -26,13 +26,13 @@ func TestGrid_GetConstraints(t *testing.T) {
 		{10, ACROSS, "RA  "},
 	}
 	for _, sw := range someWords {
-		word = grid.LookupWordByNumber(sw.seq, sw.dir)
-		grid.SetText(word, sw.text)
+		word = puzzle.LookupWordByNumber(sw.seq, sw.dir)
+		puzzle.SetText(word, sw.text)
 	}
 
-	// Now find the constraints of a word in that grid
-	word = grid.LookupWordByNumber(2, DOWN)
-	constraints = grid.GetConstraints(word)
+	// Now find the constraints of a word in that puzzle
+	word = puzzle.LookupWordByNumber(2, DOWN)
+	constraints = puzzle.GetConstraints(word)
 	fmt.Printf("Constraints for 2 down:\n")
 	overall = ""
 	for i, constraint := range constraints {
@@ -42,8 +42,8 @@ func TestGrid_GetConstraints(t *testing.T) {
 	fmt.Printf("Overall pattern: %q\n", overall)
 
 	// Try 10 across
-	word = grid.LookupWordByNumber(10, ACROSS)
-	constraints = grid.GetConstraints(word)
+	word = puzzle.LookupWordByNumber(10, ACROSS)
+	constraints = puzzle.GetConstraints(word)
 	fmt.Printf("Constraints for 10 across:\n")
 	overall = ""
 	for i, constraint := range constraints {

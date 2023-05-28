@@ -14,21 +14,37 @@ import (
 // Constraint is a structure that describes constraints imposed on this
 // word by its crossing words.
 type Constraint struct {
+	//
 	// Index within the main word (1, 2, ..., length)
+	//
 	Pos int `json:"pos"`
+	//
 	// Index within the crossing word (1, 2, ..., length)
+	//
 	Index int `json:"index"`
+	//
 	// Letter at index
+	//
 	Letter string `json:"letter"`
+	//
 	// Text of crossing word
+	//
 	Text string `json:"text"`
+	//
 	// Word number of crossing word
+	//
 	Seq int `json:"seq"`
+	//
 	// Direction of crossing word
+	//
 	Dir Direction `json:"dir"`
-	// Regular expression for possibilities
+	//
+	// Regular expression for possibilities for this cell
+	//
 	Pattern string `json:"pattern"`
+	//
 	// Number of words that match that pattern
+	//
 	NChoices int `json:"nChoices"`
 }
 
@@ -38,7 +54,7 @@ type Constraint struct {
 
 // GetConstraints finds the constraints imposed on this word by its
 // crossing words.
-func (grid *Grid) GetConstraints(word *Word) []*Constraint {
+func (puzzle *Puzzle) GetConstraints(word *Word) []*Constraint {
 
 	// Create a slice to return the constraints we find for each
 	// crossing word.
@@ -57,8 +73,8 @@ func (grid *Grid) GetConstraints(word *Word) []*Constraint {
 		}
 
 		// Lookup the crossing word
-		crosser := grid.LookupWord(point, word.direction.Other())
-		crosserWordNumber := grid.GetWordNumber(crosser)
+		crosser := puzzle.LookupWord(point, word.direction.Other())
+		crosserWordNumber := puzzle.GetWordNumber(crosser)
 
 		// Create an empty constraint object pointer
 		cst := new(Constraint)
@@ -70,7 +86,7 @@ func (grid *Grid) GetConstraints(word *Word) []*Constraint {
 		// Set the index (1, 2, ..., ) within the crossing word at which
 		// this crossing occurs.
 		crossIndex := 0
-		for crossPoint := range grid.WordIterator(crosserWordNumber.point, crosser.direction) {
+		for crossPoint := range puzzle.WordIterator(crosserWordNumber.point, crosser.direction) {
 			crossIndex++
 			if crossPoint == point {
 				cst.Index = crossIndex
@@ -78,10 +94,10 @@ func (grid *Grid) GetConstraints(word *Word) []*Constraint {
 		}
 
 		// Get the letter at that point
-		cst.Letter = grid.GetLetter(point)
+		cst.Letter = puzzle.GetLetter(point)
 
 		// Get the text of the crossing word
-		cst.Text = grid.GetText(crosser)
+		cst.Text = puzzle.GetText(crosser)
 
 		// Get the sequence number of the crossing word
 		cst.Seq = crosserWordNumber.seq

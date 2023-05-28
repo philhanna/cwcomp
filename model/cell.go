@@ -16,12 +16,12 @@ type Cell interface {
 
 // CellIterator is a generator for all the cells in the grid, from top
 // to bottom, left to right (same as PointIterator).
-func (grid *Grid) CellIterator() <-chan Cell {
+func (puzzle *Puzzle) CellIterator() <-chan Cell {
 	out := make(chan Cell)
 	go func() {
 		defer close(out)
-		for point := range grid.PointIterator() {
-			cell := grid.GetCell(point)
+		for point := range puzzle.PointIterator() {
+			cell := puzzle.GetCell(point)
 			out <- cell
 		}
 	}()

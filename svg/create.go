@@ -53,10 +53,10 @@ func NewSVG(cells [][]byte) *SVG {
 	return svg
 }
 
-// NewSVGFromGrid will create a new SVG object from a grid, delegating
+// NewSVGFromPuzzle will create a new SVG object from a grid, delegating
 // that to NewSVG after creating the simple cell matrix it needs.
-func NewSVGFromGrid(grid *model.Grid) *SVG {
-	cells := model.GridToSimpleMatrix(grid)
+func NewSVGFromPuzzle(puzzle *model.Puzzle) *SVG {
+	cells := model.PuzzleToSimpleMatrix(puzzle)
 	return NewSVG(cells)
 }
 

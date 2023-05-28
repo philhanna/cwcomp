@@ -15,17 +15,17 @@ const BLACK_CELL = "\x00"
 // Functions
 // ---------------------------------------------------------------------
 
-// DeleteGrid deletes the specified grid
-func (grid *Grid) DeleteGrid(userid int, gridname string) error {
+// DeletePuzzle deletes the specified puzzle
+func (puzzle *Puzzle) DeletePuzzle(userid int, puzzlename string) error {
 	con, _ := cwcomp.Connect()
-	sql := `DELETE FROM grids WHERE userid = ? AND gridname = ?`
-	_, err := con.Exec(sql, userid, gridname)
+	sql := `DELETE FROM puzzles WHERE userid=? AND puzzlename=?`
+	_, err := con.Exec(sql, userid, puzzlename)
 	return err
 }
 
-// GetGridList returns a list of grids for the specified user.
-func (grid *Grid) GetGridList(userid int) []string {
-	gridnames := make([]string, 0)
+// GetPuzzleList returns a list of puzzles for the specified user.
+func (puzzle *Puzzle) GetPuzzleList(userid int) []string {
+	puzzlenames := make([]string, 0)
 
 	// Get a database connection
 	con, _ := cwcomp.Connect()
@@ -33,8 +33,8 @@ func (grid *Grid) GetGridList(userid int) []string {
 
 	// Make the query
 	sql := `
-		SELECT		gridname
-		FROM		grids
+		SELECT		puzzlename
+		FROM		puzzles
 		WHERE		userid = ?
 		ORDER BY	modified`
 	rows, _ := con.Query(sql, userid)
@@ -46,30 +46,30 @@ func (grid *Grid) GetGridList(userid int) []string {
 		if !more {
 			break
 		}
-		var gridname string
-		rows.Scan(&gridname)
-		gridnames = append(gridnames, gridname)
+		var puzzlename string
+		rows.Scan(&puzzlename)
+		puzzlenames = append(puzzlenames, puzzlename)
 	}
 
-	// Return the names of the grids
+	// Return the names of the puzzles
 
-	return gridnames
+	return puzzlenames
 
 }
 
-// GridNameUsed returns true if the specified grid name for this user is
+// PuzzleNameUsed returns true if the specified puzzle name for this user is
 // already saved in the database
-func (grid *Grid) GridNameUsed(userid int, gridname string) bool {
+func (puzzle *Puzzle) PuzzleNameUsed(userid int, puzzlename string) bool {
 	// Open a connection
 	con, _ := cwcomp.Connect()
 	defer con.Close()
 
-	// Query for this user/gridname
-	sql := `SELECT COUNT(*) FROM grids WHERE userid=? AND gridname=?`
-	rows, _ := con.Query(sql, userid, gridname)
+	// Query for this user/puzzlename
+	sql := `SELECT COUNT(*) FROM puzzles WHERE userid=? AND puzzlename=?`
+	rows, _ := con.Query(sql, userid, puzzlename)
 	defer rows.Close()
 
-	// Get the count of saved grids with that name
+	// Get the count of saved puzzles with that name
 	rows.Next()
 	count := 0
 	rows.Scan(&count)
@@ -80,36 +80,36 @@ func (grid *Grid) GridNameUsed(userid int, gridname string) bool {
 	return used
 }
 
-// LoadGrid reads grid data from the database and creates a Grid object from it.
-func LoadGrid(userid int, gridname string) (*Grid, error) {
+// LoadPuzzle reads puzzle data from the database and creates a Puzzle object from it.
+func LoadPuzzle(userid int, puzzlename string) (*Puzzle, error) {
 
 	// Connect to the database
 	con, _ := cwcomp.Connect()
 	defer con.Close()
 
-	// Get the grid record from the database
-	gridRows, _ := con.Query(`
-		SELECT COUNT(*), gridid, n FROM grids WHERE userid=? AND gridname=?`,
-		userid, gridname)
-	defer gridRows.Close()
+	// Get the puzzle record from the database
+	puzzleRows, _ := con.Query(`
+		SELECT COUNT(*), id, n FROM puzzles WHERE userid=? AND puzzlename=?`,
+		userid, puzzlename)
+	defer puzzleRows.Close()
 
-	var count, gridid, n int
+	var count, id, n int
 
-	for gridRows.Next() {
-		gridRows.Scan(&count, &gridid, &n)
+	for puzzleRows.Next() {
+		puzzleRows.Scan(&count, &id, &n)
 		if count == 0 {
-			return nil, fmt.Errorf("no grid named %q found", gridname)
+			return nil, fmt.Errorf("no puzzle named %q found", puzzlename)
 		}
 	}
 
-	// Create an empty grid and begin populating it from the database
-	grid := NewGrid(n)
-	grid.SetGridName(gridname)
+	// Create an empty puzzle and begin populating it from the database
+	puzzle := NewPuzzle(n)
+	puzzle.SetPuzzleName(puzzlename)
 
 	// Populate the cells (black cells and other)
 	cellRows, _ := con.Query(`
-		SELECT r, c, letter FROM cells WHERE gridid=?`,
-		gridid)
+		SELECT r, c, letter FROM cells WHERE id=?`,
+		id)
 	defer cellRows.Close()
 
 	var r, c int
@@ -120,19 +120,19 @@ func LoadGrid(userid int, gridname string) (*Grid, error) {
 		point := NewPoint(r, c)
 		switch letter {
 		case BLACK_CELL:
-			grid.SetCell(point, NewBlackCell(point))
+			puzzle.SetCell(point, NewBlackCell(point))
 		default:
-			grid.SetLetter(point, letter)
+			puzzle.SetLetter(point, letter)
 		}
 	}
 
-	// Renumber the grid to create the word and word number arrays
-	grid.RenumberCells()
+	// Renumber the puzzle to create the word and word number arrays
+	puzzle.RenumberCells()
 
 	// Populate the words
 	wordRows, _ := con.Query(`
-		SELECT r, c, dir, clue FROM words WHERE gridid=?`,
-		gridid)
+		SELECT r, c, dir, clue FROM words WHERE id=?`,
+		id)
 	defer wordRows.Close()
 
 	for wordRows.Next() {
@@ -143,27 +143,27 @@ func LoadGrid(userid int, gridname string) (*Grid, error) {
 		wordRows.Scan(&r, &c, &dir, &clue)
 		point := NewPoint(r, c)
 		direction := DirectionFromString(dir)
-		word := grid.LookupWord(point, direction)
-		grid.SetClue(word, clue)
+		word := puzzle.LookupWord(point, direction)
+		puzzle.SetClue(word, clue)
 	}
 
-	// Return the newly reconstituted grid with no error
-	return grid, nil
+	// Return the newly reconstituted puzzle with no error
+	return puzzle, nil
 }
 
-// SaveGrid adds or updates a record for this grid in the database
-func (grid *Grid) SaveGrid(userid int) error {
+// SavePuzzle adds or updates a record for this puzzle in the database
+func (puzzle *Puzzle) SavePuzzle(userid int) error {
 	var (
-		err    error
-		gridid int
-		rows   *sql.Rows
-		sql    string
+		err  error
+		id   int
+		rows *sql.Rows
+		sql  string
 	)
 
-	// Ensure the grid has been named
-	gridname := grid.GetGridName()
-	if gridname == "" {
-		err = fmt.Errorf("cannot save a grid without a name")
+	// Ensure the puzzle has been named
+	puzzlename := puzzle.GetPuzzleName()
+	if puzzlename == "" {
+		err = fmt.Errorf("cannot save a puzzle without a name")
 		return err
 	}
 
@@ -171,31 +171,31 @@ func (grid *Grid) SaveGrid(userid int) error {
 	con, _ := cwcomp.Connect()
 	defer con.Close()
 
-	// Delete any previous records for this grid
+	// Delete any previous records for this puzzle
 	// (should do cascading delete to other tables)
-	sql = `DELETE FROM grids WHERE gridname = ?`
-	con.Exec(sql, gridname)
+	sql = `DELETE FROM puzzles WHERE puzzlename = ?`
+	con.Exec(sql, puzzlename)
 
-	// Save the data in the grids table
-	// and get the generated grid ID
+	// Save the data in the puzzles table
+	// and get the generated puzzle ID
 	sql = `
-		INSERT INTO grids(userid, gridname, created, modified, n)
+		INSERT INTO puzzles(userid, puzzlename, created, modified, n)
 		VALUES(?, ?, ?, ?, ?)
 		`
 	timenow := time.Now()
 	created := timenow.Format(time.RFC3339)
 	modified := created
-	con.Exec(sql, userid, gridname, created, modified, grid.n)
+	con.Exec(sql, userid, puzzlename, created, modified, puzzle.n)
 	rows, _ = con.Query("SELECT last_insert_rowid()")
 	rows.Next()
-	rows.Scan(&gridid) // Return this later
+	rows.Scan(&id) // Return this later
 
 	// Save the cell data in the cells table
 	sql = `
-		INSERT INTO cells(gridid, r, c, letter)
+		INSERT INTO cells(id, r, c, letter)
 		VALUES(?, ?, ?, ?)
 		`
-	for cell := range grid.CellIterator() {
+	for cell := range puzzle.CellIterator() {
 		var (
 			r      int
 			c      int
@@ -208,30 +208,30 @@ func (grid *Grid) SaveGrid(userid int) error {
 		case BlackCell:
 			letter = BLACK_CELL
 		}
-		con.Exec(sql, gridid, r, c, letter)
+		con.Exec(sql, id, r, c, letter)
 	}
 
 	// Save the word data in the words table
 	sql = `
-		INSERT INTO words(gridid, r, c, dir, length, clue)
+		INSERT INTO words(id, r, c, dir, length, clue)
 		VALUES(?, ?, ?, ?, ?, ?)
 		`
-	for _, word := range grid.words {
+	for _, word := range puzzle.words {
 		point := word.point
-		con.Exec(sql, gridid, point.r, point.c, word.direction, word.length, word.clue)
+		con.Exec(sql, id, point.r, point.c, word.direction, word.length, word.clue)
 	}
 
 	// Successful completion
 	return nil
 }
 
-// RenameGrid renames a grid in the database
-func (grid *Grid) RenameGrid(userid int, oldGridName, newGridName string) error {
+// RenamePuzzle renames a puzzle in the database
+func (puzzle *Puzzle) RenamePuzzle(userid int, oldPuzzleName, newPuzzleName string) error {
 
-	// See if there is a grid by the old name
+	// See if there is a puzzle by the old name
 
-	if !grid.GridNameUsed(userid, oldGridName) {
-		return fmt.Errorf("no grid found for name=%q", oldGridName)
+	if !puzzle.PuzzleNameUsed(userid, oldPuzzleName) {
+		return fmt.Errorf("no puzzle found for name=%q", oldPuzzleName)
 	}
 
 	// Connect to the database
@@ -241,10 +241,10 @@ func (grid *Grid) RenameGrid(userid int, oldGridName, newGridName string) error 
 
 	// Do the update and return no error
 	con.Exec(`
-		UPDATE	grids
-		SET		gridname=?
+		UPDATE	puzzles
+		SET		puzzlename=?
 		WHERE	userid=?
-		AND		gridname=?`,
-		newGridName, userid, oldGridName)
+		AND		puzzlename=?`,
+		newPuzzleName, userid, oldPuzzleName)
 	return nil
 }

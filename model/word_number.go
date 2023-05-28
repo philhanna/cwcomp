@@ -9,7 +9,7 @@ import (
 // Type definitions
 // ---------------------------------------------------------------------
 
-// WordNumber is a type that exists for each numbered cell in the grid.
+// WordNumber is a type that exists for each numbered cell in the puzzle.
 // It contains the word number and the location at which it exists in the
 // grid
 type WordNumber struct {

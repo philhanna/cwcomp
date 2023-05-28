@@ -41,12 +41,12 @@ func (lc LetterCell) GetPoint() Point {
 }
 
 // LetterCellIterator is a generator for all the LetterCells in the grid.
-func (grid *Grid) LetterCellIterator() <-chan LetterCell {
+func (puzzle *Puzzle) LetterCellIterator() <-chan LetterCell {
 	out := make(chan LetterCell)
 	go func() {
 		defer close(out)
-		for point := range grid.PointIterator() {
-			cell := grid.GetCell(point)
+		for point := range puzzle.PointIterator() {
+			cell := puzzle.GetCell(point)
 			switch typedCell := cell.(type) {
 			case LetterCell:
 				out <- typedCell

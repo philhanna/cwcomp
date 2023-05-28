@@ -11,26 +11,26 @@ import (
 // Type definitions
 // ---------------------------------------------------------------------
 
-// Grid contains the cells of a puzzle.
+// Puzzle contains the cells of a grid.
 //
-// A grid is constructed with the single parameter n, which is the size
+// The grid is constructed with the single parameter n, which is the size
 // (n x n) of the grid.
 //
-// Any of the cells in the grid can be "black cells", which act as the
+// Any of the cells in the puzzle can be "black cells", which act as the
 // boundaries of where the words can go. The model automatically takes
 // care of matching a black cell with its symmetric twin 180 degrees
 // from it.
 //
-// Wherever an across or down word starts, the grid assigns the next
+// Wherever an across or down word starts, the puzzle assigns the next
 // available word number to the cell and keeps track of the lengths of
 // the across and down words.
 //
-// Grid supports a full "undo/redo" capability for the current session
+// Puzzle supports a full "undo/redo" capability for the current session
 // (from load to save).  Any black cell additions or deletions are
 // pushed on an undo stack.
-type Grid struct {
+type Puzzle struct {
 	n              int                 // Size of the grid (n x n square)
-	gridName       string              // The grid name
+	puzzleName     string              // The puzzle name
 	cells          [][]Cell            // Black cells and letter cells
 	words          []*Word             // Pointers to the words in this grid
 	wordNumbers    []*WordNumber       // Word number pointers
@@ -44,9 +44,9 @@ type Grid struct {
 // Constructor
 // ---------------------------------------------------------------------
 
-// NewGrid creates a grid of the specified size.
-func NewGrid(n int) *Grid {
-	g := new(Grid)
+// NewPuzzle creates a puzzle of the specified size.
+func NewPuzzle(n int) *Puzzle {
+	g := new(Puzzle)
 	g.n = n
 
 	// Create an n x n matrix of cell objects
@@ -70,45 +70,45 @@ func NewGrid(n int) *Grid {
 // Methods
 // ---------------------------------------------------------------------
 
-// Equal returns true if this grid is essentially equal to the other.
-func (grid *Grid) Equal(other *Grid) bool {
+// Equal returns true if this puzzle is essentially equal to the other.
+func (puzzle *Puzzle) Equal(other *Puzzle) bool {
 	if other == nil {
 		return false
 	}
-	thisString := grid.String()
+	thisString := puzzle.String()
 	thatString := other.String()
 	return thisString == thatString
 }
 
 // GetCell returns the cell at the specified point, which may be a black
 // cell or a letter cell.
-func (grid *Grid) GetCell(point Point) Cell {
-	err := grid.ValidIndex(point)
+func (puzzle *Puzzle) GetCell(point Point) Cell {
+	err := puzzle.ValidIndex(point)
 	if err != nil {
 		errmsg := fmt.Sprintf("%s is not a valid point", point.String())
 		panic(errmsg)
 	}
 	x, y := point.ToXY()
-	return grid.cells[y][x]
+	return puzzle.cells[y][x]
 }
 
 // GetClue returns the clue for the word.
-func (grid *Grid) GetClue(word *Word) (string, error) {
-	err := grid.wordPointerIsValid(word)
+func (puzzle *Puzzle) GetClue(word *Word) (string, error) {
+	err := puzzle.wordPointerIsValid(word)
 	if err != nil {
 		return "", err
 	}
 	return word.clue, nil
 }
 
-// GetGridName returns the grid name
-func (grid *Grid) GetGridName() string {
-	return grid.gridName
+// GetPuzzleName returns the puzzle name
+func (puzzle *Puzzle) GetPuzzleName() string {
+	return puzzle.puzzleName
 }
 
 // GetLength returns the length of the word.
-func (grid *Grid) GetLength(word *Word) (int, error) {
-	err := grid.wordPointerIsValid(word)
+func (puzzle *Puzzle) GetLength(word *Word) (int, error) {
+	err := puzzle.wordPointerIsValid(word)
 	if err != nil {
 		return 0, err
 	}
@@ -118,9 +118,9 @@ func (grid *Grid) GetLength(word *Word) (int, error) {
 // GetLetter returns the value of the cell at this point.  The length of
 // the returned value is always 1, unless the point refers to a black
 // cell, in which case the length is zero.
-func (grid *Grid) GetLetter(point Point) string {
+func (puzzle *Puzzle) GetLetter(point Point) string {
 	letter := ""
-	cell := grid.GetCell(point)
+	cell := puzzle.GetCell(point)
 	switch typedcell := cell.(type) {
 	case LetterCell:
 		letter = typedcell.letter
@@ -132,13 +132,13 @@ func (grid *Grid) GetLetter(point Point) string {
 }
 
 // GetText returns the text of the word.
-func (grid *Grid) GetText(word *Word) string {
-	err := grid.wordPointerIsValid(word)
+func (puzzle *Puzzle) GetText(word *Word) string {
+	err := puzzle.wordPointerIsValid(word)
 	if err != nil {
 		return ""
 	}
 
-	length, _ := grid.GetLength(word)
+	length, _ := puzzle.GetLength(word)
 
 	var s string
 	var point Point
@@ -149,17 +149,17 @@ func (grid *Grid) GetText(word *Word) string {
 		case DOWN:
 			point = NewPoint(word.point.r+i, word.point.c)
 		}
-		letter := grid.GetLetter(point)
+		letter := puzzle.GetLetter(point)
 		s += letter
 	}
 	return s
 }
 
 // LookupWord returns the word containing this point and direction
-func (grid *Grid) LookupWord(point Point, dir Direction) *Word {
-	for _, word := range grid.words {
+func (puzzle *Puzzle) LookupWord(point Point, dir Direction) *Word {
+	for _, word := range puzzle.words {
 		if word.direction == dir {
-			for wPoint := range grid.WordIterator(word.point, dir) {
+			for wPoint := range puzzle.WordIterator(word.point, dir) {
 				if wPoint == point {
 					return word
 				}
@@ -170,12 +170,12 @@ func (grid *Grid) LookupWord(point Point, dir Direction) *Word {
 }
 
 // LookupWordByNumber returns the word at this point and direction
-func (grid *Grid) LookupWordByNumber(seq int, dir Direction) *Word {
-	wn := grid.LookupWordNumber(seq)
+func (puzzle *Puzzle) LookupWordByNumber(seq int, dir Direction) *Word {
+	wn := puzzle.LookupWordNumber(seq)
 	if wn == nil {
 		return nil
 	}
-	for _, word := range grid.words {
+	for _, word := range puzzle.words {
 		if word.point == wn.point {
 			if word.direction == dir {
 				return word
@@ -186,8 +186,8 @@ func (grid *Grid) LookupWordByNumber(seq int, dir Direction) *Word {
 }
 
 // LookupWordNumber returns the WordNumber for this number
-func (grid *Grid) LookupWordNumber(seq int) *WordNumber {
-	for _, wn := range grid.wordNumbers {
+func (puzzle *Puzzle) LookupWordNumber(seq int) *WordNumber {
+	for _, wn := range puzzle.wordNumbers {
 		if wn.seq == seq {
 			return wn
 		}
@@ -197,8 +197,8 @@ func (grid *Grid) LookupWordNumber(seq int) *WordNumber {
 
 // LookupWordNumberForStartingPoint returns the WordNumber starting at
 // this point.
-func (grid *Grid) LookupWordNumberForStartingPoint(point Point) *WordNumber {
-	for _, wn := range grid.wordNumbers {
+func (puzzle *Puzzle) LookupWordNumberForStartingPoint(point Point) *WordNumber {
+	for _, wn := range puzzle.wordNumbers {
 		if wn.point == point {
 			return wn
 		}
@@ -208,48 +208,48 @@ func (grid *Grid) LookupWordNumberForStartingPoint(point Point) *WordNumber {
 
 // RenumberCells assigns the word numbers based on the locations of the
 // black cells.
-func (grid *Grid) RenumberCells() {
+func (puzzle *Puzzle) RenumberCells() {
 
 	// Get the word numbers
-	cells := GridToSimpleMatrix(grid)
+	cells := PuzzleToSimpleMatrix(puzzle)
 	ncs := GetNumberedCells(cells)
-	grid.wordNumbers = make([]*WordNumber, len(ncs))
+	puzzle.wordNumbers = make([]*WordNumber, len(ncs))
 	for i, nc := range ncs {
 		wn := new(WordNumber)
 		wn.seq = nc.Seq
 		wn.point = NewPoint(nc.Row, nc.Col)
-		grid.wordNumbers[i] = wn
+		puzzle.wordNumbers[i] = wn
 	}
 
 	// Get the words list and add lengths
-	grid.words = make([]*Word, 0)
+	puzzle.words = make([]*Word, 0)
 	for _, nc := range ncs {
 		point := NewPoint(nc.Row, nc.Col)
 		if nc.StartA {
 			word := NewWord(point, ACROSS, 0, "")
-			for range grid.WordIterator(point, ACROSS) {
+			for range puzzle.WordIterator(point, ACROSS) {
 				word.length++
 			}
-			grid.words = append(grid.words, word)
+			puzzle.words = append(puzzle.words, word)
 		}
 		if nc.StartD {
 			word := NewWord(point, DOWN, 0, "")
-			for range grid.WordIterator(point, DOWN) {
+			for range puzzle.WordIterator(point, DOWN) {
 				word.length++
 			}
-			grid.words = append(grid.words, word)
+			puzzle.words = append(puzzle.words, word)
 		}
 	}
 }
 
 // SetCell sets the cell at the specified point
-func (grid *Grid) SetCell(point Point, cell Cell) {
+func (puzzle *Puzzle) SetCell(point Point, cell Cell) {
 	x, y := point.ToXY()
-	grid.cells[y][x] = cell
+	puzzle.cells[y][x] = cell
 }
 
 // SetClue sets the specified clue in the specified word.
-func (grid *Grid) SetClue(word *Word, clue string) error {
+func (puzzle *Puzzle) SetClue(word *Word, clue string) error {
 	if word == nil {
 		return fmt.Errorf("word pointer is nil")
 	}
@@ -258,25 +258,25 @@ func (grid *Grid) SetClue(word *Word, clue string) error {
 }
 
 // SetLetter sets the letter value of the cell at the specified point
-func (grid *Grid) SetLetter(point Point, letter string) {
-	cell := grid.GetCell(point)
+func (puzzle *Puzzle) SetLetter(point Point, letter string) {
+	cell := puzzle.GetCell(point)
 	switch typedCell := cell.(type) {
 	case LetterCell:
 		typedCell.letter = letter
-		grid.SetCell(point, typedCell)
+		puzzle.SetCell(point, typedCell)
 	}
 }
 
-// SetGridName sets the grid title
-func (grid *Grid) SetGridName(name string) {
-	grid.gridName = name
+// SetPuzzleName sets the puzzle name
+func (puzzle *Puzzle) SetPuzzleName(name string) {
+	puzzle.puzzleName = name
 }
 
-// SetText sets the text in the grid for a specified word.
-func (grid *Grid) SetText(word *Word, text string) error {
+// SetText sets the text in the puzzle for a specified word.
+func (puzzle *Puzzle) SetText(word *Word, text string) error {
 
 	// Make sure this is a valid word pointer
-	err := grid.wordPointerIsValid(word)
+	err := puzzle.wordPointerIsValid(word)
 	if err != nil {
 		return err
 	}
@@ -289,8 +289,8 @@ func (grid *Grid) SetText(word *Word, text string) error {
 	}
 
 	// Create a new Doable for this word and push it on the undoWordStack
-	doable := NewDoable(grid, word)
-	grid.undoWordStack.Push(doable)
+	doable := NewDoable(puzzle, word)
+	puzzle.undoWordStack.Push(doable)
 
 	// Pad the text with blanks if too short
 	for len(text) < word.length {
@@ -299,30 +299,30 @@ func (grid *Grid) SetText(word *Word, text string) error {
 
 	// Iterate through the points of the word, storing the text into it
 	// letter by letter.
-	grid.SetTextWithoutPush(word, text)
+	puzzle.SetTextWithoutPush(word, text)
 
 	// OK
 	return nil
 }
 
-func (grid *Grid) SetTextWithoutPush(word *Word, text string) {
+func (puzzle *Puzzle) SetTextWithoutPush(word *Word, text string) {
 	i := 0
-	for point := range grid.WordIterator(word.point, word.direction) {
+	for point := range puzzle.WordIterator(word.point, word.direction) {
 		ch := text[i]
 		i++
 		letter := string(ch)
-		grid.SetLetter(point, letter)
+		puzzle.SetLetter(point, letter)
 	}
 }
 
-// String returns a string representation of the grid
-func (grid *Grid) String() string {
-	n := grid.n
+// String returns a string representation of the puzzle
+func (puzzle *Puzzle) String() string {
+	n := puzzle.n
 	sb := ""
-	if grid.gridName == "" {
+	if puzzle.puzzleName == "" {
 		sb += "(Untitled)"
 	} else {
-		sb += grid.gridName
+		sb += puzzle.puzzleName
 	}
 	sb += "\n"
 
@@ -346,12 +346,12 @@ func (grid *Grid) String() string {
 		sb += fmt.Sprintf(" %2d ", r)
 		for c := 1; c <= n; c++ {
 			point := NewPoint(r, c)
-			cell := grid.GetCell(point)
+			cell := puzzle.GetCell(point)
 			switch cell.(type) {
 			case BlackCell:
 				sb += "|***"
 			case LetterCell:
-				letter := grid.GetLetter(point)
+				letter := puzzle.GetLetter(point)
 				sb += fmt.Sprintf("| %s ", letter)
 			}
 		}
@@ -366,14 +366,14 @@ func (grid *Grid) String() string {
 }
 
 // wordPointerIsValid returns an error if the word pointer is nil,
-// or if it points to a nonexistent point in the grid.
-func (grid *Grid) wordPointerIsValid(word *Word) error {
+// or if it points to a nonexistent point in the puzzle.
+func (puzzle *Puzzle) wordPointerIsValid(word *Word) error {
 	if word == nil {
 		errmsg := "Word number pointer is nil"
 		err := errors.New(errmsg)
 		return err
 	}
-	if err := grid.ValidIndex(word.point); err != nil {
+	if err := puzzle.ValidIndex(word.point); err != nil {
 		return err
 	}
 	return nil

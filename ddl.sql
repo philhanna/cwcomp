@@ -13,30 +13,30 @@ CREATE TABLE users (
     address_state   TEXT,                   -- Author state code
     address_zip     TEXT                    -- Author zip code
 );
-CREATE TABLE grids (
-    gridid          INTEGER PRIMARY KEY,    -- Grid ID
-    userid          INTEGER NOT NULL,       -- User who owns the grid
-    gridname        TEXT NOT NULL UNIQUE,   -- Grid name
+CREATE TABLE puzzles (
+    id              INTEGER PRIMARY KEY,    -- Puzzle ID
+    userid          INTEGER NOT NULL,       -- User who owns the puzzle
+    puzzlename      TEXT NOT NULL UNIQUE,   -- Puzzle name
     created         TEXT,                   -- Datetime when created
     modified        TEXT,                   -- Datetime last modified
-    n               INTEGER                 -- Grid size (width and height)
+    n               INTEGER                 -- Puzzle size (width and height)
 );
 CREATE TABLE cells (
-    gridid          INTEGER,                -- Grid ID
+    id              INTEGER,                -- Puzzle ID
     r               INTEGER,                -- Row number (1, 2, ..., n)
     c               INTEGER,                -- Column number (1, 2, ..., n)
     letter          TEXT,                   -- Cell value character
-    PRIMARY KEY (gridid, r, c),
-    FOREIGN KEY (gridid) REFERENCES grids (gridid) ON DELETE CASCADE
+    PRIMARY KEY (id, r, c),
+    FOREIGN KEY (id) REFERENCES puzzles (id) ON DELETE CASCADE
 );
 CREATE TABLE words (
-    gridid          INTEGER,                -- Grid ID
+    id              INTEGER,                -- Puzzle ID
     r               INTEGER,                -- Row number (1, 2, ..., n)
     c               INTEGER,                -- Column number (1, 2, ..., n)
     dir             TEXT,                   -- Direction (Across="A",Down="D")
     length          INTEGER,                -- Length of word
     clue            TEXT,                   -- Text of clue
-    PRIMARY KEY (gridid, r, c, dir),
-    FOREIGN KEY (gridid) REFERENCES grids (gridid) ON DELETE CASCADE
+    PRIMARY KEY (id, r, c, dir),
+    FOREIGN KEY (id) REFERENCES puzzles (id) ON DELETE CASCADE
 );
 

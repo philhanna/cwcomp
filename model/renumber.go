@@ -49,20 +49,20 @@ func GetNumberedCells(cells [][]byte) []NumberedCell {
 	return ncs
 }
 
-// GridToSimpleMatrix builds a simple representation of a grid as an n x n
-// matrix of bytes, where 0 represents a black cell, and the rest are
-// the letters in that cell.
-func GridToSimpleMatrix(grid *Grid) [][]byte {
-	n := grid.n
+// PuzzleToSimpleMatrix builds a simple representation of a grid as an n
+// x n matrix of bytes, where '\x00' represents a black cell, and the
+// rest are the letters in that cell.
+func PuzzleToSimpleMatrix(puzzle *Puzzle) [][]byte {
+	n := puzzle.n
 	cells := make([][]byte, n)
 	for i := 0; i < n; i++ {
 		cells[i] = make([]byte, n)
 		for j := 0; j < n; j++ {
 			point := NewPoint(i+1, j+1)
-			if grid.IsBlackCell(point) {
+			if puzzle.IsBlackCell(point) {
 				cells[i][j] = '\x00'
 			} else {
-				letter := grid.GetLetter(point)
+				letter := puzzle.GetLetter(point)
 				cells[i][j] = letter[0]
 			}
 		}

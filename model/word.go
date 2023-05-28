@@ -32,19 +32,19 @@ func NewWord(point Point, dir Direction, length int, clue string) *Word {
 }
 
 // GetCrossingWords returns the words that intersect the specified word.
-func (word *Word) GetCrossingWords(grid *Grid) []*Word {
+func (word *Word) GetCrossingWords(puzzle *Puzzle) []*Word {
 	crossers := make([]*Word, 0)
 	otherDirection := word.direction.Other()
-	for point := range grid.WordIterator(word.point, word.direction) {
-		otherWord := grid.LookupWord(point, otherDirection)
+	for point := range puzzle.WordIterator(word.point, word.direction) {
+		otherWord := puzzle.LookupWord(point, otherDirection)
 		crossers = append(crossers, otherWord)
 	}
 	return crossers
 }
 
 // Given a word, returns the word number for it
-func (grid *Grid) GetWordNumber(word *Word) *WordNumber {
-	wn := grid.LookupWordNumberForStartingPoint(word.point)
+func (puzzle *Puzzle) GetWordNumber(word *Word) *WordNumber {
+	wn := puzzle.LookupWordNumberForStartingPoint(word.point)
 	return wn
 }
 
@@ -59,72 +59,72 @@ func (word *Word) String() string {
 	return strings.Join(parts, ",")
 }
 
-// RedoWord gets the last word change to the grid and re-applies it
-func (grid *Grid) RedoWord() {
+// RedoWord gets the last word change to the puzzle and re-applies it
+func (puzzle *Puzzle) RedoWord() {
 
 	// Return immediately if the redo stack is empty
-	if grid.redoWordStack.IsEmpty() {
+	if puzzle.redoWordStack.IsEmpty() {
 		return
 	}
 
 	// Pop the old Doable from the redo stack. This will give us the
 	// point and direction of the word.
-	oldDoable, _ := grid.redoWordStack.Pop()
+	oldDoable, _ := puzzle.redoWordStack.Pop()
 	oldWord := &oldDoable.word
 	oldText := oldDoable.text
 
 	// Construct a new Doable from the current grid for the word in the
 	// doable.
-	newDoable := NewDoable(grid, oldWord)
+	newDoable := NewDoable(puzzle, oldWord)
 
 	// Push the new Doable onto the undo stack.
-	grid.undoWordStack.Push(newDoable)
+	puzzle.undoWordStack.Push(newDoable)
 
 	// Set the text of the old Doable in the current grid, but do not
 	// use the SetText method, because it pushes the word back on the
 	// undo stack.
-	grid.SetTextWithoutPush(oldWord, oldText)
+	puzzle.SetTextWithoutPush(oldWord, oldText)
 }
 
 // UndoWord undoes the last push to the undoWordStack
-func (grid *Grid) UndoWord() {
+func (puzzle *Puzzle) UndoWord() {
 
 	// Return immediately if the undo stack is empty
-	if grid.undoWordStack.IsEmpty() {
+	if puzzle.undoWordStack.IsEmpty() {
 		return
 	}
 
 	// Pop the old Doable from the undo stack. This will give us the
 	// point and direction of the word.
-	oldDoable, _ := grid.undoWordStack.Pop()
+	oldDoable, _ := puzzle.undoWordStack.Pop()
 	oldWord := &oldDoable.word
 	oldText := oldDoable.text
 
-	// Construct a new Doable from the current grid for the word in the
-	// doable.
-	newDoable := NewDoable(grid, oldWord)
+	// Construct a new Doable from the current puzzle for the word in
+	// the doable.
+	newDoable := NewDoable(puzzle, oldWord)
 
 	// Push the new Doable onto the redo stack.
-	grid.redoWordStack.Push(newDoable)
+	puzzle.redoWordStack.Push(newDoable)
 
 	// Set the text of the old Doable in the current grid, but do not
 	// use the SetText method, because it pushes the word back on the
 	// undo stack.
-	grid.SetTextWithoutPush(oldWord, oldText)
+	puzzle.SetTextWithoutPush(oldWord, oldText)
 }
 
 // WordIterator iterates through the points in a word, stopping when it
 // encounters a black cell or the edge of the grid.
-func (grid *Grid) WordIterator(point Point, dir Direction) <-chan Point {
+func (puzzle *Puzzle) WordIterator(point Point, dir Direction) <-chan Point {
 	out := make(chan Point)
 	go func() {
 		defer close(out)
 		pp := NewPoint(point.r, point.c)
 		for {
-			if err := grid.ValidIndex(pp); err != nil {
+			if err := puzzle.ValidIndex(pp); err != nil {
 				return
 			}
-			if grid.IsBlackCell(pp) {
+			if puzzle.IsBlackCell(pp) {
 				return
 			}
 			out <- pp

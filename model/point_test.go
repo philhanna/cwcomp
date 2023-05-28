@@ -7,13 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGrid_PointIterator(t *testing.T) {
+func TestPuzzle_PointIterator(t *testing.T) {
 	const n = 3
-	grid := NewGrid(n)
+	puzzle := NewPuzzle(n)
 
 	// Make a list of all points received from the iterator
 	list1 := make([]Point, n*n)
-	it := grid.PointIterator()
+	it := puzzle.PointIterator()
 	index := 0
 	for point := range it {
 		list1[index] = point
@@ -34,8 +34,8 @@ func TestGrid_PointIterator(t *testing.T) {
 	assert.Equal(t, list1, list2)
 }
 
-func TestGrid_SymmetricPoint(t *testing.T) {
-	grid := NewGrid(9)
+func TestPuzzle_SymmetricPoint(t *testing.T) {
+	puzzle := NewPuzzle(9)
 	tests := []struct {
 		p  Point
 		sp Point
@@ -45,7 +45,7 @@ func TestGrid_SymmetricPoint(t *testing.T) {
 	}
 	for _, tt := range tests {
 		want := tt.sp
-		have := grid.SymmetricPoint(tt.p)
+		have := puzzle.SymmetricPoint(tt.p)
 		assert.Equal(t, want, have)
 	}
 }
@@ -156,7 +156,7 @@ func TestPoint_ToXY(t *testing.T) {
 	}
 }
 
-func TestGrid_ValidIndex(t *testing.T) {
+func TestPuzzle_ValidIndex(t *testing.T) {
 	tests := []struct {
 		name    string
 		point   Point
@@ -170,12 +170,12 @@ func TestGrid_ValidIndex(t *testing.T) {
 		{"bad both", NewPoint(0, 0), true},
 	}
 
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			point := tt.point
-			err := grid.ValidIndex(point)
+			err := puzzle.ValidIndex(point)
 			switch tt.wantErr {
 			case true:
 				assert.NotNil(t, err)

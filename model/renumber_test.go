@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetNumberedCellsFromGrid(t *testing.T) {
-	grid := getGoodGrid()
-	cells := GridToSimpleMatrix(grid)
+func TestGetNumberedCellsFromPuzzle(t *testing.T) {
+	puzzle := getGoodPuzzle()
+	cells := PuzzleToSimpleMatrix(puzzle)
 	ncs := GetNumberedCells(cells)
 	for _, nc := range ncs {
 		fmt.Printf("%v\n", nc)
@@ -36,7 +36,7 @@ func TestGetNumberedCellsFromGrid(t *testing.T) {
 	for _, nc := range ncs {
 		fmt.Println(nc.String())
 	}
-	dumpGrid(grid)
+	DumpPuzzle(puzzle)
 
 }
 

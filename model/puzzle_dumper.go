@@ -5,14 +5,14 @@ import (
 	"log"
 )
 
-// dumpGrid is a diagnostic function that shows the exact composition of
+// DumpPuzzle is a diagnostic function that shows the exact composition of
 // each cell in the grid.
-func dumpGrid(grid *Grid) {
-	n := grid.n
+func DumpPuzzle(puzzle *Puzzle) {
+	n := puzzle.n
 	for r := 1; r <= n; r++ {
 		for c := 1; c <= n; c++ {
 			point := NewPoint(r, c)
-			cell := grid.GetCell(point)
+			cell := puzzle.GetCell(point)
 			switch typedCell := cell.(type) {
 			case BlackCell:
 				log.Printf("BlackCell    at %v has value %v\n", point, typedCell.String())
@@ -21,5 +21,5 @@ func dumpGrid(grid *Grid) {
 			}
 		}
 	}
-	fmt.Println(grid.String())
+	fmt.Println(puzzle.String())
 }

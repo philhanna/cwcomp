@@ -54,11 +54,11 @@ func (p *Point) Equal(other Point) bool {
 // PointIterator is a generator for all the points in the grid, from
 // top bottom and left to right (i.e, (1, 1), (1, 2), ..., (1, n),
 // (2, 1), (2, 2), ..., (2, n), ..., (n, 1) (n, 2), ..., (n, n)).
-func (grid *Grid) PointIterator() <-chan Point {
+func (puzzle *Puzzle) PointIterator() <-chan Point {
 	out := make(chan Point)
 	go func() {
 		defer close(out)
-		n := grid.n
+		n := puzzle.n
 		for r := 1; r <= n; r++ {
 			for c := 1; c <= n; c++ {
 				out <- NewPoint(r, c)
@@ -69,10 +69,11 @@ func (grid *Grid) PointIterator() <-chan Point {
 }
 
 // SymmetricPoint returns the point of the cell at 180 degrees rotation.
-func (grid *Grid) SymmetricPoint(point Point) Point {
+func (puzzle *Puzzle) SymmetricPoint(point Point) Point {
+	n := puzzle.n
 	r := point.r
 	c := point.c
-	return NewPoint(grid.n+1-r, grid.n+1-c)
+	return NewPoint(n+1-r, n+1-c)
 }
 
 // ToXY converts a point (that uses 1-based coordinates) to a pair (x,
@@ -84,10 +85,10 @@ func (p *Point) ToXY() (int, int) {
 }
 
 // ValidIndex whether a point is a valid index in this grid.
-func (grid *Grid) ValidIndex(point Point) error {
+func (puzzle *Puzzle) ValidIndex(point Point) error {
 	r, c := point.r, point.c
-	validRow := r >= 1 && r <= grid.n
-	validCol := c >= 1 && c <= grid.n
+	validRow := r >= 1 && r <= puzzle.n
+	validCol := c >= 1 && c <= puzzle.n
 	if validRow && validCol {
 		return nil
 	}

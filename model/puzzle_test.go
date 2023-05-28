@@ -12,7 +12,7 @@ import (
 // Internal functions
 // ---------------------------------------------------------------------
 
-func getGoodGrid() *Grid {
+func getGoodPuzzle() *Puzzle {
 	points := []Point{
 		{1, 1},
 		{1, 5},
@@ -23,43 +23,43 @@ func getGoodGrid() *Grid {
 		{5, 2},
 		{5, 3},
 	}
-	grid := getTestGrid(points)
-	return grid
+	puzzle := getTestPuzzle(points)
+	return puzzle
 }
 
-func getTestGrid(points []Point) *Grid {
-	grid := NewGrid(9)
+func getTestPuzzle(points []Point) *Puzzle {
+	puzzle := NewPuzzle(9)
 	for _, point := range points {
-		grid.Toggle(point)
+		puzzle.Toggle(point)
 	}
-	grid.RenumberCells()
-	return grid
+	puzzle.RenumberCells()
+	return puzzle
 }
 
 // ---------------------------------------------------------------------
 // Unit tests
 // ---------------------------------------------------------------------
 
-func TestGrid_Equal(t *testing.T) {
-	grid := getGoodGrid()
-	assert.False(t, grid.Equal(nil))
-	assert.True(t, grid.Equal(grid))
-	bogusGrid := getTestGrid([]Point{
+func TestPuzzle_Equal(t *testing.T) {
+	puzzle := getGoodPuzzle()
+	assert.False(t, puzzle.Equal(nil))
+	assert.True(t, puzzle.Equal(puzzle))
+	bogusPuzzle := getTestPuzzle([]Point{
 		{1, 2},
 		{3, 4},
 	})
-	assert.False(t, grid.Equal(bogusGrid))
+	assert.False(t, puzzle.Equal(bogusPuzzle))
 }
 
-func TestGrid_GetCell(t *testing.T) {
-	grid := getGoodGrid()
-	grid.GetCell(NewPoint(4, 6)) // Good point
+func TestPuzzle_GetCell(t *testing.T) {
+	puzzle := getGoodPuzzle()
+	puzzle.GetCell(NewPoint(4, 6)) // Good point
 	assert.Panics(t, func() {
-		grid.GetCell(NewPoint(10, -1))
+		puzzle.GetCell(NewPoint(10, -1))
 	})
 }
 
-func TestGrid_GetClue(t *testing.T) {
+func TestPuzzle_GetClue(t *testing.T) {
 	tests := []struct {
 		name string
 		seq  int
@@ -71,14 +71,14 @@ func TestGrid_GetClue(t *testing.T) {
 		{"No across word", 13, ACROSS, ""},
 		{"No down word", 21, DOWN, ""},
 	}
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			word := grid.LookupWordByNumber(tt.seq, tt.dir)
+			word := puzzle.LookupWordByNumber(tt.seq, tt.dir)
 			if word != nil {
 				word.clue = tt.want
 				want := tt.want
-				have, err := grid.GetClue(word)
+				have, err := puzzle.GetClue(word)
 				assert.Nil(t, err)
 				assert.Equal(t, want, have)
 			}
@@ -86,15 +86,15 @@ func TestGrid_GetClue(t *testing.T) {
 	}
 }
 
-func TestGrid_GetClue_Bad(t *testing.T) {
-	grid := getGoodGrid()
+func TestPuzzle_GetClue_Bad(t *testing.T) {
+	puzzle := getGoodPuzzle()
 	word := new(Word)
-	_, err := grid.GetClue(word)
+	_, err := puzzle.GetClue(word)
 	assert.NotNil(t, err)
 }
 
-func TestGrid_GetLength(t *testing.T) {
-	grid := getGoodGrid()
+func TestPuzzle_GetLength(t *testing.T) {
+	puzzle := getGoodPuzzle()
 	tests := []struct {
 		name string
 		seq  int
@@ -108,37 +108,37 @@ func TestGrid_GetLength(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			word := grid.LookupWordByNumber(tt.seq, tt.dir)
-			have, _ := grid.GetLength(word)
+			word := puzzle.LookupWordByNumber(tt.seq, tt.dir)
+			have, _ := puzzle.GetLength(word)
 			want := tt.want
 			assert.Equal(t, want, have, "Failed word at %v", word.point)
 		})
 	}
 }
 
-func TestGrid_GetLength_Bad(t *testing.T) {
+func TestPuzzle_GetLength_Bad(t *testing.T) {
 	var err error
 	var word *Word
 
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 
 	// Try a nil pointer
 	word = nil
-	_, err = grid.GetLength(word)
+	_, err = puzzle.GetLength(word)
 	assert.NotNil(t, err)
 
 	// There is no 9 down
-	word = grid.LookupWordByNumber(9, DOWN)
+	word = puzzle.LookupWordByNumber(9, DOWN)
 	assert.Nil(t, word)
-	_, err = grid.GetLength(word)
+	_, err = puzzle.GetLength(word)
 	assert.NotNil(t, err)
 
 }
 
-// TestGrid_GetLength_All checks the expected length of all words in the
+// TestPuzzle_GetLength_All checks the expected length of all words in the
 // grid.
-func TestGrid_GetLength_All(t *testing.T) {
-	grid := getGoodGrid()
+func TestPuzzle_GetLength_All(t *testing.T) {
+	puzzle := getGoodPuzzle()
 
 	type test struct {
 		seq  int
@@ -181,15 +181,15 @@ func TestGrid_GetLength_All(t *testing.T) {
 		name := fmt.Sprintf("%d %v\n", tt.seq, tt.dir)
 		t.Run(name, func(t *testing.T) {
 			want := tt.want
-			word := grid.LookupWordByNumber(tt.seq, tt.dir)
-			have, err := grid.GetLength(word)
+			word := puzzle.LookupWordByNumber(tt.seq, tt.dir)
+			have, err := puzzle.GetLength(word)
 			assert.Nil(t, err)
 			assert.Equal(t, want, have)
 		})
 	}
 }
 
-func TestGrid_GetText(t *testing.T) {
+func TestPuzzle_GetText(t *testing.T) {
 	type test struct {
 		name       string
 		seq        int
@@ -204,12 +204,12 @@ func TestGrid_GetText(t *testing.T) {
 		{"No across word", 13, ACROSS, 0, "", false},
 		{"No down word", 21, DOWN, 0, "", false},
 	}
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			want := tt.want
-			word := grid.LookupWordByNumber(tt.seq, tt.dir)
-			have := grid.GetText(word)
+			word := puzzle.LookupWordByNumber(tt.seq, tt.dir)
+			have := puzzle.GetText(word)
 			switch tt.expectOK {
 			case true:
 				assert.Equal(t, tt.wantLength, len(have))
@@ -220,61 +220,61 @@ func TestGrid_GetText(t *testing.T) {
 	}
 }
 
-func TestGrid_GetText_Across(t *testing.T) {
+func TestPuzzle_GetText_Across(t *testing.T) {
 	var word *Word
 
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 
 	// It should fail if the word pointer is invalid
 	word = new(Word)
 	word.point = NewPoint(-1, 3)
 	word.direction = ACROSS
-	text := grid.GetText(word)
+	text := puzzle.GetText(word)
 	assert.Equal(t, "", text)
 
 	word = new(Word)
 	word.point = NewPoint(100, 3)
 	word.direction = ACROSS
-	text = grid.GetText(word)
+	text = puzzle.GetText(word)
 	assert.Equal(t, "", text)
 
 	// Should return a string of the correct length
 	wantLength := 3
 	want := strings.Repeat(" ", wantLength)
-	word = grid.LookupWordByNumber(14, ACROSS)
-	have := grid.GetText(word)
+	word = puzzle.LookupWordByNumber(14, ACROSS)
+	have := puzzle.GetText(word)
 	assert.Equal(t, wantLength, len(have))
 	assert.Equal(t, want, have)
 }
 
-func TestGrid_GetText_Bad(t *testing.T) {
-	grid := getGoodGrid()
+func TestPuzzle_GetText_Bad(t *testing.T) {
+	grid := getGoodPuzzle()
 	grid.GetText(nil)
 
 }
-func TestGrid_GetText_Down(t *testing.T) {
+func TestPuzzle_GetText_Down(t *testing.T) {
 
 	var word *Word
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 
 	// It should fail if the word point is invalid
 	word = new(Word)
 	word.point = NewPoint(-1, 3)
 	word.direction = DOWN
-	text := grid.GetText(word)
+	text := puzzle.GetText(word)
 	assert.Equal(t, "", text)
 
 	// Should return a string of the correct length
 	wantLength := 9
-	word = grid.LookupWordByNumber(3, DOWN)
+	word = puzzle.LookupWordByNumber(3, DOWN)
 
 	want := strings.Repeat(" ", wantLength)
-	have := grid.GetText(word)
+	have := puzzle.GetText(word)
 	assert.Equal(t, wantLength, len(have))
 	assert.Equal(t, want, have)
 }
 
-func TestGrid_GetTextWithLetters(t *testing.T) {
+func TestPuzzle_GetTextWithLetters(t *testing.T) {
 	type test struct {
 		name       string
 		seq        int
@@ -282,10 +282,10 @@ func TestGrid_GetTextWithLetters(t *testing.T) {
 		wantLength int
 		want       string
 	}
-	grid := getGoodGrid()
-	grid.SetLetter(NewPoint(5, 4), "O")
-	grid.SetLetter(NewPoint(5, 5), "A")
-	grid.SetLetter(NewPoint(5, 6), "F")
+	puzzle := getGoodPuzzle()
+	puzzle.SetLetter(NewPoint(5, 4), "O")
+	puzzle.SetLetter(NewPoint(5, 5), "A")
+	puzzle.SetLetter(NewPoint(5, 6), "F")
 	tests := []test{
 		{"14 across", 14, ACROSS, 3, "OAF"},
 		{"3 down", 3, DOWN, 9, "    O    "},
@@ -297,16 +297,16 @@ func TestGrid_GetTextWithLetters(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			want := tt.want
-			word := grid.LookupWordByNumber(tt.seq, tt.dir)
-			have := grid.GetText(word)
+			word := puzzle.LookupWordByNumber(tt.seq, tt.dir)
+			have := puzzle.GetText(word)
 			assert.Equal(t, tt.wantLength, len(have))
 			assert.Equal(t, want, have)
 		})
 	}
 }
 
-func TestGrid_LookupWord(t *testing.T) {
-	grid := getGoodGrid()
+func TestPuzzle_LookupWord(t *testing.T) {
+	puzzle := getGoodPuzzle()
 	type Test struct {
 		name       string
 		point      Point
@@ -322,20 +322,20 @@ func TestGrid_LookupWord(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			word := grid.LookupWord(tt.point, ACROSS)
+			word := puzzle.LookupWord(tt.point, ACROSS)
 			if tt.wantOK {
 				assert.NotNil(t, word)
-				wn := grid.LookupWordNumberForStartingPoint(word.point)
+				wn := puzzle.LookupWordNumberForStartingPoint(word.point)
 				assert.NotNil(t, wn)
 				assert.Equal(t, tt.wantAcross, wn.seq)
 			} else {
 				assert.Nil(t, word)
 			}
 
-			word = grid.LookupWord(tt.point, DOWN)
+			word = puzzle.LookupWord(tt.point, DOWN)
 			if tt.wantOK {
 				assert.NotNil(t, word)
-				wn := grid.LookupWordNumberForStartingPoint(word.point)
+				wn := puzzle.LookupWordNumberForStartingPoint(word.point)
 				assert.NotNil(t, wn)
 				assert.Equal(t, tt.wantDown, wn.seq)
 			} else {
@@ -345,7 +345,7 @@ func TestGrid_LookupWord(t *testing.T) {
 	}
 
 }
-func TestGrid_SetClue(t *testing.T) {
+func TestPuzzle_SetClue(t *testing.T) {
 	tests := []struct {
 		name   string
 		seq    int
@@ -358,15 +358,15 @@ func TestGrid_SetClue(t *testing.T) {
 		{"No across word", 13, ACROSS, "", false},
 		{"No down word", 21, DOWN, "", false},
 	}
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			word := grid.LookupWordByNumber(tt.seq, tt.dir)
-			err := grid.SetClue(word, tt.clue)
+			word := puzzle.LookupWordByNumber(tt.seq, tt.dir)
+			err := puzzle.SetClue(word, tt.clue)
 			switch tt.wantOK {
 			case true:
 				assert.Nil(t, err)
-				want, err := grid.GetClue(word)
+				want, err := puzzle.GetClue(word)
 				assert.Nil(t, err)
 				assert.Equal(t, tt.clue, want)
 			case false:
@@ -376,7 +376,7 @@ func TestGrid_SetClue(t *testing.T) {
 	}
 }
 
-func TestGrid_SetText(t *testing.T) {
+func TestPuzzle_SetText(t *testing.T) {
 	var (
 		err  error
 		have string
@@ -384,7 +384,7 @@ func TestGrid_SetText(t *testing.T) {
 		word *Word
 	)
 
-	grid := getGoodGrid()
+	puzzle := getGoodPuzzle()
 	type testWord struct {
 		seq  int
 		dir  Direction
@@ -395,11 +395,11 @@ func TestGrid_SetText(t *testing.T) {
 		{13, DOWN, "TAP"},
 	}
 	for i, sw := range setupWords {
-		word = grid.LookupWordByNumber(sw.seq, sw.dir)
+		word = puzzle.LookupWordByNumber(sw.seq, sw.dir)
 		assert.NotNil(t, word)
-		err = grid.SetText(word, sw.text)
+		err = puzzle.SetText(word, sw.text)
 		assert.Nil(t, err)
-		assert.Equal(t, i+1, grid.undoWordStack.Len())
+		assert.Equal(t, i+1, puzzle.undoWordStack.Len())
 	}
 
 	values := []testWord{
@@ -410,98 +410,98 @@ func TestGrid_SetText(t *testing.T) {
 		{5, DOWN, "    "},
 	}
 	for _, tt := range values {
-		word = grid.LookupWordByNumber(tt.seq, tt.dir)
+		word = puzzle.LookupWordByNumber(tt.seq, tt.dir)
 		assert.NotNil(t, word)
-		have = grid.GetText(word)
+		have = puzzle.GetText(word)
 		want = tt.text
 		assert.Equalf(t, want, have, "%d %s", tt.seq, tt.dir)
 	}
 }
 
-func TestGrid_SetText_Bad(t *testing.T) {
+func TestPuzzle_SetText_Bad(t *testing.T) {
 	var (
-		err  error
-		grid *Grid
-		have string
-		text string
-		word *Word
+		err    error
+		puzzle *Puzzle
+		have   string
+		text   string
+		word   *Word
 	)
 
-	grid = getGoodGrid()
+	puzzle = getGoodPuzzle()
 
 	// Try a non-existent word
 	word = NewWord(NewPoint(6, 18), ACROSS, 6, "")
 	text = "BOGUS"
-	err = grid.SetText(word, text)
+	err = puzzle.SetText(word, text)
 	assert.NotNil(t, err)
 
 	// What happens if the text is shorter than the word expects?
-	word = grid.LookupWordByNumber(21, ACROSS)
-	err = grid.SetText(word, "X")
+	word = puzzle.LookupWordByNumber(21, ACROSS)
+	err = puzzle.SetText(word, "X")
 	assert.Nil(t, err)
-	have = grid.GetText(word)
+	have = puzzle.GetText(word)
 	assert.Equal(t, "X   ", have)
 
 	// What happens if the text is longer than the word expects?
-	word = grid.LookupWordByNumber(21, ACROSS)
-	err = grid.SetText(word, "BOGUS")
+	word = puzzle.LookupWordByNumber(21, ACROSS)
+	err = puzzle.SetText(word, "BOGUS")
 	assert.NotNil(t, err)
-	have = grid.GetText(word)
+	have = puzzle.GetText(word)
 	assert.Equal(t, "X   ", have)
 }
 
-func TestGrid_String(t *testing.T) {
+func TestPuzzle_String(t *testing.T) {
 
 	var (
-		gridString string
+		puzzleString string
 	)
 
-	grid := getGoodGrid()
-	grid.SetLetter(NewPoint(5, 4), "O")
-	grid.SetLetter(NewPoint(5, 5), "A")
-	grid.SetLetter(NewPoint(5, 6), "F")
+	puzzle := getGoodPuzzle()
+	puzzle.SetLetter(NewPoint(5, 4), "O")
+	puzzle.SetLetter(NewPoint(5, 5), "A")
+	puzzle.SetLetter(NewPoint(5, 6), "F")
 
-	gridString = grid.String()
-	assert.Contains(t, gridString, "| O | A | F |")
-	assert.Equal(t, "", grid.GetGridName())
-	assert.Contains(t, gridString, "(Untitled)")
+	puzzleString = puzzle.String()
+	assert.Contains(t, puzzleString, "| O | A | F |")
+	assert.Equal(t, "", puzzle.GetPuzzleName())
+	assert.Contains(t, puzzleString, "(Untitled)")
 
 	// Now set the title and see that it appears in the string
-	name := "MYGRID"
-	grid.SetGridName(name)
-	gridString = grid.String()
+	name := "MYPUZZLE"
+	puzzle.SetPuzzleName(name)
+	puzzleString = puzzle.String()
 
-	assert.Contains(t, gridString, name)
-	assert.Equal(t, name, grid.GetGridName())
+	assert.Contains(t, puzzleString, name)
+	assert.Equal(t, name, puzzle.GetPuzzleName())
 
 }
 
-func TestGrid_LookupWordByNumber(t *testing.T) {
+func TestPuzzle_LookupWordByNumber(t *testing.T) {
 	var (
-		grid *Grid
-		word *Word
+		puzzle *Puzzle
+		word   *Word
 	)
 
-	grid = getGoodGrid()
+	puzzle = getGoodPuzzle()
 
 	// Good one
-	word = grid.LookupWordByNumber(17, DOWN)
+	word = puzzle.LookupWordByNumber(17, DOWN)
 	assert.NotNil(t, word)
 
 	// Bad one
-	word = grid.LookupWordByNumber(30, ACROSS)
+	word = puzzle.LookupWordByNumber(30, ACROSS)
 	assert.Nil(t, word)
 }
 
-func TestGrid_LookupWordNumberForStartingPoint(t *testing.T) {
-	grid := getGoodGrid()
+func TestPuzzle_LookupWordNumberForStartingPoint(t *testing.T) {
+	puzzle := getGoodPuzzle()
 
 	point := NewPoint(5, 4)
 	want := NewWordNumber(14, point)
-	have := grid.LookupWordNumberForStartingPoint(point)
+	have := puzzle.LookupWordNumberForStartingPoint(point)
 	assert.Equal(t, want, have)
 
 	point = Point{0, 0}
-	have = grid.LookupWordNumberForStartingPoint(point)
+	have = puzzle.LookupWordNumberForStartingPoint(point)
 	assert.Nil(t, have)
 }

@@ -25,7 +25,7 @@ func createTestDatabase() {
 	tmp := os.TempDir()
 	config := cwcomp.Configuration
 	dbName := filepath.Join(tmp, "cwcomp_test.db")
-	if fileExists(dbName) {
+	if FileExists(dbName) {
 		os.Remove(dbName)
 	}
 	config.DATABASE.NAME = dbName
@@ -51,11 +51,11 @@ func createTestDatabase() {
 
 }
 
-// Creates a test grid, populates some words and clues, and saves it.
-func saveGrid(grid *Grid, gridName string) error {
+// Creates a test puzzle, populates some words and clues, and saves it.
+func savePuzzle(puzzle *Puzzle, puzzleName string) error {
 	var err error
 
-	// Create a new grid and populate it with words
+	// Create a new puzzle and populate it with words
 	type test struct {
 		seq  int
 		dir  Direction
@@ -69,17 +69,17 @@ func saveGrid(grid *Grid, gridName string) error {
 		{20, DOWN, "HOW", "In what manner"},
 	}
 	for _, test := range testWords {
-		word := grid.LookupWordByNumber(test.seq, test.dir)
-		if err = grid.SetText(word, test.text); err != nil {
+		word := puzzle.LookupWordByNumber(test.seq, test.dir)
+		if err = puzzle.SetText(word, test.text); err != nil {
 			return err
 		}
-		if err = grid.SetClue(word, test.clue); err != nil {
+		if err = puzzle.SetClue(word, test.clue); err != nil {
 			return err
 		}
 	}
 
-	grid.SetGridName(gridName)
-	if err = grid.SaveGrid(TEST_USERID); err != nil {
+	puzzle.SetPuzzleName(puzzleName)
+	if err = puzzle.SavePuzzle(TEST_USERID); err != nil {
 		return err
 	}
 
@@ -107,7 +107,7 @@ func setUp() {
 func tearDown() {
 	tmp := os.TempDir()
 	dbName := filepath.Join(tmp, "cwcomp_test.db")
-	if fileExists(dbName) {
+	if FileExists(dbName) {
 		os.Remove(dbName)
 	}
 }
@@ -116,93 +116,93 @@ func tearDown() {
 // Unit tests
 // ---------------------------------------------------------------------
 
-// Tests whether the list of grid names obtained from the
-// grid.GetGridList method is expected.
-func TestGrid_GetGridList(t *testing.T) {
+// Tests whether the list of puzzle names obtained from the
+// puzzle.GetPuzzleList method is expected.
+func TestPuzzle_GetPuzzleList(t *testing.T) {
 	runtest(func(*testing.T) {
-		grid := getGoodGrid()
-		gridNames := grid.GetGridList(TEST_USERID)
-		assert.Equal(t, 0, len(gridNames))
+		puzzle := getGoodPuzzle()
+		puzzleNames := puzzle.GetPuzzleList(TEST_USERID)
+		assert.Equal(t, 0, len(puzzleNames))
 	})(t)
 }
 
-// Tests whether the specified grid name is already used.
-func TestGrid_GridNameUsed(t *testing.T) {
+// Tests whether the specified puzzle name is already used.
+func TestPuzzle_PuzzleNameUsed(t *testing.T) {
 	runtest(func(*testing.T) {
 		var (
-			err       error
-			gridNames []string
-			used      bool
+			err         error
+			puzzleNames []string
+			used        bool
 		)
-		grid := getGoodGrid()
+		puzzle := getGoodPuzzle()
 
-		gridNames = grid.GetGridList(TEST_USERID)
-		assert.Equal(t, 0, len(gridNames))
+		puzzleNames = puzzle.GetPuzzleList(TEST_USERID)
+		assert.Equal(t, 0, len(puzzleNames))
 
-		err = grid.SaveGrid(TEST_USERID)
-		assert.NotNilf(t, err, "save grid")
+		err = puzzle.SavePuzzle(TEST_USERID)
+		assert.NotNilf(t, err, "save puzzle")
 
-		used = grid.GridNameUsed(TEST_USERID, "good9")
+		used = puzzle.PuzzleNameUsed(TEST_USERID, "good9")
 		assert.False(t, used)
 
-		grid.SetGridName("good9")
-		grid.SaveGrid(TEST_USERID)
-		gridNames = grid.GetGridList(TEST_USERID)
-		assert.Equal(t, 1, len(gridNames))
+		puzzle.SetPuzzleName("good9")
+		puzzle.SavePuzzle(TEST_USERID)
+		puzzleNames = puzzle.GetPuzzleList(TEST_USERID)
+		assert.Equal(t, 1, len(puzzleNames))
 
-		used = grid.GridNameUsed(TEST_USERID, "good9")
+		used = puzzle.PuzzleNameUsed(TEST_USERID, "good9")
 		assert.True(t, used)
 
 	})(t)
 }
 
-// Tests whether a grid can be loaded correctly.
-func TestGrid_LoadGrid(t *testing.T) {
+// Tests whether a puzzle can be loaded correctly.
+func TestPuzzle_LoadPuzzle(t *testing.T) {
 	runtest(func(*testing.T) {
 		var (
-			err          error
-			grid         *Grid
-			reloadedGrid *Grid
+			err            error
+			puzzle         *Puzzle
+			reloadedPuzzle *Puzzle
 		)
 
-		_, err = LoadGrid(TEST_USERID, "BOGUS")
+		_, err = LoadPuzzle(TEST_USERID, "BOGUS")
 		assert.NotNil(t, err)
 
-		const gridName = "Rhyme"
+		const puzzleName = "Rhyme"
 
-		grid = getGoodGrid()
-		err = saveGrid(grid, gridName)
+		puzzle = getGoodPuzzle()
+		err = savePuzzle(puzzle, puzzleName)
 		assert.Nil(t, err)
 
-		// Reload the grid from the database
-		reloadedGrid, err = LoadGrid(TEST_USERID, gridName)
+		// Reload the puzzle from the database
+		reloadedPuzzle, err = LoadPuzzle(TEST_USERID, puzzleName)
 		assert.Nil(t, err)
 
-		// Compare to the original grid
+		// Compare to the original puzzle
 
-		assert.True(t, grid.Equal(reloadedGrid))
+		assert.True(t, puzzle.Equal(reloadedPuzzle))
 	})(t)
 }
 
-func TestGrid_RenameGrid(t *testing.T) {
+func TestPuzzle_RenamePuzzle(t *testing.T) {
 	runtest(func(*testing.T) {
-		grid := getGoodGrid()
-		grid.SetGridName("foo")
-		grid.SaveGrid(TEST_USERID)
-		err := grid.RenameGrid(TEST_USERID, "foo", "bar")
+		puzzle := getGoodPuzzle()
+		puzzle.SetPuzzleName("foo")
+		puzzle.SavePuzzle(TEST_USERID)
+		err := puzzle.RenamePuzzle(TEST_USERID, "foo", "bar")
 		assert.Nil(t, err)
-		err = grid.RenameGrid(TEST_USERID, "baz", "bam")
+		err = puzzle.RenamePuzzle(TEST_USERID, "baz", "bam")
 		assert.NotNil(t, err)
 	})(t)
 }
 
-// Tests whether a grid can be saved correctly.
-func TestGrid_SaveGrid(t *testing.T) {
+// Tests whether a puzzle can be saved correctly.
+func TestPuzzle_SavePuzzle(t *testing.T) {
 	runtest(func(*testing.T) {
-		const gridName = "Rhyme"
-		grid := getGoodGrid()
-		err := saveGrid(grid, gridName)
+		const puzzleName = "Rhyme"
+		puzzle := getGoodPuzzle()
+		err := savePuzzle(puzzle, puzzleName)
 		assert.Nil(t, err)
-		grid.DeleteGrid(TEST_USERID, gridName)
+		puzzle.DeletePuzzle(TEST_USERID, puzzleName)
 	})(t)
 }
