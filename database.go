@@ -6,9 +6,6 @@ import (
 	"time"
 )
 
-// Letter value of a black cell in the cells table
-const BLACK_CELL = "\x00"
-
 // ---------------------------------------------------------------------
 // Functions
 // ---------------------------------------------------------------------
@@ -117,7 +114,7 @@ func LoadPuzzle(userid int, puzzlename string) (*Puzzle, error) {
 		cellRows.Scan(&r, &c, &letter)
 		point := NewPoint(r, c)
 		switch letter {
-		case BLACK_CELL:
+		case string(BLACK_CELL):
 			puzzle.SetCell(point, NewBlackCell(point))
 		default:
 			puzzle.SetLetter(point, letter)
@@ -204,7 +201,7 @@ func (puzzle *Puzzle) SavePuzzle(userid int) error {
 		case LetterCell:
 			letter = typedCell.letter
 		case BlackCell:
-			letter = BLACK_CELL
+			letter = string(BLACK_CELL)
 		}
 		con.Exec(sql, id, r, c, letter)
 	}

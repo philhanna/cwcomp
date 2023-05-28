@@ -1,4 +1,4 @@
-package wordlist
+package cwcomp
 
 /***********************************************************************
  * LetterList is a utility class that forms a regular expression

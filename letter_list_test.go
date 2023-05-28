@@ -1,16 +1,15 @@
-package wordlist
+package cwcomp
 
 import (
 	"testing"
 
-	"github.com/philhanna/cwcomp"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/exp/slices"
 )
 
 func TestGetPackage(t *testing.T) {
-	want := "wordlist"
-	have := cwcomp.GetPackageName()
+	want := "cwcomp"
+	have := GetPackageName()
 	assert.Equal(t, want, have)
 }
 

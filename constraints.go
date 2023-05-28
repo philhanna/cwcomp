@@ -3,8 +3,6 @@ package cwcomp
 import (
 	"encoding/json"
 	"regexp"
-
-	"github.com/philhanna/cwcomp/wordlist"
 )
 
 // ---------------------------------------------------------------------
@@ -117,7 +115,7 @@ func (puzzle *Puzzle) GetConstraints(word *Word) []*Constraint {
 		// will figure out a regular expression)
 		cst.NChoices = 0
 		letterSet := make(map[byte]bool)
-		for matcher := range wordlist.GetMatchingWords(pattern, make(chan struct{})) {
+		for matcher := range GetMatchingWords(pattern, make(chan struct{})) {
 			cst.NChoices++
 			letter := matcher[cst.Index-1]
 			letterSet[letter] = true
@@ -130,7 +128,7 @@ func (puzzle *Puzzle) GetConstraints(word *Word) []*Constraint {
 			letterList = append(letterList, letter)
 		}
 		letterString := string(letterList)
-		cst.Pattern = wordlist.Regexp(letterString)
+		cst.Pattern = Regexp(letterString)
 
 		// Special case - crossing word is not in the dictionary
 		if cst.Pattern == "" {

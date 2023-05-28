@@ -1,4 +1,4 @@
-package wordlist
+package cwcomp
 
 import (
 	"bufio"
