@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-
-	"github.com/philhanna/cwcomp"
 )
 
 // Letter value of a black cell in the cells table
@@ -17,7 +15,7 @@ const BLACK_CELL = "\x00"
 
 // DeletePuzzle deletes the specified puzzle
 func (puzzle *Puzzle) DeletePuzzle(userid int, puzzlename string) error {
-	con, _ := cwcomp.Connect()
+	con, _ := Connect()
 	sql := `DELETE FROM puzzles WHERE userid=? AND puzzlename=?`
 	_, err := con.Exec(sql, userid, puzzlename)
 	return err
@@ -28,7 +26,7 @@ func (puzzle *Puzzle) GetPuzzleList(userid int) []string {
 	puzzlenames := make([]string, 0)
 
 	// Get a database connection
-	con, _ := cwcomp.Connect()
+	con, _ := Connect()
 	defer con.Close()
 
 	// Make the query
@@ -61,7 +59,7 @@ func (puzzle *Puzzle) GetPuzzleList(userid int) []string {
 // already saved in the database
 func (puzzle *Puzzle) PuzzleNameUsed(userid int, puzzlename string) bool {
 	// Open a connection
-	con, _ := cwcomp.Connect()
+	con, _ := Connect()
 	defer con.Close()
 
 	// Query for this user/puzzlename
@@ -84,7 +82,7 @@ func (puzzle *Puzzle) PuzzleNameUsed(userid int, puzzlename string) bool {
 func LoadPuzzle(userid int, puzzlename string) (*Puzzle, error) {
 
 	// Connect to the database
-	con, _ := cwcomp.Connect()
+	con, _ := Connect()
 	defer con.Close()
 
 	// Get the puzzle record from the database
@@ -168,7 +166,7 @@ func (puzzle *Puzzle) SavePuzzle(userid int) error {
 	}
 
 	// Open a connection
-	con, _ := cwcomp.Connect()
+	con, _ := Connect()
 	defer con.Close()
 
 	// Delete any previous records for this puzzle
@@ -236,7 +234,7 @@ func (puzzle *Puzzle) RenamePuzzle(userid int, oldPuzzleName, newPuzzleName stri
 
 	// Connect to the database
 
-	con, _ := cwcomp.Connect()
+	con, _ := Connect()
 	defer con.Close()
 
 	// Do the update and return no error
