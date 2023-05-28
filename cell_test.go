@@ -9,12 +9,12 @@ import (
 )
 
 func TestCell_GetPoint(t *testing.T) {
-	
+
 	var (
 		PACKAGE_NAME = GetPackageName()
 		PREFIX       = PACKAGE_NAME + "."
 	)
-	
+
 	// Map out the cell types (abbreviations).
 
 	abbrev := []string{

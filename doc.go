@@ -8,7 +8,7 @@
 //   - Black cells: Blocks in the grid
 //
 //   - Letter cells: Ordinary cells where letters of words can be
-//   placed.
+//     placed.
 //
 // The puzzle also supports undo/redo for black cells and words in the
 // grid.
