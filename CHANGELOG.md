@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog].
 	
 ## [Unreleased]
 
-- Renamed "grid(anything)" to "puzzle(anything)"
+- Renamed `grid*` to `puzzle*`
 
 ## [v0.6.0] - 2023-05-27
 Added feature to create SVG from a graph
