@@ -1,4 +1,4 @@
-package model
+package cwcomp
 
 import (
 	"log"
@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/philhanna/cwcomp"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,25 +22,25 @@ func createTestDatabase() {
 
 	// Set configuration to use the test database name
 	tmp := os.TempDir()
-	config := cwcomp.Configuration
+	config := Configuration
 	dbName := filepath.Join(tmp, "cwcomp_test.db")
 	if FileExists(dbName) {
 		os.Remove(dbName)
 	}
 	config.DATABASE.NAME = dbName
-	cwcomp.Configuration = config
+	Configuration = config
 
 	// Create the test database
-	cwcomp.CreateDatabase()
+	CreateDatabase()
 
 	// Connect to the test database
-	con, _ := cwcomp.Connect()
+	con, _ := Connect()
 	defer con.Close()
 
 	// Create the test user
 	sql := `INSERT INTO users (username, password, created) values(?, ?, ?);`
 	username := "test"
-	password := cwcomp.Hash256(username)
+	password := Hash256(username)
 	created := time.Now().Format(time.RFC3339)
 	_, err := con.Exec(sql, username, password, created)
 	if err != nil {

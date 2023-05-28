@@ -1,21 +1,20 @@
-package model
+package cwcomp
 
 import (
 	"fmt"
 	"strings"
 	"testing"
 
-	"github.com/philhanna/cwcomp"
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	PACKAGE_NAME = cwcomp.GetPackageName()
-	PREFIX       = PACKAGE_NAME + "."
-)
-
 func TestCell_GetPoint(t *testing.T) {
-
+	
+	var (
+		PACKAGE_NAME = GetPackageName()
+		PREFIX       = PACKAGE_NAME + "."
+	)
+	
 	// Map out the cell types (abbreviations).
 
 	abbrev := []string{
