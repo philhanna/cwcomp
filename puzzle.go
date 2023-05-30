@@ -175,7 +175,7 @@ func ImportPuzzle(source Importer) (*Puzzle, error) {
 			// Black cell
 			puzzle.cells[i][j] = NewBlackCell(point)
 		} else {
-			 // Letter cell
+			// Letter cell
 			lc := NewLetterCell(point)
 			lc.letter = string(value)
 			puzzle.cells[i][j] = lc
@@ -189,12 +189,11 @@ func ImportPuzzle(source Importer) (*Puzzle, error) {
 	for index, clue := range source.GetAcrossClues() {
 		seq := index + 1 // Word numbers are 1-based, not 0-based
 		word := puzzle.LookupWordByNumber(seq, ACROSS)
-		if word == nil {
-			return nil, fmt.Errorf("no %d across word", seq)
-		}
-		err := puzzle.SetClue(word, clue)
-		if err != nil {
-			return nil, err
+		if word != nil {
+			err := puzzle.SetClue(word, clue)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -202,12 +201,11 @@ func ImportPuzzle(source Importer) (*Puzzle, error) {
 	for index, clue := range source.GetDownClues() {
 		seq := index + 1 // Word numbers are 1-based, not 0-based
 		word := puzzle.LookupWordByNumber(seq, DOWN)
-		if word == nil {
-			return nil, fmt.Errorf("no %d down word", seq)
-		}
-		err := puzzle.SetClue(word, clue)
-		if err != nil {
-			return nil, err
+		if word != nil {
+			err := puzzle.SetClue(word, clue)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
