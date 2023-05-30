@@ -155,6 +155,65 @@ func (puzzle *Puzzle) GetText(word *Word) string {
 	return s
 }
 
+// ImportPuzzle creates a puzzle from an external source
+func ImportPuzzle(source Importer) (*Puzzle, error) {
+	n := source.GetSize()
+	puzzle := NewPuzzle(n)
+	puzzle.puzzleName = source.GetName()
+	// TODO what to do about puzzle title?
+	for point := range puzzle.PointIterator() {
+		r, c := point.r, point.c
+		value, err := source.GetCell(r, c)
+		if err != nil {
+			err := fmt.Errorf("Point(%s): %v", point.String(), err)
+			return nil, err
+		}
+
+		// Switch to zero-based indices to set cell values
+		i, j := r-1, c-1
+		if value == BLACK_CELL {
+			// Black cell
+			puzzle.cells[i][j] = NewBlackCell(point)
+		} else {
+			 // Letter cell
+			lc := NewLetterCell(point)
+			lc.letter = string(value)
+			puzzle.cells[i][j] = lc
+		}
+	}
+	puzzle.RenumberCells()
+
+	// Now set the clues
+
+	// Across words
+	for index, clue := range source.GetAcrossClues() {
+		seq := index + 1 // Word numbers are 1-based, not 0-based
+		word := puzzle.LookupWordByNumber(seq, ACROSS)
+		if word == nil {
+			return nil, fmt.Errorf("no %d across word", seq)
+		}
+		err := puzzle.SetClue(word, clue)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Down words
+	for index, clue := range source.GetDownClues() {
+		seq := index + 1 // Word numbers are 1-based, not 0-based
+		word := puzzle.LookupWordByNumber(seq, DOWN)
+		if word == nil {
+			return nil, fmt.Errorf("no %d down word", seq)
+		}
+		err := puzzle.SetClue(word, clue)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return puzzle, nil
+}
+
 // LookupWord returns the word containing this point and direction
 func (puzzle *Puzzle) LookupWord(point Point, dir Direction) *Word {
 	for _, word := range puzzle.words {
