@@ -28,4 +28,5 @@ configdir
 words.txt
 
 # Skip test files
-testdata/
+/testdata/
+!/export/testdata/
