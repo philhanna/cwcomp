@@ -28,6 +28,10 @@ type AcrossLite struct {
 func NewAcrossLite() *AcrossLite {
 	p := new(AcrossLite)
 
+	p.title = ""
+	p.author = ""
+	p.copyright = ""
+	p.size = 0
 	p.grid = make([]string, 0)
 	p.acrossClues = make([]string, 0)
 	p.downClues = make([]string, 0)
@@ -43,11 +47,5 @@ func NewAcrossLite() *AcrossLite {
 // Import parses the text in an AcrossLite puzzle
 func Import(filename string) (*AcrossLite, error) {
 	p := NewAcrossLite()
-
-	type ParsingState byte
-	const (
-		INIT ParsingState = iota
-	)
-
 	return p, nil
 }
