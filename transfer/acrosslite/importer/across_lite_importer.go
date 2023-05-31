@@ -245,9 +245,7 @@ func Import(filename string) (*al.AcrossLite, error) {
 		return nil, fmt.Errorf("unexpected final state READING_GRID")
 	case READING_ACROSS:
 		return nil, fmt.Errorf("unexpected final state READING_ACROSS")
-	case READING_DOWN:
-		return nil, fmt.Errorf("unexpected final state READING_DOWN")
-	case READING_NOTEPAD, DONE:
+	case READING_DOWN, READING_NOTEPAD, DONE:
 		// OK
 	}
 
