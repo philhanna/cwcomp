@@ -12,13 +12,12 @@ import (
 	al "github.com/philhanna/cwcomp/transfer/acrosslite"
 )
 
-
 // ---------------------------------------------------------------------
 // Functions
 // ---------------------------------------------------------------------
 
-// Import parses the text in an AcrossLite puzzle
-func Import(filename string) (*al.AcrossLite, error) {
+// Parse parses the text in an AcrossLite puzzle
+func Parse(filename string) (*al.AcrossLite, error) {
 
 	// Initialize a new AcrossLite structure
 	pal := new(al.AcrossLite)

@@ -8,13 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestImport(t *testing.T) {
+func TestParse(t *testing.T) {
 	dirname, err := filepath.Abs(filepath.Join("..", "testdata"))
 	assert.Nil(t, err)
 
 	filename := filepath.Join(dirname, "easy.txt")
 
-	acrossLite, err := Import(filename)
+	acrossLite, err := Parse(filename)
 	assert.Nil(t, err)
 
 	fmt.Println(acrossLite)
