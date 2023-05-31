@@ -69,31 +69,31 @@ func (ti *TestImporter) GetAcrossClues() []string {
 }
 func (ti *TestImporter) GetDownClues() []string {
 	return []string{
-		"", // 1 down
-		"", // 2 down
-		"", // 3 down
-		"", // 4 down
-		"", // 5 down
-		"", // 6 down
-		"Bovine", // 7 down
-		"", // 8 down
-		"", // 9 down
-		"", // 10 down
-		"", // 11 down
-		"", // 12 down
-		"", // 13 down
-		"", // 14 down
-		"", // 15 down
-		"", // 16 down
-		"", // 17 down
-		"", // 18 down
-		"", // 19 down
+		"",        // 1 down
+		"",        // 2 down
+		"",        // 3 down
+		"",        // 4 down
+		"",        // 5 down
+		"",        // 6 down
+		"Bovine",  // 7 down
+		"",        // 8 down
+		"",        // 9 down
+		"",        // 10 down
+		"",        // 11 down
+		"",        // 12 down
+		"",        // 13 down
+		"",        // 14 down
+		"",        // 15 down
+		"",        // 16 down
+		"",        // 17 down
+		"",        // 18 down
+		"",        // 19 down
 		"Not why", // 20 down
-		"", // 21 down
-		"", // 22 down
-		"", // 23 down
-		"", // 24 down
-		"", // 25 down
+		"",        // 21 down
+		"",        // 22 down
+		"",        // 23 down
+		"",        // 24 down
+		"",        // 25 down
 	}
 }
 

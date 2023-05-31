@@ -35,7 +35,7 @@ type Importer interface {
 	// less than the word number.  Words with no clue yet still occupy a
 	// position in the slice containing the empty string.
 	GetAcrossClues() []string
-	
+
 	// Returns the clues to the down words.  The slice index is one less
 	// than the word number.  Words with no clue yet still occupy a
 	// position in the slice containing the empty string.
