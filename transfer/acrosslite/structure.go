@@ -9,12 +9,12 @@ package export
 // https://www.litsoft.com/.  It is described in
 // https://www.litsoft.com/across/docs/AcrossTextFormat.pdf#31
 type AcrossLite struct {
-	title       string
-	author      string
-	copyright   string
-	size        int
-	grid        []string
-	acrossClues []string
-	downClues   []string
-	notepad     []string
+	Title       string
+	Author      string
+	Copyright   string
+	Size        int
+	Grid        []string
+	AcrossClues []string
+	DownClues   []string
+	Notepad     []string
 }
