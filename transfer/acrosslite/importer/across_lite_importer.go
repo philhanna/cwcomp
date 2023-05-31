@@ -8,7 +8,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"github.com/philhanna/cwcomp/transfer/acrosslite"
+
+	al "github.com/philhanna/cwcomp/transfer/acrosslite"
 )
 
 // ---------------------------------------------------------------------
@@ -16,14 +17,14 @@ import (
 // ---------------------------------------------------------------------
 
 // Import parses the text in an AcrossLite puzzle
-func Import(filename string) (*acrosslite.AcrossLite, error) {
+func Import(filename string) (*al.AcrossLite, error) {
 
 	// Initialize a new AcrossLite structure
-	pal := new(acrosslite.AcrossLite)
-	pal.grid = make([]string, 0)
-	pal.acrossClues = make([]string, 0)
-	pal.downClues = make([]string, 0)
-	pal.notepad = make([]string, 0)
+	pal := new(al.AcrossLite)
+	pal.Grid = make([]string, 0)
+	pal.AcrossClues = make([]string, 0)
+	pal.DownClues = make([]string, 0)
+	pal.Notepad = make([]string, 0)
 
 	// Describe the parsing states of the finite state machine
 	type ParsingState byte
@@ -70,7 +71,7 @@ func Import(filename string) (*acrosslite.AcrossLite, error) {
 		},
 
 		READING_TITLE: func(line string) (ParsingState, error) {
-			pal.title = line
+			pal.Title = line
 			return LOOKING_FOR_AUTHOR, nil
 		},
 
@@ -84,7 +85,7 @@ func Import(filename string) (*acrosslite.AcrossLite, error) {
 		},
 
 		READING_AUTHOR: func(line string) (ParsingState, error) {
-			pal.author = line
+			pal.Author = line
 			return LOOKING_FOR_COPYRIGHT, nil
 		},
 
@@ -98,7 +99,7 @@ func Import(filename string) (*acrosslite.AcrossLite, error) {
 		},
 
 		READING_COPYRIGHT: func(line string) (ParsingState, error) {
-			pal.copyright = line
+			pal.Copyright = line
 			return LOOKING_FOR_SIZE, nil
 		},
 
@@ -122,7 +123,7 @@ func Import(filename string) (*acrosslite.AcrossLite, error) {
 			case tokens[0] != tokens[1]:
 				return UNKNOWN, fmt.Errorf("only square grids allowed, not %sx%s", tokens[0], tokens[1])
 			default:
-				pal.size, _ = strconv.Atoi(tokens[0])
+				pal.Size, _ = strconv.Atoi(tokens[0])
 				return LOOKING_FOR_GRID, nil
 			}
 		},
@@ -130,7 +131,7 @@ func Import(filename string) (*acrosslite.AcrossLite, error) {
 		LOOKING_FOR_GRID: func(line string) (ParsingState, error) {
 			switch line {
 			case "<GRID>":
-				pal.grid = make([]string, 0)
+				pal.Grid = make([]string, 0)
 				return READING_GRID, nil
 			default:
 				return UNKNOWN, fmt.Errorf("did not find <GRID>")
@@ -139,19 +140,19 @@ func Import(filename string) (*acrosslite.AcrossLite, error) {
 
 		READING_GRID: func(line string) (ParsingState, error) {
 			if line == "<ACROSS>" {
-				if len(pal.grid) != pal.size {
+				if len(pal.Grid) != pal.Size {
 					return UNKNOWN, fmt.Errorf(
 						"found %d lines in <GRID> section, expected %d",
-						len(pal.grid), pal.size)
+						len(pal.Grid), pal.Size)
 				}
 				return READING_ACROSS, nil
 			}
-			if len(line) != pal.size {
+			if len(line) != pal.Size {
 				return UNKNOWN, fmt.Errorf(
 					"found %d characters in grid line, expected %d",
-					len(line), pal.size)
+					len(line), pal.Size)
 			}
-			pal.grid = append(pal.grid, line)
+			pal.Grid = append(pal.Grid, line)
 			return READING_GRID, nil
 		},
 
@@ -159,7 +160,7 @@ func Import(filename string) (*acrosslite.AcrossLite, error) {
 			if line == "<DOWN>" {
 				return READING_DOWN, nil
 			}
-			pal.acrossClues = append(pal.acrossClues, line)
+			pal.AcrossClues = append(pal.AcrossClues, line)
 			return READING_ACROSS, nil
 		},
 
@@ -167,12 +168,12 @@ func Import(filename string) (*acrosslite.AcrossLite, error) {
 			if line == "<NOTEPAD>" {
 				return READING_NOTEPAD, nil
 			}
-			pal.downClues = append(pal.downClues, line)
+			pal.DownClues = append(pal.DownClues, line)
 			return READING_DOWN, nil
 		},
 
 		READING_NOTEPAD: func(line string) (ParsingState, error) {
-			pal.notepad = append(pal.notepad, line)
+			pal.Notepad = append(pal.Notepad, line)
 			return READING_NOTEPAD, nil
 		},
 
