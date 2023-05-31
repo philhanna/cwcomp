@@ -147,6 +147,9 @@ func Parse(filename string) (*al.AcrossLite, error) {
 				}
 				return READING_ACROSS, nil
 			}
+			for len(line) < pal.Size {
+				line += " "
+			}
 			if len(line) != pal.Size {
 				return UNKNOWN, fmt.Errorf(
 					"found %d characters in grid line, expected %d",
