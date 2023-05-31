@@ -113,17 +113,17 @@ func Import(filename string) (*al.AcrossLite, error) {
 		},
 
 		READING_SIZE: func(line string) (ParsingState, error) {
-			reSize := regexp.MustCompile(`(\d+)x(\d)`)
+			reSize := regexp.MustCompile(`(\d+)x(\d+)`)
 			tokens := reSize.FindStringSubmatch(line)
 			switch {
 			case tokens == nil:
 				return UNKNOWN, fmt.Errorf("no <digits>x<digits> size expression found")
-			case len(tokens) != 2:
-				return UNKNOWN, fmt.Errorf("expected two size integers, found %d", len(tokens))
-			case tokens[0] != tokens[1]:
-				return UNKNOWN, fmt.Errorf("only square grids allowed, not %sx%s", tokens[0], tokens[1])
+			case len(tokens)-1 != 2:
+				return UNKNOWN, fmt.Errorf("expected two size integers, found %d", len(tokens)-1)
+			case tokens[1] != tokens[2]:
+				return UNKNOWN, fmt.Errorf("only square grids allowed, not %sx%s", tokens[1], tokens[2])
 			default:
-				pal.Size, _ = strconv.Atoi(tokens[0])
+				pal.Size, _ = strconv.Atoi(tokens[1])
 				return LOOKING_FOR_GRID, nil
 			}
 		},
@@ -216,9 +216,39 @@ func Import(filename string) (*al.AcrossLite, error) {
 		}
 	}
 
-	if state != DONE {
-		// TODO change this to a switch statement for all states
-		return nil, fmt.Errorf("Expected final state to be DONE, not %v", state)
+	// Check the final state
+
+	switch state {
+	default:
+		return nil, fmt.Errorf("unexpected final state %v", state)
+	case INIT:
+		return nil, fmt.Errorf("no lines in file")
+	case LOOKING_FOR_TITLE:
+		return nil, fmt.Errorf("never found <TITLE>")
+	case READING_TITLE:
+		return nil, fmt.Errorf("unexpected final state READING_TITLE")
+	case LOOKING_FOR_AUTHOR:
+		return nil, fmt.Errorf("never found <AUTHOR>")
+	case READING_AUTHOR:
+		return nil, fmt.Errorf("unexpected final state READING_AUTHOR")
+	case LOOKING_FOR_COPYRIGHT:
+		return nil, fmt.Errorf("never found <COPYRIGHT>")
+	case READING_COPYRIGHT:
+		return nil, fmt.Errorf("unexpected final state READING_COPYRIGHT")
+	case LOOKING_FOR_SIZE:
+		return nil, fmt.Errorf("never found <SIZE>")
+	case READING_SIZE:
+		return nil, fmt.Errorf("unexpected final state READING_SIZE")
+	case LOOKING_FOR_GRID:
+		return nil, fmt.Errorf("never found <GRID>")
+	case READING_GRID:
+		return nil, fmt.Errorf("unexpected final state READING_GRID")
+	case READING_ACROSS:
+		return nil, fmt.Errorf("unexpected final state READING_ACROSS")
+	case READING_DOWN:
+		return nil, fmt.Errorf("unexpected final state READING_DOWN")
+	case READING_NOTEPAD, DONE:
+		// OK
 	}
 
 	return pal, nil
