@@ -1,4 +1,4 @@
-package export
+package importer
 
 import (
 	"bufio"
@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"github/philhanna/cwcomp/transfer/acrosslite"
 )
 
 // ---------------------------------------------------------------------
@@ -15,10 +16,10 @@ import (
 // ---------------------------------------------------------------------
 
 // Import parses the text in an AcrossLite puzzle
-func Import(filename string) (*AcrossLite, error) {
+func Import(filename string) (*acrosslite.AcrossLite, error) {
 
 	// Initialize a new AcrossLite structure
-	pal := new(AcrossLite)
+	pal := new(acrosslite.AcrossLite)
 	pal.grid = make([]string, 0)
 	pal.acrossClues = make([]string, 0)
 	pal.downClues = make([]string, 0)
