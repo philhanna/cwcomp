@@ -48,7 +48,7 @@ func (self *AcrossLite) GetTitle() string {
 // GetCell returns the letter at a given point in the grid.  These are
 // relative to 1, not 0, so
 //
-//  r = 1, 2, ..., n c = 1, 2, ..., n
+//	r = 1, 2, ..., n c = 1, 2, ..., n
 //
 // If the letter value is '\x00', it is a black cell.  Otherwise, it is
 // converted to uppercase.  If the letter is not a black cell and not in
