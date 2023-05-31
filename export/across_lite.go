@@ -18,24 +18,3 @@ type AcrossLite struct {
 	downClues   []string
 	notepad     []string
 }
-
-// ---------------------------------------------------------------------
-// Constructor
-// ---------------------------------------------------------------------
-
-// NewAcrossLite creates a new, empty AcrossLite structure and returns a
-// pointer to it.
-func NewAcrossLite() *AcrossLite {
-	p := new(AcrossLite)
-
-	p.title = ""
-	p.author = ""
-	p.copyright = ""
-	p.size = 0
-	p.grid = make([]string, 0)
-	p.acrossClues = make([]string, 0)
-	p.downClues = make([]string, 0)
-	p.notepad = make([]string, 0)
-
-	return p
-}

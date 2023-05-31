@@ -15,7 +15,7 @@ import (
 
 // Import parses the text in an AcrossLite puzzle
 func Import(filename string) (*AcrossLite, error) {
-	pal := NewAcrossLite()
+	pal := new(AcrossLite)
 
 	fp, err := os.Open(filename)
 	if err != nil {
@@ -35,6 +35,10 @@ func Import(filename string) (*AcrossLite, error) {
 		READING_SIZE
 		LOOKING_FOR_GRID
 		READING_GRID
+		READING_ACROSS
+		READING_DOWN
+		READING_NOTEPAD
+		DONE
 	)
 	state := INIT
 	scanner := bufio.NewScanner(fp)
@@ -97,24 +101,36 @@ func Import(filename string) (*AcrossLite, error) {
 			tokens := reSize.FindStringSubmatch(line)
 			if tokens == nil {
 				return nil, fmt.Errorf("no <digits>x<digits> size expression found")
-			} else if len(tokens) != 2 {
-				return nil, fmt.Errorf("expected two size integers, found %d", len(tokens))
-			} else if tokens[0] != tokens[1] {
-				return nil, fmt.Errorf("only square grids allowed, not %sx%s", tokens[0], tokens[1])
-			} else {
-				pal.size, _ = strconv.Atoi(tokens[0])
-				state = LOOKING_FOR_GRID
 			}
+			if len(tokens) != 2 {
+				return nil, fmt.Errorf("expected two size integers, found %d", len(tokens))
+			}
+			if tokens[0] != tokens[1] {
+				return nil, fmt.Errorf("only square grids allowed, not %sx%s", tokens[0], tokens[1])
+			}
+			pal.size, _ = strconv.Atoi(tokens[0])
+			state = LOOKING_FOR_GRID
 
 		case LOOKING_FOR_GRID:
 			if line == "<GRID>" {
-				state =  READING_GRID	
+				state = READING_GRID
+				pal.grid = make([]string, 0)
 			} else {
 				return nil, fmt.Errorf("did not find <GRID>")
 			}
 
 		case READING_GRID:
-			
+			if line == "<ACROSS>" {
+				if len(pal.grid) != pal.size {
+					return nil, fmt.Errorf("Must be %d lines in grid, not %d", pal.size, len(pal.grid))
+				}
+				state = READING_ACROSS
+				pal.acrossClues = make([]string, 0)
+			} else {
+				return nil, fmt.Errorf("did not find <ACROSS>")
+			}
+
+		case READING_ACROSS:
 		}
 	}
 
