@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"github/philhanna/cwcomp/transfer/acrosslite"
+	"github.com/philhanna/cwcomp/transfer/acrosslite"
 )
 
 // ---------------------------------------------------------------------
