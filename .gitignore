@@ -24,8 +24,6 @@ go.work
 # Skip the soft link to the configuration directory
 configdir
 
-# Skip the words.txt file
-words.txt
-
 # Skip test files
-testdata/
+/testdata/
+!/export/testdata/
