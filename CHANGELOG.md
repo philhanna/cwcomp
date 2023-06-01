@@ -4,7 +4,9 @@ This project adheres to [Semantic Versioning].
 The format is based on [Keep a Changelog].
 	
 ## [Unreleased]
-
+- Refactored LetterCell
+- Added diagnostic routines
+  
 ## [v0.7.0] - 2023-05-30
 - Renamed `grid*` to `puzzle*`
 - Merged all subpackages to main package
