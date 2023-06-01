@@ -184,30 +184,30 @@ func ImportPuzzle(source Importer) (*Puzzle, error) {
 	puzzle.RenumberCells()
 
 	// Now set the clues
+	setClues := func(direction Direction) {
+		
+		var clues []string
+		var clueIndex int
 
-	// Across words
-	for index, clue := range source.GetAcrossClues() {
-		seq := index + 1 // Word numbers are 1-based, not 0-based
-		word := puzzle.LookupWordByNumber(seq, ACROSS)
-		if word != nil {
-			err := puzzle.SetClue(word, clue)
-			if err != nil {
-				return nil, err
-			}
+		switch direction {
+		case ACROSS:
+			clues = source.GetAcrossClues()
+		case DOWN:
+			clues = source.GetDownClues()
+		}
+		for _, wn := range puzzle.wordNumbers {
+			seq := wn.seq
+			word := puzzle.LookupWordByNumber(seq, direction)
+			if word != nil {
+				clue := clues[clueIndex]
+				clueIndex++
+				puzzle.SetClue(word, clue)
+			}	
 		}
 	}
 
-	// Down words
-	for index, clue := range source.GetDownClues() {
-		seq := index + 1 // Word numbers are 1-based, not 0-based
-		word := puzzle.LookupWordByNumber(seq, DOWN)
-		if word != nil {
-			err := puzzle.SetClue(word, clue)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
+	setClues(ACROSS)
+	setClues(DOWN)
 
 	return puzzle, nil
 }
