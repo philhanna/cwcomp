@@ -22,4 +22,20 @@ func DumpPuzzle(puzzle *Puzzle) {
 		}
 	}
 	fmt.Println(puzzle.String())
+	
+	dumpClues := func(direction Direction) {
+		for _, wn := range puzzle.wordNumbers {
+			seq := wn.seq
+			word := puzzle.LookupWordByNumber(seq, direction)
+			if word != nil {
+				fmt.Printf("%d. %s\n", seq, word.clue)
+			}
+		}
+	}
+
+	fmt.Println("Across:")
+	dumpClues(ACROSS)
+
+	fmt.Println("Down:")
+	dumpClues(DOWN)
 }
