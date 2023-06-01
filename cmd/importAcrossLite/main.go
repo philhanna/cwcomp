@@ -64,7 +64,7 @@ func getFileName() string {
 func createTestUser() (int, error) {
 	var userid int
 	var err error
-	
+
 	// Connect to the database
 	con, err := cwcomp.Connect()
 	defer con.Close()
@@ -93,7 +93,7 @@ func createTestUser() (int, error) {
 		log.Println(err)
 		return 0, err
 	}
-	
+
 	log.Printf("Added test user\n")
 	return userid, nil
 }
