@@ -23,7 +23,3 @@ go.work
 
 # Skip the soft link to the configuration directory
 configdir
-
-# Skip test files
-/testdata/
-!/export/testdata/
