@@ -7,7 +7,7 @@ import "fmt"
 // ---------------------------------------------------------------------
 
 // AcrossLite is a representation of a puzzle in a standard interchange
-// format.  This is proprietary format is defined and maintained by
+// format.  This is a proprietary format is defined and maintained by
 // https://www.litsoft.com/.  It is described in
 // https://www.litsoft.com/across/docs/AcrossTextFormat.pdf#31
 type AcrossLite struct {
@@ -19,6 +19,21 @@ type AcrossLite struct {
 	AcrossClues []string
 	DownClues   []string
 	Notepad     []string
+}
+
+// ---------------------------------------------------------------------
+// Constructor
+// ---------------------------------------------------------------------
+
+// NewAcrossLite creates and initialized an AcrossLite structure and
+// returns a pointer to it.
+func NewAcrossLite() *AcrossLite {
+	pal := new(AcrossLite)
+	pal.Grid = make([]string, 0)
+	pal.AcrossClues = make([]string, 0)
+	pal.DownClues = make([]string, 0)
+	pal.Notepad = make([]string, 0)
+	return pal
 }
 
 // ---------------------------------------------------------------------
