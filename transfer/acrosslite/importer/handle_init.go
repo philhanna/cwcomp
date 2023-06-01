@@ -5,6 +5,8 @@ import (
 	al "github.com/philhanna/cwcomp/transfer/acrosslite"
 )
 
+// HandleInit looks for the valid beginning of an AcrossLite text file,
+// which is <ACROSS PUZZLE>.
 func HandleInit(pal *al.AcrossLite, line string) (ParsingState, error) {
 	switch line {
 	case "<ACROSS PUZZLE>":

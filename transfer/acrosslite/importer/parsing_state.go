@@ -4,7 +4,9 @@ package importer
 // Type definitions
 // ---------------------------------------------------------------------
 
-// The parsing states of the finite state machine
+// The parsing states of the finite state machine. These are used in
+// determining the next state after each line is handled. There is a map
+// of parsing states to handler functions in AcrossLiteImporter.
 type ParsingState byte
 
 const (

@@ -8,6 +8,8 @@ import (
 	al "github.com/philhanna/cwcomp/transfer/acrosslite"
 )
 
+// HandleLookingForSize verifies that the current line in the data
+// is <SIZE>.
 func HandleLookingForSize(pal *al.AcrossLite, line string) (ParsingState, error) {
 	switch line {
 	case "<SIZE>":
@@ -17,6 +19,9 @@ func HandleLookingForSize(pal *al.AcrossLite, line string) (ParsingState, error)
 	}
 }
 
+// HandleReadingSize examines the current line, and verifies that it has
+// the form <digits>x<digits>.  Note that the only grids I handle are
+// square ones.
 func HandleReadingSize(pal *al.AcrossLite, line string) (ParsingState, error) {
 	reSize := regexp.MustCompile(`(\d+)x(\d+)`)
 	tokens := reSize.FindStringSubmatch(line)
