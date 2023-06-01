@@ -21,11 +21,14 @@ func DumpPuzzle(puzzle *Puzzle) {
 				fmt.Printf("%d. %s\n", seq, word.clue)
 			}
 		}
-		
+
 		switch nPrinted {
-		case 0: fmt.Printf("\tNo non-blank clues\n")
-		case 1: fmt.Printf("\t1 non-blank clue\n")
-		default: fmt.Printf("\t%d non-blank clues\n", nPrinted)
+		case 0:
+			fmt.Printf("\tNo non-blank clues\n")
+		case 1:
+			fmt.Printf("\t1 non-blank clue\n")
+		default:
+			fmt.Printf("\t%d non-blank clues\n", nPrinted)
 		}
 	}
 

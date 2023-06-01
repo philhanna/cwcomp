@@ -13,8 +13,8 @@ import (
 //   - The location of the cell, a Point(r, c)
 //   - The character in the cell
 type LetterCell struct {
-	point    Point       // Location of this letter cell
-	letter   string      // Character in the cell
+	point  Point  // Location of this letter cell
+	letter string // Character in the cell
 }
 
 // ---------------------------------------------------------------------
