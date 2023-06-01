@@ -28,7 +28,7 @@ func GetNumberedCells(cells [][]byte) []NumberedCell {
 	ncs := make([]NumberedCell, 0)
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
-			if cells[i][j] != 0 {
+			if cells[i][j] != BLACK_CELL {
 				startD := (i == 0) || (cells[i-1][j] == 0)
 				startA := (j == 0) || (cells[i][j-1] == 0)
 				if startA || startD {
@@ -60,7 +60,7 @@ func PuzzleToSimpleMatrix(puzzle *Puzzle) [][]byte {
 		for j := 0; j < n; j++ {
 			point := NewPoint(i+1, j+1)
 			if puzzle.IsBlackCell(point) {
-				cells[i][j] = '\x00'
+				cells[i][j] = BLACK_CELL
 			} else {
 				letter := puzzle.GetLetter(point)
 				cells[i][j] = letter[0]
