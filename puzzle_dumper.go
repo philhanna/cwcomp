@@ -9,13 +9,23 @@ import (
 // of each cell in the grid.
 func DumpPuzzle(puzzle *Puzzle) {
 
+	fmt.Printf(puzzle.String())
+
 	dumpClues := func(direction Direction) {
+		nPrinted := 0
 		for _, wn := range puzzle.wordNumbers {
 			seq := wn.seq
 			word := puzzle.LookupWordByNumber(seq, direction)
-			if word != nil {
+			if word != nil && word.clue != "" {
+				nPrinted++
 				fmt.Printf("%d. %s\n", seq, word.clue)
 			}
+		}
+		
+		switch nPrinted {
+		case 0: fmt.Printf("\tNo non-blank clues\n")
+		case 1: fmt.Printf("\t1 non-blank clue\n")
+		default: fmt.Printf("\t%d non-blank clues\n", nPrinted)
 		}
 	}
 
@@ -36,12 +46,11 @@ func TracePuzzle(puzzle *Puzzle) {
 			cell := puzzle.GetCell(point)
 			switch typedCell := cell.(type) {
 			case BlackCell:
-				log.Printf("BlackCell at  %v has value %v\n", point, typedCell.String())
+				log.Printf("BlackCell at  %v\n", point)
 			case LetterCell:
 				log.Printf("LetterCell at %v has value %v\n", point, typedCell.String())
 			}
 		}
 	}
-	fmt.Println(puzzle.String())
 
 }
