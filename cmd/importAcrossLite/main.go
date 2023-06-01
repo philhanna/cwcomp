@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"log"
+	"os"
 	"path/filepath"
-	"time"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/philhanna/cwcomp"
@@ -11,26 +13,19 @@ import (
 )
 
 // This program will read a file in AcrossLite text format, create a
-// puzzle from it, and save the puzzle in a database. The database will
-// be created if it does not already exist.
-
-const USERNAME = "Phil Hanna"
-
+// puzzle from it, and dump the grid in an SVG in /tmp
 func main() {
 
 	var err error
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	// Add the test user
-	userid, err := createTestUser()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	// Load easy.txt into an AcrossLite structure
-	filename := getFileName()
-	acrossLite, err := importer.Parse(filename)
+
+
+	reader := strings.NewReader(SAMPLE_DATA)
+	bufferedReader := bufio.NewReader(reader)
+	acrossLite, err := importer.Parse(bufferedReader)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,72 +36,122 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Save the puzzle in the database
-	err = puzzle.SavePuzzle(userid)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Save the SVG image of the puzzle
+	filename := filepath.Join(os.TempDir(), "across_lite.svg")
+	svg := cwcomp.NewSVGFromPuzzle(puzzle)
+	svgString := svg.GenerateSVG()
+	svgBytes := []byte(svgString)
+	os.WriteFile(filename, svgBytes, 0644)
 
-	// Reload the puzzle and print it
-	grid, err := cwcomp.LoadPuzzle(userid, "TODO")
-	if err != nil {
-		log.Fatal(err)
-	}
-	cwcomp.DumpPuzzle(grid)
+	log.Printf("SVG written to %v\n", filename)
 }
 
-// Returns the test file name abs(easy.txt)
-func getFileName() string {
-	dirname := filepath.Join("..", "..", "transfer", "acrosslite", "testdata")
-	dirname, _ = filepath.Abs(dirname)
-	filename := filepath.Join(dirname, "easy.txt")
-	return filename
-}
-
-// Creates this user in the database
-func createTestUser() (int, error) {
-	var userid int
-	var err error
-
-	// Connect to the database
-	con, err := cwcomp.Connect()
-	defer con.Close()
-	if err != nil {
-		log.Println(err)
-		return 0, err
-	}
-
-	// Create the test user
-	sql := `INSERT INTO users
-			(username, password, created)
-			VALUES (?, ?, ?)`
-	_, err = con.Exec(sql, USERNAME, getPassword(), getTime())
-	if err != nil {
-		log.Println(err)
-		return 0, err
-	}
-
-	// Get the userid just added
-	rows, _ := con.Query(`SELECT last_insert_rowid()`)
-	defer rows.Close()
-
-	rows.Next()
-	err = rows.Scan(&userid)
-	if err != nil {
-		log.Println(err)
-		return 0, err
-	}
-
-	log.Printf("Added test user\n")
-	return userid, nil
-}
-
-// Returns the encrypted password
-func getPassword() []byte {
-	return cwcomp.Hash256(USERNAME)
-}
-
-// Returns the current time as a string
-func getTime() string {
-	return time.Now().Format(time.RFC3339)
-}
+// Sample file from https://www.litsoft.com/across/docs/AcrossTextFormat.pdf#31
+var SAMPLE_DATA =
+`
+<ACROSS PUZZLE>
+<TITLE> 
+	Politics: Who, what, where and why
+<AUTHOR> 
+	Created by Avalonian
+<COPYRIGHT> 
+	Literate Software Systems
+<SIZE> 
+	15x15
+<GRID>
+	FATE.AWASH.AWOL
+	LIES.CURIO.SHOE
+	ELECTORATE.SIZE
+	ASS.ERST.DIETED
+	...CENT.HOSTESS
+	REFITS.JEWISH..
+	ARITH.KERNS.OAF
+	NILE.ANNES.DUPE
+	DEI.OVENS.LOSER
+	..BODILY.RACERS
+	GLUTEAL.PEPS...
+	RESIST.SLUE.SKI
+	OTTO.REPUBLICAN
+	OMES.IRATE.RAMS
+	MERE.XENON.ABET
+<ACROSS>    			 
+	Destiny
+	Above water, barely
+	Deserter
+	True ------ : Arnold S. movie
+	Novel or rare item
+	If the ---- fits, ...
+	Favorite group of 53 across
+	EEE with 16 across
+	Midsummer's Night Dream character
+	Formerly
+	Ate sparingly
+	Monetary unit
+	She entertains guests
+	Make ready for use again
+	Yiddish, informally
+	Math. subject
+	Parts of typeset characters
+	Clod
+	Egyptian river
+	Bancroft and Archer
+	Fool
+	God in latin
+	Pizza place fixtures
+	Sometimes a dieter is one
+	Physical
+	Some kinds of snakes
+	Of posterior muscles
+	Raises one's spirits
+	Block
+	Swing about
+	--- slopes
+	A dog's name
+	GOP member
+	Of masses
+	Angry
+	Strikes violently
+	Just
+	Inert gas
+	Encourage
+<DOWN>
+	Biting insect
+	Troubles
+	Golf equipments
+	Computer keyboard key
+	Oak seed or fruit
+	Sausage
+	I smell ----
+	Squat
+	Community dances
+	Owned property
+	House on Pennsylvania Ave.
+	Seeps 
+	City NE of Manchester
+	Subject of dentistry
+	Wife of Asiris
+	Use reference
+	"------, Johnny!"
+	South African currency unit
+	Canal or Lake
+	Delaying tactic of 53 across
+	Spinning ------
+	Toll
+	One who mimics
+	Bearers : comb. form
+	Female pilot
+	Medics
+	Homages
+	Coat part
+	Idle
+	Type of sandwich
+	Clean and care for
+	"----- through!"
+	Smallest planet of the Sun
+	Cover
+	One who works despite a strike
+	Glacial ridge
+	Org.
+	Before
+	Tax break savings account
+`

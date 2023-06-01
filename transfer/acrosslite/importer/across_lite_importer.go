@@ -3,8 +3,8 @@ package importer
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
-	"os"
 	"strings"
 
 	al "github.com/philhanna/cwcomp/transfer/acrosslite"
@@ -45,17 +45,12 @@ var StateMap = map[ParsingState]Handler{
 // ---------------------------------------------------------------------
 
 // Parse parses the text in an AcrossLite puzzle
-func Parse(filename string) (*al.AcrossLite, error) {
+func Parse(reader io.Reader) (*al.AcrossLite, error) {
+
+	var err error
 
 	// Initialize a new AcrossLite structure
 	pal := al.NewAcrossLite()
-
-	// Open the file
-	fp, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer fp.Close()
 
 	// -----------------------------------------------------------------
 	// Now run the finite state machine:
@@ -70,7 +65,7 @@ func Parse(filename string) (*al.AcrossLite, error) {
 
 	state := INIT
 
-	scanner := bufio.NewScanner(fp)
+	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		line := scanner.Text()
 		line = strings.TrimSpace(line)
