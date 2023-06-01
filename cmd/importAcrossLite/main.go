@@ -48,8 +48,7 @@ func main() {
 
 // Sample file from https://www.litsoft.com/across/docs/AcrossTextFormat.pdf#31
 var SAMPLE_DATA =
-`
-<ACROSS PUZZLE>
+`<ACROSS PUZZLE>
 <TITLE> 
 	Politics: Who, what, where and why
 <AUTHOR> 
