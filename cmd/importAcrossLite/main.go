@@ -22,7 +22,6 @@ func main() {
 
 	// Load easy.txt into an AcrossLite structure
 
-
 	reader := strings.NewReader(SAMPLE_DATA)
 	bufferedReader := bufio.NewReader(reader)
 	acrossLite, err := importer.Parse(bufferedReader)
@@ -47,8 +46,7 @@ func main() {
 }
 
 // Sample file from https://www.litsoft.com/across/docs/AcrossTextFormat.pdf#31
-var SAMPLE_DATA =
-`<ACROSS PUZZLE>
+var SAMPLE_DATA = `<ACROSS PUZZLE>
 <TITLE> 
 	Politics: Who, what, where and why
 <AUTHOR> 

@@ -25,4 +25,3 @@ const (
 	READING_NOTEPAD
 	DONE
 )
-
