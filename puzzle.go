@@ -185,7 +185,7 @@ func ImportPuzzle(source Importer) (*Puzzle, error) {
 
 	// Now set the clues
 	setClues := func(direction Direction, clueMapGetter func() map[int]string) {
-		
+
 		clues := clueMapGetter()
 		for _, wn := range puzzle.wordNumbers {
 			seq := wn.seq
@@ -193,7 +193,7 @@ func ImportPuzzle(source Importer) (*Puzzle, error) {
 			if word != nil {
 				clue := clues[seq]
 				puzzle.SetClue(word, clue)
-			}	
+			}
 		}
 	}
 

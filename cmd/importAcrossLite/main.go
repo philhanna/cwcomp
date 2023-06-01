@@ -37,7 +37,7 @@ func main() {
 
 	// Dump the puzzle and clues
 	cwcomp.DumpPuzzle(puzzle)
-	
+
 	// Save the SVG image of the puzzle
 	filename := filepath.Join(os.TempDir(), "across_lite.svg")
 	svg := cwcomp.NewSVGFromPuzzle(puzzle)
@@ -46,7 +46,7 @@ func main() {
 	os.WriteFile(filename, svgBytes, 0644)
 
 	log.Printf("SVG written to %v\n", filename)
-	
+
 }
 
 // Sample file from https://www.litsoft.com/across/docs/AcrossTextFormat.pdf#31

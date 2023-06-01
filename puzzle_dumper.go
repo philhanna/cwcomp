@@ -22,7 +22,7 @@ func DumpPuzzle(puzzle *Puzzle) {
 		}
 	}
 	fmt.Println(puzzle.String())
-	
+
 	dumpClues := func(direction Direction) {
 		for _, wn := range puzzle.wordNumbers {
 			seq := wn.seq
