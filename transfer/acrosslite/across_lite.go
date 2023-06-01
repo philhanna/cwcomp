@@ -59,7 +59,13 @@ func (self *AcrossLite) GetCell(r, c int) (byte, error) {
 		return 0, fmt.Errorf("Invalid index: r=%d,c=%d", r, c)
 	}
 	i, j := r-1, c-1
-	return self.Grid[i][j], nil
+
+	letter := self.Grid[i][j]
+	if letter == byte('.') {
+		letter = byte('\x00')
+	}
+
+	return letter, nil
 }
 
 // GetAcrossClues returns the clues to the across words.  The slice
