@@ -31,13 +31,9 @@ type Importer interface {
 	// not in the alphabet A-Z, an error is returned.
 	GetCell(r, c int) (byte, error)
 
-	// Returns the clues to the across words.  The slice index is one
-	// less than the word number.  Words with no clue yet still occupy a
-	// position in the slice containing the empty string.
-	GetAcrossClues() []string
+	// Returns a map of across word numbers to clues
+	GetAcrossClues() map[int]string
 
-	// Returns the clues to the down words.  The slice index is one less
-	// than the word number.  Words with no clue yet still occupy a
-	// position in the slice containing the empty string.
-	GetDownClues() []string
+	// Returns a map of down word numbers to clues
+	GetDownClues() map[int]string
 }

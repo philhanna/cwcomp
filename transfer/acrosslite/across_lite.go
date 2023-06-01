@@ -1,6 +1,8 @@
 package export
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // ---------------------------------------------------------------------
 // Type definitions
@@ -11,13 +13,14 @@ import "fmt"
 // https://www.litsoft.com/.  It is described in
 // https://www.litsoft.com/across/docs/AcrossTextFormat.pdf#31
 type AcrossLite struct {
+	Name        string
 	Title       string
 	Author      string
 	Copyright   string
 	Size        int
 	Grid        []string
-	AcrossClues []string
-	DownClues   []string
+	AcrossClues map[int]string
+	DownClues   map[int]string
 	Notepad     []string
 }
 
@@ -30,8 +33,8 @@ type AcrossLite struct {
 func NewAcrossLite() *AcrossLite {
 	pal := new(AcrossLite)
 	pal.Grid = make([]string, 0)
-	pal.AcrossClues = make([]string, 0)
-	pal.DownClues = make([]string, 0)
+	pal.AcrossClues = make(map[int]string)
+	pal.DownClues = make(map[int]string)
 	pal.Notepad = make([]string, 0)
 	return pal
 }
@@ -50,7 +53,11 @@ func (self *AcrossLite) GetSize() int {
 //
 // This is not the same as the puzzle title
 func (self *AcrossLite) GetName() string {
-	return "TODO" // TODO figure out a way to supply this
+	return self.Name
+}
+
+func (self *AcrossLite) SetName(name string) {
+	self.Name = name
 }
 
 // GetTitle returns the puzzle title, which is a descriptive string that
@@ -83,16 +90,12 @@ func (self *AcrossLite) GetCell(r, c int) (byte, error) {
 	return letter, nil
 }
 
-// GetAcrossClues returns the clues to the across words.  The slice
-// index is one less than the word number.  Words with no clue yet still
-// occupy a position in the slice containing the empty string.
-func (self *AcrossLite) GetAcrossClues() []string {
+// GetAcrossClues returns a map of across word numbers to their clues.
+func (self *AcrossLite) GetAcrossClues() map[int]string {
 	return self.AcrossClues
 }
 
-// GetDownClues returns the clues to the down words.  The slice index is
-// one less than the word number.  Words with no clue yet still occupy a
-// position in the slice containing the empty string.
-func (self *AcrossLite) GetDownClues() []string {
+// GetAcrossClues returns a map of down word numbers to their clues.
+func (self *AcrossLite) GetDownClues() map[int]string {
 	return self.DownClues
 }

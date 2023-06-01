@@ -184,30 +184,21 @@ func ImportPuzzle(source Importer) (*Puzzle, error) {
 	puzzle.RenumberCells()
 
 	// Now set the clues
-	setClues := func(direction Direction) {
+	setClues := func(direction Direction, clueMapGetter func() map[int]string) {
 		
-		var clues []string
-		var clueIndex int
-
-		switch direction {
-		case ACROSS:
-			clues = source.GetAcrossClues()
-		case DOWN:
-			clues = source.GetDownClues()
-		}
+		clues := clueMapGetter()
 		for _, wn := range puzzle.wordNumbers {
 			seq := wn.seq
 			word := puzzle.LookupWordByNumber(seq, direction)
 			if word != nil {
-				clue := clues[clueIndex]
-				clueIndex++
+				clue := clues[seq]
 				puzzle.SetClue(word, clue)
 			}	
 		}
 	}
 
-	setClues(ACROSS)
-	setClues(DOWN)
+	setClues(ACROSS, source.GetAcrossClues)
+	setClues(DOWN, source.GetDownClues)
 
 	return puzzle, nil
 }

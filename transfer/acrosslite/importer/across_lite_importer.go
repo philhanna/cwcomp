@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"sort"
 	"strings"
 
+	"github.com/philhanna/cwcomp"
 	al "github.com/philhanna/cwcomp/transfer/acrosslite"
 )
 
@@ -112,5 +114,82 @@ func Parse(reader io.Reader) (*al.AcrossLite, error) {
 		// OK
 	}
 
+	// Since we don't know the word numbers until the parsing is
+	// complete, we assigned temporary word numbers to all the clues. We
+	// are now in a position to renumber the words and assign the keys
+	// in the map correctly.
+
+	patchWordNumbers(pal)
+
 	return pal, nil
+}
+
+func patchWordNumbers(pal *al.AcrossLite) {
+
+	// Create an n x n grid that we can renumber
+	n := pal.GetSize()
+	cells := make([][]byte, n)
+	for i := 0; i < n; i++ {
+		cells[i] = make([]byte, n)
+	}
+
+	// Convert the grid strings into this simple byte matrix
+	// so that we can calculate the word numbers.
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			letter := pal.Grid[i][j]
+			if letter == '.' {
+				letter = cwcomp.BLACK_CELL
+			}
+			cells[i][j] = letter
+		}
+	}
+
+	// Now get the actual word numbers using the logic in the main package.
+	numberedCells := cwcomp.GetNumberedCells(cells)
+
+	// Internal function to create a new map of word numbers to clues in
+	// the given direction.
+	remap := func(direction cwcomp.Direction, oldClues map[int]string) map[int]string {
+
+		// Get a sorted list of the old clue indices
+		oldSeqs := make([]int, 0)
+		for oldIndex := range oldClues {
+			oldSeqs = append(oldSeqs, oldIndex)
+		}
+		sort.Ints(oldSeqs)
+
+		// Internal function to return true if the given word number
+		// starts a word in the given direction.
+		isWordInThisDirection := func(nc cwcomp.NumberedCell, direction cwcomp.Direction) bool {
+			switch direction {
+			case cwcomp.ACROSS:
+				return nc.StartA
+			case cwcomp.DOWN:
+				return nc.StartD
+			}
+			panic(direction)
+		}
+
+		// Get a sorted list of the new clue indices
+		newSeqs := make([]int, 0)
+		for _, nc := range numberedCells {
+			if isWordInThisDirection(nc, direction) {
+				newSeqs = append(newSeqs, nc.Seq)
+			}
+		}
+		sort.Ints(newSeqs)
+
+		// Now build a new map of sequence numbers to clues
+		newClues := make(map[int]string)
+		for oldSeq, newSeq := range newSeqs {
+			newClues[newSeq] = oldClues[oldSeq]
+		}
+		return newClues
+	}
+
+	// Replace the old clue maps with the new ones
+	pal.AcrossClues = remap(cwcomp.ACROSS, pal.AcrossClues)
+	pal.DownClues = remap(cwcomp.DOWN, pal.DownClues)
+
 }
