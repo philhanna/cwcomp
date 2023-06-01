@@ -37,6 +37,9 @@ func main() {
 
 	// Import the AcrossLite structure into a Puzzle object
 	puzzle, err := cwcomp.ImportPuzzle(acrossLite)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Save the puzzle in the database
 	err = puzzle.SavePuzzle(userid)
