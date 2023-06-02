@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog].
 ## [Unreleased]
 - Refactored LetterCell
 - Added diagnostic routines
+- Moved svg code to an `svg` package
   
 ## [v0.7.0] - 2023-05-30
 - Renamed `grid*` to `puzzle*`
