@@ -1,9 +1,11 @@
-package cwcomp
+package svg
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/philhanna/cwcomp"
 )
 
 // ---------------------------------------------------------------------
@@ -52,8 +54,8 @@ func NewSVG(cells [][]byte) *SVG {
 
 // NewSVGFromPuzzle will create a new SVG object from a grid, delegating
 // that to NewSVG after creating the simple cell matrix it needs.
-func NewSVGFromPuzzle(puzzle *Puzzle) *SVG {
-	cells := PuzzleToSimpleMatrix(puzzle)
+func NewSVGFromPuzzle(puzzle *cwcomp.Puzzle) *SVG {
+	cells := cwcomp.PuzzleToSimpleMatrix(puzzle)
 	return NewSVG(cells)
 }
 
@@ -162,7 +164,7 @@ func (svg *SVG) Cells() string {
 		yBase := (r - 1) * BOXSIZE
 		for c := 1; c <= svg.n; c++ {
 			xBase := (c - 1) * BOXSIZE
-			if svg.cells[r-1][c-1] == BLACK_CELL {
+			if svg.cells[r-1][c-1] == cwcomp.BLACK_CELL {
 				sb.WriteString(fmt.Sprintf(
 					"<rect x=%q y=%q width=%q height=%q fill=%q/>\n",
 					strconv.Itoa(xBase),
@@ -193,7 +195,7 @@ func (svg *SVG) Cells() string {
 func (svg *SVG) WordNumbers() string {
 	sb := strings.Builder{}
 	sb.WriteString("\n<!-- Word numbers -->\n")
-	for _, nc := range GetNumberedCells(svg.cells) {
+	for _, nc := range cwcomp.GetNumberedCells(svg.cells) {
 		seq := nc.Seq
 		xbase := (nc.Col-1)*BOXSIZE + NUMBER_X_OFFSET
 		ybase := (nc.Row-1)*BOXSIZE + NUMBER_Y_OFFSET

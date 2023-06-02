@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/philhanna/cwcomp"
+	"github.com/philhanna/cwcomp/svg"
 	"github.com/philhanna/cwcomp/transfer/acrosslite/importer"
 )
 
@@ -40,7 +41,7 @@ func main() {
 
 	// Save the SVG image of the puzzle
 	filename := filepath.Join(os.TempDir(), "across_lite.svg")
-	svg := cwcomp.NewSVGFromPuzzle(puzzle)
+	svg := svg.NewSVGFromPuzzle(puzzle)
 	svgString := svg.GenerateSVG()
 	svgBytes := []byte(svgString)
 	os.WriteFile(filename, svgBytes, 0644)

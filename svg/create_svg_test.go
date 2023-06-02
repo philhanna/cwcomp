@@ -1,8 +1,11 @@
-package cwcomp
+package svg
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/philhanna/cwcomp"
 )
 
 const BLK = byte('\x00')
@@ -26,27 +29,32 @@ func TestSVG_GenerateSVG(t *testing.T) {
 	cells := getMatrix()
 	svg := NewSVG(cells)
 	have := svg.GenerateSVG()
-	if true { // Change this to true if you want to write the file
-		os.WriteFile("testdata/simple_matrix.svg", []byte(have), 0644)
-	}
+	filename := filepath.Join(getOutputDirectory(), "simple_matrix.svg")
+	os.WriteFile(filename, []byte(have), 0644)
+}
+
+func getOutputDirectory() string {
+	output := filepath.Join(os.TempDir(), "cwcomp")
+	os.MkdirAll(output, 0750)
+	return output
 }
 
 func TestSVG_NewSVGFromPuzzle(t *testing.T) {
-	puzzle := NewPuzzle(9)
+	puzzle := cwcomp.NewPuzzle(9)
 	blackCells := [][]int{
 		{1, 1}, {1, 5}, {2, 5}, {3, 5}, {4, 9}, {5, 1}, {5, 2}, {5, 3},
 	}
 	for _, pair := range blackCells {
 		r, c := pair[0], pair[1]
-		point := NewPoint(r, c)
+		point := cwcomp.NewPoint(r, c)
 		puzzle.Toggle(point)
 	}
-	puzzle.SetLetter(NewPoint(5, 4), "O")
-	puzzle.SetLetter(NewPoint(5, 5), "A")
-	puzzle.SetLetter(NewPoint(5, 6), "F")
+	puzzle.SetLetter(cwcomp.NewPoint(5, 4), "O")
+	puzzle.SetLetter(cwcomp.NewPoint(5, 5), "A")
+	puzzle.SetLetter(cwcomp.NewPoint(5, 6), "F")
 	svg := NewSVGFromPuzzle(puzzle)
 	have := svg.GenerateSVG()
-	if true { // Change this to true if you want to write the file
-		os.WriteFile("testdata/from_puzzle.svg", []byte(have), 0644)
-	}
+	filename := filepath.Join(getOutputDirectory(), "from_puzzle.svg")
+	os.WriteFile(filename, []byte(have), 0644)
+
 }
