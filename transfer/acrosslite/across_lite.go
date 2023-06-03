@@ -13,11 +13,11 @@ import (
 // https://www.litsoft.com/.  It is described in
 // https://www.litsoft.com/across/docs/AcrossTextFormat.pdf#31
 type AcrossLite struct {
+	Size        int
 	Name        string
 	Title       string
 	Author      string
 	Copyright   string
-	Size        int
 	Grid        []string
 	AcrossClues map[int]string
 	DownClues   map[int]string
