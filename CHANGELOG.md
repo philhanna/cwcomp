@@ -4,9 +4,12 @@ This project adheres to [Semantic Versioning].
 The format is based on [Keep a Changelog].
 	
 ## [Unreleased]
+
+## [v0.8.0] - 2023-06-03
+- Added importer for AcrossLite text files
+- Moved svg code to an `svg` package
 - Refactored LetterCell
 - Added diagnostic routines
-- Moved svg code to an `svg` package
   
 ## [v0.7.0] - 2023-05-30
 - Renamed `grid*` to `puzzle*`
@@ -45,7 +48,8 @@ Development version with complete grid package
 
 [Semantic Versioning]: http://semver.org
 [Keep a Changelog]: http://keepachangelog.com
-[Unreleased]: https://github.com/philhanna/cwcomp/compare/v0.7.0..HEAD
+[Unreleased]: https://github.com/philhanna/cwcomp/compare/v0.8.0..HEAD
+[v0.8.0]: https://github.com/philhanna/cwcomp/compare/v0.7.0..v0.8.0
 [v0.7.0]: https://github.com/philhanna/cwcomp/compare/v0.6.0..v0.7.0
 [v0.6.0]: https://github.com/philhanna/cwcomp/compare/v0.5.0..v0.6.0
 [v0.5.0]: https://github.com/philhanna/cwcomp/compare/v0.4.0..v0.5.0
