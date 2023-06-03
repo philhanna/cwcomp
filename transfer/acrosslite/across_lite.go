@@ -21,7 +21,7 @@ type AcrossLite struct {
 	Grid        []string
 	AcrossClues map[int]string
 	DownClues   map[int]string
-	Notepad     []string
+	Notepad     string
 }
 
 // ---------------------------------------------------------------------
@@ -35,7 +35,6 @@ func NewAcrossLite() *AcrossLite {
 	pal.Grid = make([]string, 0)
 	pal.AcrossClues = make(map[int]string)
 	pal.DownClues = make(map[int]string)
-	pal.Notepad = make([]string, 0)
 	return pal
 }
 
