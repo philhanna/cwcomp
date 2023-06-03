@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning].
 The format is based on [Keep a Changelog].
 	
 ## [Unreleased]
+- Added exporter methods to AcrossLite structure
 
 ## [v0.8.0] - 2023-06-03
 - Added importer for AcrossLite text files
