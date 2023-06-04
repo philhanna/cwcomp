@@ -48,6 +48,15 @@ func (self *AcrossLite) GetSize() int {
 	return self.Size
 }
 
+// SetSize sets the number of rows or columns in this puzzle
+func (self *AcrossLite) SetSize(n int) {
+	self.Size = n
+	self.Grid = make([]string, n)
+	for i := 0; i < n; i++ {
+		self.Grid[i] = strings.Repeat(" ", n)
+	}
+}
+
 // GetName returns the puzzle name, which will be used as part of the
 // key in the database representation.
 //
