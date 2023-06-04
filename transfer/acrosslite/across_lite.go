@@ -99,7 +99,7 @@ func (self *AcrossLite) GetCopyright() string {
 
 // SetCopyright sets the copyright line
 func (self *AcrossLite) SetCopyright(copyright string) {
-	self.Author = copyright
+	self.Copyright = copyright
 }
 
 // GetGrid returns the list of strings in the grid

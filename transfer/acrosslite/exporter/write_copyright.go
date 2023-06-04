@@ -9,5 +9,5 @@ import (
 // WriteCopyright writes the <COPYRIGHT> entry
 func WriteCopyright(pal *al.AcrossLite) string {
 	const TAG = `<COPYRIGHT>`
-	return fmt.Sprintf("%s\n\t%s", TAG, pal.GetCopyright())
+	return fmt.Sprintf("%s\n    %s", TAG, pal.GetCopyright())
 }

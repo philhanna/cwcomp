@@ -12,9 +12,9 @@ func WriteAcrossClues(pal *al.AcrossLite) string {
 	const TAG = "<ACROSS>"
 	parts := make([]string, 0)
 	for _, clue := range pal.GetAcrossClues() {
-		parts = append(parts, fmt.Sprintf("\t%s", clue))
+		parts = append(parts, fmt.Sprintf("    %s", clue))
 	}
 	section := strings.Join(parts, "\n")
-	result := fmt.Sprintf("%s\n\t%s", TAG, section)
+	result := fmt.Sprintf("%s\n%s", TAG, section)
 	return result
 }

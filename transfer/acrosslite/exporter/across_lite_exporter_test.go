@@ -49,7 +49,7 @@ func getTestStructure() (*al.AcrossLite, error)  {
 		2: "Pain expression",
 		3: "Starts with WE",
 		7: "Sacred animal",
-		20: "No why but",
+		20: "Not why but",
 	}
 	pal.SetDownClues(clueMap)
 

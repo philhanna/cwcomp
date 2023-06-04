@@ -12,7 +12,7 @@ func WriteGrid(pal *al.AcrossLite) string {
 	n := pal.GetSize()
 	parts := make([]string, n)
 	for i, line := range pal.GetGrid() {
-		parts[i] = "\t" + line
+		parts[i] = "    " + line
 	}
 	section := strings.Join(parts, "\n")
 	result := TAG + "\n" + section

@@ -9,5 +9,5 @@ import (
 // WriteTitle writes the <TITLE> entry
 func WriteTitle(pal *al.AcrossLite) string {
 	const TAG = `<TITLE>`
-	return fmt.Sprintf("%s\n\t%s", TAG, pal.GetTitle())
+	return fmt.Sprintf("%s\n    %s", TAG, pal.GetTitle())
 }

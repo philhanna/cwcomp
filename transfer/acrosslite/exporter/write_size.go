@@ -10,5 +10,5 @@ import (
 func WriteSize(pal *al.AcrossLite) string {
 	const TAG = `<SIZE>`
 	n := pal.GetSize()
-	return fmt.Sprintf("%s\n\t%dx%d\n", TAG, n, n)
+	return fmt.Sprintf("%s\n    %dx%d", TAG, n, n)
 }

@@ -8,5 +8,5 @@ import (
 // WriteAuthor writes the <AUTHOR> entry
 func WriteAuthor(pal *al.AcrossLite) string {
 	const TAG = `<AUTHOR>`
-	return fmt.Sprintf("%s\n\t%s", TAG, pal.GetAuthor())
+	return fmt.Sprintf("%s\n    %s", TAG, pal.GetAuthor())
 }
