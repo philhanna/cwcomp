@@ -2,8 +2,8 @@ package acrosslite
 
 import (
 	"fmt"
-	"strings"
 	"time"
+	"strings"
 )
 
 // ---------------------------------------------------------------------
