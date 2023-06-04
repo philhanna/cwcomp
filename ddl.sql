@@ -1,4 +1,5 @@
 PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
 CREATE TABLE users (
     userid          INTEGER PRIMARY KEY,    -- User ID
     username        TEXT NOT NULL UNIQUE,   -- User name
@@ -13,6 +14,21 @@ CREATE TABLE users (
     address_state   TEXT,                   -- Author state code
     address_zip     TEXT                    -- Author zip code
 );
+INSERT INTO users VALUES(
+    1,
+    'ph1204',
+    X'04a9660f69a5deebd8cf5b2d8f5074143b52472c174dc5f6980d014f0603f843',
+    '1953-12-04T08:30:00',
+    'ph1204@gmail.com',
+    '2020-07-07T03:33:01.264065',
+    'Phil and Mary Hanna',
+    '7500 Cadbury Court',
+    'Apt. 202',
+    'Raleigh',
+    'NC',
+    '27615'
+    );
+
 CREATE TABLE puzzles (
     id              INTEGER PRIMARY KEY,    -- Puzzle ID
     userid          INTEGER NOT NULL,       -- User who owns the puzzle
@@ -39,4 +55,4 @@ CREATE TABLE words (
     PRIMARY KEY (id, r, c, dir),
     FOREIGN KEY (id) REFERENCES puzzles (id) ON DELETE CASCADE
 );
-
+COMMIT;
