@@ -2,7 +2,6 @@ package exporter
 
 import (
 	"bufio"
-	"encoding/json"
 	"os"
 	"testing"
 	"time"
@@ -16,7 +15,7 @@ func getTestStructure() (*al.AcrossLite, error) {
 	pal := al.NewAcrossLite()
 	n := 9
 	pal.SetTitle("My title")
-	// pal.SetAuthor("Phil Hanna")
+	pal.SetAuthor("Phil Hanna")
 	pal.SetCopyright("2023")
 	pal.SetSize(n)
 	cellStrings := []string{
@@ -52,26 +51,8 @@ func getTestStructure() (*al.AcrossLite, error) {
 		20: "Not why but",
 	}
 	pal.SetDownClues(clueMap)
-
-	if false {
-		type Extra struct {
-			Created  string
-			Modified string
-		}
-		const ISO8601 = "2006-01-02T15:04:05.999999"
-		created := time.Now()
-		modified := time.Now().Add(3 * 24 * time.Hour)
-		extra := Extra{
-			Created:  created.Format(ISO8601),
-			Modified: modified.Format(ISO8601),
-		}
-		jsonblob, err := json.Marshal(extra)
-		if err != nil {
-			return pal, err
-		}
-		jsonstr := string(jsonblob)
-		pal.SetNotepad(jsonstr)
-	}
+	pal.SetCreatedDate(time.Now())
+	pal.SetModifiedDate(time.Now().Add(3 * 24 * time.Hour))
 	return pal, nil
 }
 
