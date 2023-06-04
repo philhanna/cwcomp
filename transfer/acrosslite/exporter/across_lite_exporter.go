@@ -33,9 +33,7 @@ func Write(pal *al.AcrossLite, writer io.Writer) error {
 	sb.WriteString(WriteGrid(pal) + "\n")
 	sb.WriteString(WriteAcrossClues(pal) + "\n")
 	sb.WriteString(WriteDownClues(pal) + "\n")
-	if pal.GetNotepad() != "" {
-		sb.WriteString(WriteNotepad(pal) + "\n")
-	}
+	sb.WriteString(WriteNotepad(pal) + "\n")
 
 	// Write the results
 	result := sb.String()
