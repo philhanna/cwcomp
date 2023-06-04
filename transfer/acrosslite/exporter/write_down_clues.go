@@ -11,7 +11,15 @@ import (
 func WriteDownClues(pal *al.AcrossLite) string {
 	const TAG = "<DOWN>"
 	parts := make([]string, 0)
-	for _, clue := range pal.GetDownClues() {
+	clueMap := pal.GetDownClues()
+
+	// Must do this in sorted order
+	keys := []int{}
+	for seq := range clueMap {
+		keys = append(keys, seq)
+	}
+	for _, seq := range keys {
+		clue := clueMap[seq]
 		parts = append(parts, fmt.Sprintf("    %s", clue))
 	}
 	section := strings.Join(parts, "\n")

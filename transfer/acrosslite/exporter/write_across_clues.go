@@ -11,7 +11,15 @@ import (
 func WriteAcrossClues(pal *al.AcrossLite) string {
 	const TAG = "<ACROSS>"
 	parts := make([]string, 0)
-	for _, clue := range pal.GetAcrossClues() {
+	clueMap := pal.GetAcrossClues()
+
+	// Must do this in sorted order
+	keys := []int{}
+	for seq := range clueMap {
+		keys = append(keys, seq)
+	}
+	for _, seq := range keys {
+		clue := clueMap[seq]
 		parts = append(parts, fmt.Sprintf("    %s", clue))
 	}
 	section := strings.Join(parts, "\n")
