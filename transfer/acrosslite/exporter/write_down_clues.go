@@ -2,6 +2,7 @@ package exporter
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	al "github.com/philhanna/cwcomp/transfer/acrosslite"
@@ -18,6 +19,7 @@ func WriteDownClues(pal *al.AcrossLite) string {
 	for seq := range clueMap {
 		keys = append(keys, seq)
 	}
+	sort.Ints(keys)
 	for _, seq := range keys {
 		clue := clueMap[seq]
 		parts = append(parts, fmt.Sprintf("    %s", clue))
