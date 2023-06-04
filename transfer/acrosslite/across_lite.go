@@ -1,8 +1,9 @@
-package export
+package acrosslite
 
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 // ---------------------------------------------------------------------
@@ -14,16 +15,22 @@ import (
 // https://www.litsoft.com/.  It is described in
 // https://www.litsoft.com/across/docs/AcrossTextFormat.pdf#31
 type AcrossLite struct {
-	Size        int
-	Name        string
-	Title       string
-	Author      string
-	Copyright   string
-	Grid        []string
-	AcrossClues map[int]string
-	DownClues   map[int]string
-	Notepad     string
+	Size         int
+	Name         string
+	Title        string
+	Author       string
+	Copyright    string
+	Grid         []string
+	AcrossClues  map[int]string
+	DownClues    map[int]string
+	CreatedDate  time.Time
+	ModifiedDate time.Time
 }
+
+// ---------------------------------------------------------------------
+// Constants and variables
+// ---------------------------------------------------------------------
+const ISO8601 = "2006-01-02T15:04:05.999999"
 
 // ---------------------------------------------------------------------
 // Constructor
@@ -36,6 +43,7 @@ func NewAcrossLite() *AcrossLite {
 	pal.Grid = make([]string, 0)
 	pal.AcrossClues = make(map[int]string)
 	pal.DownClues = make(map[int]string)
+
 	return pal
 }
 
@@ -110,9 +118,30 @@ func (self *AcrossLite) GetDownClues() map[int]string {
 	return self.DownClues
 }
 
+// GetCreatedDate returns the creation date timestamp. If one has not
+// been specified, uses current date/time.
+func (self *AcrossLite) GetCreatedDate() time.Time {
+	if self.CreatedDate.IsZero() {
+		self.CreatedDate = time.Now()
+	}
+	return self.CreatedDate
+}
+
+// GetModifiedDate returns the modified date timestamp. If one has not
+// been specified, uses current date/time.
+func (self *AcrossLite) GetModifiedDate() time.Time {
+	if self.ModifiedDate.IsZero() {
+		self.ModifiedDate = time.Now().Add(3 * 24 * time.Hour)
+	}
+	return self.ModifiedDate
+}
+
 // GetNotepad returns the <NOTEPAD> entry, which may be empty
 func (self *AcrossLite) GetNotepad() string {
-	return self.Notepad
+	parts := make([]string, 2)
+	parts[0] = fmt.Sprintf("%q:%q", "created", self.GetCreatedDate().Format(ISO8601))
+	parts[1] = fmt.Sprintf("%q:%q", "modified", self.GetModifiedDate().Format(ISO8601))
+	return "{" + strings.Join(parts, ",") + "}"
 }
 
 // ---------------------------------------------------------------------
@@ -202,7 +231,12 @@ func (self *AcrossLite) SetDownClues(clueMap map[int]string) {
 	self.DownClues = clueMap
 }
 
-// SetNotepad sets the <NOTEPAD> entry
-func (self *AcrossLite) SetNotepad(s string) {
-	self.Notepad = s
+// SetCreatedDate sets the creation datetime
+func (self *AcrossLite) SetCreatedDate(created time.Time) {
+	self.CreatedDate = created
+}
+
+// SetModifiedDate sets the modified datetime
+func (self *AcrossLite) SetModifiedDate(modified time.Time) {
+	self.ModifiedDate = modified
 }
