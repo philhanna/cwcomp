@@ -73,6 +73,31 @@ func (self *AcrossLite) SetTitle(title string) {
 	self.Title = title
 }
 
+// GetAuthor returns the author line
+func (self *AcrossLite) GetAuthor() string {
+	return self.Author
+}
+
+// SetAuthor sets the author line
+func (self *AcrossLite) SetAuthor(author string) {
+	self.Author = author
+}
+
+// GetCopyright returns the copyright line
+func (self *AcrossLite) GetCopyright() string {
+	return self.Copyright
+}
+
+// SetCopyright sets the copyright line
+func (self *AcrossLite) SetCopyright(copyright string) {
+	self.Author = copyright
+}
+
+// GetGrid returns the list of strings in the grid
+func (self *AcrossLite) GetGrid() []string {
+	return self.Grid
+}
+
 // GetCell returns the letter at a given point in the grid.  These are
 // relative to 1, not 0, so
 //
