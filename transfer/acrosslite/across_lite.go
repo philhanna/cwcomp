@@ -39,22 +39,9 @@ func NewAcrossLite() *AcrossLite {
 	return pal
 }
 
-// ---------------------------------------------------------------------
-// Implementation of Importer interface
-// ---------------------------------------------------------------------
-
 // GetSize returns the number of rows or columns in this puzzle
 func (self *AcrossLite) GetSize() int {
 	return self.Size
-}
-
-// SetSize sets the number of rows or columns in this puzzle
-func (self *AcrossLite) SetSize(n int) {
-	self.Size = n
-	self.Grid = make([]string, n)
-	for i := 0; i < n; i++ {
-		self.Grid[i] = strings.Repeat(" ", n)
-	}
 }
 
 // GetName returns the puzzle name, which will be used as part of the
@@ -65,11 +52,6 @@ func (self *AcrossLite) GetName() string {
 	return self.Name
 }
 
-// SetName sets the puzzle nme
-func (self *AcrossLite) SetName(name string) {
-	self.Name = name
-}
-
 // GetTitle returns the puzzle title, which is a descriptive string that
 // is typically used as the heading of the page it is printed on in the
 // newspaper.
@@ -77,29 +59,14 @@ func (self *AcrossLite) GetTitle() string {
 	return self.Title
 }
 
-// SetTitle sets the puzzle title
-func (self *AcrossLite) SetTitle(title string) {
-	self.Title = title
-}
-
 // GetAuthor returns the author line
 func (self *AcrossLite) GetAuthor() string {
 	return self.Author
 }
 
-// SetAuthor sets the author line
-func (self *AcrossLite) SetAuthor(author string) {
-	self.Author = author
-}
-
 // GetCopyright returns the copyright line
 func (self *AcrossLite) GetCopyright() string {
 	return self.Copyright
-}
-
-// SetCopyright sets the copyright line
-func (self *AcrossLite) SetCopyright(copyright string) {
-	self.Copyright = copyright
 }
 
 // GetGrid returns the list of strings in the grid
@@ -131,6 +98,54 @@ func (self *AcrossLite) GetCell(r, c int) (byte, error) {
 	}
 
 	return letter, nil
+}
+
+// GetAcrossClues returns a map of across word numbers to their clues.
+func (self *AcrossLite) GetAcrossClues() map[int]string {
+	return self.AcrossClues
+}
+
+// GetAcrossClues returns a map of down word numbers to their clues.
+func (self *AcrossLite) GetDownClues() map[int]string {
+	return self.DownClues
+}
+
+// GetNotepad returns the <NOTEPAD> entry, which may be empty
+func (self *AcrossLite) GetNotepad() string {
+	return self.Notepad
+}
+
+// ---------------------------------------------------------------------
+// Implementation of Exporter interface
+// ---------------------------------------------------------------------
+
+// SetSize sets the number of rows or columns in this puzzle
+func (self *AcrossLite) SetSize(n int) {
+	self.Size = n
+	self.Grid = make([]string, n)
+	for i := 0; i < n; i++ {
+		self.Grid[i] = strings.Repeat(" ", n)
+	}
+}
+
+// SetName sets the puzzle nme
+func (self *AcrossLite) SetName(name string) {
+	self.Name = name
+}
+
+// SetTitle sets the puzzle title
+func (self *AcrossLite) SetTitle(title string) {
+	self.Title = title
+}
+
+// SetAuthor sets the author line
+func (self *AcrossLite) SetAuthor(author string) {
+	self.Author = author
+}
+
+// SetCopyright sets the copyright line
+func (self *AcrossLite) SetCopyright(copyright string) {
+	self.Copyright = copyright
 }
 
 // SetCell sets the letter at a given point in the grid.  These are
@@ -177,29 +192,14 @@ func (self *AcrossLite) SetCell(r, c int, letter byte) error {
 	return nil
 }
 
-// GetAcrossClues returns a map of across word numbers to their clues.
-func (self *AcrossLite) GetAcrossClues() map[int]string {
-	return self.AcrossClues
-}
-
 // SetAcrossClues sets the across clue map
 func (self *AcrossLite) SetAcrossClues(clueMap map[int]string) {
 	self.AcrossClues = clueMap
 }
 
-// GetAcrossClues returns a map of down word numbers to their clues.
-func (self *AcrossLite) GetDownClues() map[int]string {
-	return self.DownClues
-}
-
 // SetDownClues sets the down clue map
 func (self *AcrossLite) SetDownClues(clueMap map[int]string) {
 	self.DownClues = clueMap
-}
-
-// GetNotepad returns the <NOTEPAD> entry, which may be empty
-func (self *AcrossLite) GetNotepad() string {
-	return self.Notepad
 }
 
 // SetNotepad sets the <NOTEPAD> entry
