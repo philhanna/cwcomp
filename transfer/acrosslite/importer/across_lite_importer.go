@@ -71,6 +71,7 @@ func Parse(reader io.Reader) (*al.AcrossLite, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		line = strings.TrimSpace(line)
+		line = strings.ReplaceAll(line, "_", " ")
 		handler, found := StateMap[state]
 		if found {
 			state, err = handler(pal, line)
