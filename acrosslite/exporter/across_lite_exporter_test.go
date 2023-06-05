@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 	"github.com/stretchr/testify/assert"
 )
 

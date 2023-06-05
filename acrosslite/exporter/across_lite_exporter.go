@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // ---------------------------------------------------------------------
@@ -38,11 +38,7 @@ func Write(pal *al.AcrossLite, writer io.Writer) error {
 	// Write the results
 	result := sb.String()
 	blob := []byte(result)
-	nBytes, err := writer.Write(blob)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
+	nBytes, _ := writer.Write(blob)
 	log.Printf("Wrote %d bytes to output\n", nBytes)
 	log.Println("Leaving Write")
 	return nil

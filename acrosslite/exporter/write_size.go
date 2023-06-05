@@ -3,7 +3,7 @@ package exporter
 import (
 	"fmt"
 
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // WriteSize writes the <SIZE> entry

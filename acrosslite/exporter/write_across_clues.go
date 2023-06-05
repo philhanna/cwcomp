@@ -5,14 +5,14 @@ import (
 	"sort"
 	"strings"
 
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
-// WriteDownClues writes the <DOWN> section
-func WriteDownClues(pal *al.AcrossLite) string {
-	const TAG = "<DOWN>"
+// WriteAcrossClues writes the <ACROSS> section
+func WriteAcrossClues(pal *al.AcrossLite) string {
+	const TAG = "<ACROSS>"
 	parts := make([]string, 0)
-	clueMap := pal.GetDownClues()
+	clueMap := pal.GetAcrossClues()
 
 	// Must do this in sorted order
 	keys := []int{}

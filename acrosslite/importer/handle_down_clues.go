@@ -1,7 +1,7 @@
 package importer
 
 import (
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // HandleReadingDown parses the down clues in the data, line by line.

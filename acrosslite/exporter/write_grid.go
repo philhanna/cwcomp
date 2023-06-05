@@ -3,7 +3,7 @@ package exporter
 import (
 	"strings"
 
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // WriteGrid writes the <GRID> entry

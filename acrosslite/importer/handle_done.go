@@ -1,7 +1,7 @@
 package importer
 
 import (
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // HandleDone is a no-op that continues in the DONE state.

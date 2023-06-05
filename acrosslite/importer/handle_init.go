@@ -2,7 +2,7 @@ package importer
 
 import (
 	"fmt"
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // HandleInit looks for the valid beginning of an AcrossLite text file,

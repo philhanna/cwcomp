@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // HandleLookingForSize verifies that the current line in the data

@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/philhanna/cwcomp/acrosslite/importer"
 	"github.com/philhanna/cwcomp/model"
 	"github.com/philhanna/cwcomp/svg"
-	"github.com/philhanna/cwcomp/transfer/acrosslite/importer"
 )
 
 // This program will read a file in AcrossLite text format, create a

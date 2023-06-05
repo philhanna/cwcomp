@@ -3,7 +3,7 @@ package importer
 import (
 	"fmt"
 
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // HandleLookingForCopyright verifies that the current line in the data

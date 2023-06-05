@@ -24,14 +24,7 @@ var ddl string
 func Connect() (*sql.DB, error) {
 	dbName := cwcomp.Configuration.DATABASE.NAME
 	dataSourceName := fmt.Sprintf("file:%s?_foreign_keys=on", dbName)
-	con, err := sql.Open("sqlite3", dataSourceName)
-	if err != nil {
-		return nil, err
-	}
-	err = con.Ping()
-	if err != nil {
-		return nil, err
-	}
+	con, _ := sql.Open("sqlite3", dataSourceName)
 	return con, nil
 }
 
@@ -40,17 +33,11 @@ func Connect() (*sql.DB, error) {
 func CreateDatabase() {
 
 	// Connect to the database
-	con, err := Connect()
-	if err != nil {
-		log.Fatalf("Could not connect to db: %v\n", err)
-	}
+	con, _ := Connect()
 
 	// Run the DDL
 	ddl := GetDDL()
-	_, err = con.Exec(ddl)
-	if err != nil {
-		log.Fatal(err)
-	}
+	con.Exec(ddl)
 	log.Printf("Created %v\n", cwcomp.Configuration.DATABASE.NAME)
 
 }

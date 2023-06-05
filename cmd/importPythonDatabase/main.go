@@ -15,8 +15,7 @@ import (
 	"github.com/philhanna/cwcomp/model"
 	"github.com/philhanna/cwcomp/svg"
 
-	// al "github.com/philhanna/cwcomp/transfer/acrosslite"
-	imp "github.com/philhanna/cwcomp/transfer/acrosslite/importer"
+	imp "github.com/philhanna/cwcomp/acrosslite/importer"
 )
 
 const USERID = 1

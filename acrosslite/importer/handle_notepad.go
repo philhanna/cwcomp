@@ -1,7 +1,7 @@
 package importer
 
 import (
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // HandleReadingNotepad takes each line and appends it to the AcrossLite

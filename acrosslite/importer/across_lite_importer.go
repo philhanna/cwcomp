@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/philhanna/cwcomp"
+	al "github.com/philhanna/cwcomp/acrosslite"
 	"github.com/philhanna/cwcomp/model"
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
 )
 
 // ---------------------------------------------------------------------

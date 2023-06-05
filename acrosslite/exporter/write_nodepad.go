@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // WriteNotepad writes the <NOTEPAD> entry with the creation and

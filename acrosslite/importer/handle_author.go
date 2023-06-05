@@ -3,7 +3,7 @@ package importer
 import (
 	"fmt"
 
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // HandleLookingForAuthor looks at the next line in the file and ensures

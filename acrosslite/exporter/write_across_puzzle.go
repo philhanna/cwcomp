@@ -1,7 +1,7 @@
 package exporter
 
 import (
-	al "github.com/philhanna/cwcomp/transfer/acrosslite"
+	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
 // WriteAcrossPuzzle writes the <ACROSS PUZZLE> line
