@@ -27,7 +27,6 @@ import (
 // Initialization function
 func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-	LoadDictionary()
 }
 
 const BLACK_CELL = '\x00'

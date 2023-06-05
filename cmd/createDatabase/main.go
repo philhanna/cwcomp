@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/philhanna/cwcomp"
+	"github.com/philhanna/cwcomp/model"
 )
 
 func main() {
@@ -33,7 +34,7 @@ func main() {
 	os.Remove(filename)
 
 	// Create new
-	cwcomp.CreateDatabase()
+	model.CreateDatabase()
 }
 
 // CopyFile copies src into dst (Note the order of the arguments!)

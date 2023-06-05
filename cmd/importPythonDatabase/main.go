@@ -12,7 +12,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/philhanna/cwcomp"
+	"github.com/philhanna/cwcomp/model"
 	"github.com/philhanna/cwcomp/svg"
 
 	// al "github.com/philhanna/cwcomp/transfer/acrosslite"
@@ -103,7 +103,7 @@ options:
 		}
 
 		// Now create the puzzle itself
-		puzzle, err := cwcomp.ImportPuzzle(pal)
+		puzzle, err := model.ImportPuzzle(pal)
 		if err != nil {
 			log.Fatal(err)
 		}

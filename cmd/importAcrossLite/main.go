@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/philhanna/cwcomp"
+	"github.com/philhanna/cwcomp/model"
 	"github.com/philhanna/cwcomp/svg"
 	"github.com/philhanna/cwcomp/transfer/acrosslite/importer"
 )
@@ -31,13 +31,13 @@ func main() {
 	}
 
 	// Import the AcrossLite structure into a Puzzle object
-	puzzle, err := cwcomp.ImportPuzzle(acrossLite)
+	puzzle, err := model.ImportPuzzle(acrossLite)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Dump the puzzle and clues
-	cwcomp.DumpPuzzle(puzzle)
+	model.DumpPuzzle(puzzle)
 
 	// Save the SVG image of the puzzle
 	filename := filepath.Join(os.TempDir(), "across_lite.svg")

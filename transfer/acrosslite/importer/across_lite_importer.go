@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/philhanna/cwcomp"
+	"github.com/philhanna/cwcomp/model"
 	al "github.com/philhanna/cwcomp/transfer/acrosslite"
 )
 
@@ -147,11 +148,11 @@ func patchWordNumbers(pal *al.AcrossLite) {
 	}
 
 	// Now get the actual word numbers using the logic in the main package.
-	numberedCells := cwcomp.GetNumberedCells(cells)
+	numberedCells := model.GetNumberedCells(cells)
 
 	// Internal function to create a new map of word numbers to clues in
 	// the given direction.
-	remap := func(direction cwcomp.Direction, oldClues map[int]string) map[int]string {
+	remap := func(direction model.Direction, oldClues map[int]string) map[int]string {
 
 		// Get a sorted list of the old clue indices
 		oldSeqs := make([]int, 0)
@@ -162,11 +163,11 @@ func patchWordNumbers(pal *al.AcrossLite) {
 
 		// Internal function to return true if the given word number
 		// starts a word in the given direction.
-		isWordInThisDirection := func(nc cwcomp.NumberedCell, direction cwcomp.Direction) bool {
+		isWordInThisDirection := func(nc model.NumberedCell, direction model.Direction) bool {
 			switch direction {
-			case cwcomp.ACROSS:
+			case model.ACROSS:
 				return nc.StartA
-			case cwcomp.DOWN:
+			case model.DOWN:
 				return nc.StartD
 			}
 			panic(direction)
@@ -190,7 +191,7 @@ func patchWordNumbers(pal *al.AcrossLite) {
 	}
 
 	// Replace the old clue maps with the new ones
-	pal.AcrossClues = remap(cwcomp.ACROSS, pal.AcrossClues)
-	pal.DownClues = remap(cwcomp.DOWN, pal.DownClues)
+	pal.AcrossClues = remap(model.ACROSS, pal.AcrossClues)
+	pal.DownClues = remap(model.DOWN, pal.DownClues)
 
 }
