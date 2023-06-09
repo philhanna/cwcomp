@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/philhanna/cwcomp"
+	"github.com/philhanna/cwcomp/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,7 +43,7 @@ func createTestDatabase() {
 	// Create the test user
 	sql := `INSERT INTO users (username, password, created) values(?, ?, ?);`
 	username := "test"
-	password := Hash256(username)
+	password := util.Hash256(username)
 	created := time.Now().Format(time.RFC3339)
 	_, err := con.Exec(sql, username, password, created)
 	if err != nil {
