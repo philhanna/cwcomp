@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
 )
 
 const BLACK_CELL = '\x00'
