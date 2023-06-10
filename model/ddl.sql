@@ -16,7 +16,7 @@ CREATE TABLE users (
 );
 INSERT INTO users VALUES(
     1,
-    'ph1204',
+    'saspeh',
     X'5fab5f43d0b2f97526e7daacb1e42ffd178e2067c59a0036d0d984a3bec289fb',
     '1953-12-04T08:30:00',
     'ph1204@gmail.com',
