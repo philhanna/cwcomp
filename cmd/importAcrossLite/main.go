@@ -41,8 +41,9 @@ func main() {
 
 	// Save the SVG image of the puzzle
 	filename := filepath.Join(os.TempDir(), "across_lite.svg")
-	svg := svg.NewSVGFromPuzzle(puzzle)
-	svgString := svg.GenerateSVG()
+	cells := model.PuzzleToSimpleMatrix(puzzle)
+	svgObj := svg.NewSVG(cells)
+	svgString := svgObj.GenerateSVG()
 	svgBytes := []byte(svgString)
 	os.WriteFile(filename, svgBytes, 0644)
 

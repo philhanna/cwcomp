@@ -1,7 +1,6 @@
 package svg
 
 import (
-	"github.com/philhanna/cwcomp/model"
 	"strings"
 )
 
@@ -47,13 +46,6 @@ func NewSVG(cells [][]byte) *SVG {
 	svg.nPixels = svg.n * BOXSIZE
 	svg.cells = cells
 	return svg
-}
-
-// NewSVGFromPuzzle will create a new SVG object from a grid, delegating
-// that to NewSVG after creating the simple cell matrix it needs.
-func NewSVGFromPuzzle(puzzle *model.Puzzle) *SVG {
-	cells := model.PuzzleToSimpleMatrix(puzzle)
-	return NewSVG(cells)
 }
 
 // ---------------------------------------------------------------------

@@ -113,8 +113,9 @@ options:
 			filename := filepath.Join(os.TempDir(), svgFileName)
 
 			log.Printf("Creating SVG in %s\n", filename)
-			svgObject := svg.NewSVGFromPuzzle(puzzle)
-			svgString := svgObject.GenerateSVG()
+			cells := model.PuzzleToSimpleMatrix(puzzle)
+			image := svg.NewSVG(cells)
+			svgString := image.GenerateSVG()
 			svgBytes := []byte(svgString)
 			os.WriteFile(filename, svgBytes, 0644)
 		}
