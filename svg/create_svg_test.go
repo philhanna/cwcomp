@@ -1,6 +1,7 @@
 package svg
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 	"testing"
@@ -31,6 +32,7 @@ func TestSVG_GenerateSVG(t *testing.T) {
 	have := svg.GenerateSVG()
 	filename := filepath.Join(getOutputDirectory(), "simple_matrix.svg")
 	os.WriteFile(filename, []byte(have), 0644)
+	log.Printf("SVG output written to %v\n", filename)
 }
 
 func getOutputDirectory() string {

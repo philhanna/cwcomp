@@ -1,12 +1,8 @@
 package svg
 
 import (
-	"fmt"
-	"strconv"
-	"strings"
-
-	"github.com/philhanna/cwcomp"
 	"github.com/philhanna/cwcomp/model"
+	"strings"
 )
 
 // ---------------------------------------------------------------------
@@ -74,136 +70,6 @@ func (svg *SVG) GenerateSVG() string {
 	sb.WriteString(svg.Cells())
 	sb.WriteString(svg.WordNumbers())
 	sb.WriteString(svg.EndRoot())
-	return sb.String()
-}
-
-// Root creates the root <svg> element.
-func (svg *SVG) Root() string {
-
-	sb := strings.Builder{}
-
-	// Write the first part of the tag (before we know whether we need
-	// scale)
-	sb.WriteString(fmt.Sprintf("<svg xmlns=%q xmlns:xlink=%q id=%q",
-		XMLNS,
-		XMLNS_XLINK,
-		fmt.Sprintf("svg%dx%d", svg.n, svg.n),
-	))
-
-	// Add the width and height
-	sizeAttr := strconv.Itoa(svg.nPixels)
-	sb.WriteString(fmt.Sprintf(" width=%q", sizeAttr))
-	sb.WriteString(fmt.Sprintf(" height=%q", sizeAttr))
-
-	// Add the viewport
-	vattr := fmt.Sprintf("%d %d %d %d", 0, 0, svg.nPixels, svg.nPixels)
-	sb.WriteString(fmt.Sprintf(" viewport=%q", vattr))
-
-	// Done
-	sb.WriteString(">\n")
-	return sb.String()
-}
-
-// BoundingRectangle creates an element that draws a box around the
-// whole grid.
-func (svg *SVG) BoundingRectangle() string {
-	sb := strings.Builder{}
-	sb.WriteString("\n<!-- Bounding rectangle -->\n")
-	sb.WriteString(fmt.Sprintf(
-		"<rect width=%q height=%q fill=%q stroke=%q stroke-width=%q/>\n",
-		strconv.Itoa(svg.nPixels), // width
-		strconv.Itoa(svg.nPixels), // height
-		"white",                   // fill
-		"black",                   // stroke
-		"2",                       // stroke-width
-	))
-	return sb.String()
-}
-
-// VerticalLines generates the vertical lines of the grid.
-func (svg *SVG) VerticalLines() string {
-	sb := strings.Builder{}
-	sb.WriteString("\n<!-- Vertical lines -->\n")
-	for x := 0; x < svg.n; x++ {
-		sb.WriteString(fmt.Sprintf(
-			"<line x1=%q x2=%q y1=%q y2=%q stroke=%q stroke-width=%q/>\n",
-			strconv.Itoa(x*BOXSIZE),   // x1
-			strconv.Itoa(x*BOXSIZE),   // x2
-			"0",                       // y1
-			strconv.Itoa(svg.nPixels), // y2
-			"black",                   // stroke
-			"0.5",                     // stroke-width
-		))
-	}
-	return sb.String()
-}
-
-// HorizontalLines generates the horizontal lines of the grid
-func (svg *SVG) HorizontalLines() string {
-	sb := strings.Builder{}
-	sb.WriteString("\n<!-- Horizontal lines -->\n")
-	for x := 0; x < svg.n; x++ {
-		sb.WriteString(fmt.Sprintf(
-			"<line x1=%q x2=%q y1=%q y2=%q stroke=%q stroke-width=%q/>\n",
-			"0",                       // x1
-			strconv.Itoa(svg.nPixels), // x2
-			strconv.Itoa(x*BOXSIZE),   // y1
-			strconv.Itoa(x*BOXSIZE),   // y2
-			"black",                   // stroke
-			"0.5",                     // stroke-width
-		))
-	}
-	return sb.String()
-}
-
-// Cells generates the cells of the grid, including black cells and any
-// letter values.
-func (svg *SVG) Cells() string {
-	sb := strings.Builder{}
-	sb.WriteString("\n<!-- Cells -->\n")
-	for r := 1; r <= svg.n; r++ {
-		yBase := (r - 1) * BOXSIZE
-		for c := 1; c <= svg.n; c++ {
-			xBase := (c - 1) * BOXSIZE
-			if svg.cells[r-1][c-1] == cwcomp.BLACK_CELL {
-				sb.WriteString(fmt.Sprintf(
-					"<rect x=%q y=%q width=%q height=%q fill=%q/>\n",
-					strconv.Itoa(xBase),
-					strconv.Itoa(yBase),
-					strconv.Itoa(BOXSIZE),
-					strconv.Itoa(BOXSIZE),
-					"black",
-				))
-			} else {
-				letter := svg.cells[r-1][c-1]
-				if letter != ' ' {
-					sb.WriteString(fmt.Sprintf(
-						"<text x=%q y=%q font-size=%q font-family=%q>%c</text>\n",
-						strconv.Itoa(xBase+LETTER_X_OFFSET),
-						strconv.Itoa(yBase+LETTER_Y_OFFSET),
-						LETTER_FONT_SIZE,
-						LETTER_FONT_FAMILY,
-						letter,
-					))
-				}
-			}
-		}
-	}
-	return sb.String()
-}
-
-// WordNumbers generates the word numbers of the grid.
-func (svg *SVG) WordNumbers() string {
-	sb := strings.Builder{}
-	sb.WriteString("\n<!-- Word numbers -->\n")
-	for _, nc := range model.GetNumberedCells(svg.cells) {
-		seq := nc.Seq
-		xbase := (nc.Col-1)*BOXSIZE + NUMBER_X_OFFSET
-		ybase := (nc.Row-1)*BOXSIZE + NUMBER_Y_OFFSET
-		fmtstr := `<text x="%d" y="%d" font-size="%s">%d</text>`
-		line := fmt.Sprintf(fmtstr, xbase, ybase, NUMBER_FONT_SIZE, seq)
-		sb.WriteString(line + "\n")
-	}
 	return sb.String()
 }
 
