@@ -5,8 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-
-	"github.com/philhanna/cwcomp/model"
 )
 
 const BLK = byte('\x00')
@@ -39,25 +37,4 @@ func getOutputDirectory() string {
 	output := filepath.Join(os.TempDir(), "cwcomp")
 	os.MkdirAll(output, 0750)
 	return output
-}
-
-func TestSVG_NewSVGFromPuzzle(t *testing.T) {
-	puzzle := model.NewPuzzle(9)
-	blackCells := [][]int{
-		{1, 1}, {1, 5}, {2, 5}, {3, 5}, {4, 9}, {5, 1}, {5, 2}, {5, 3},
-	}
-	for _, pair := range blackCells {
-		r, c := pair[0], pair[1]
-		point := model.NewPoint(r, c)
-		puzzle.Toggle(point)
-	}
-	puzzle.SetLetter(model.NewPoint(5, 4), "O")
-	puzzle.SetLetter(model.NewPoint(5, 5), "A")
-	puzzle.SetLetter(model.NewPoint(5, 6), "F")
-	cells := model.PuzzleToSimpleMatrix(puzzle)
-	svg := NewSVG(cells)
-	have := svg.GenerateSVG()
-	filename := filepath.Join(getOutputDirectory(), "from_puzzle.svg")
-	os.WriteFile(filename, []byte(have), 0644)
-
 }
