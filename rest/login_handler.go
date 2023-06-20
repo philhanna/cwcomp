@@ -38,14 +38,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Got userid=%d\n", userid)
 
-	// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-	w.Header().Set("Content-Type", "application/json")
 
 	// Create a new session and store it in the session map
 	session := NewSession()
 	session.USERID = userid
 	session.USERNAME = username
 	Sessions[session.ID] = session
+
+	w.Header().Set("Content-Type", "application/json")
 
 	// Send the session cookie back to client
 	cookie := session.NewSessionCookie()
