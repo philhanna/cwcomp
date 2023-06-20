@@ -22,6 +22,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.Printf("Got username=%q\n", username)
+	log.Printf("Got password=%q\n", password)
 
 	// Validate the user's credentials by looking up encrypted password
 	// and comparing it to the one sent in the request
@@ -31,8 +33,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// one coming in with the request, and compare the two.
 	userid, err := ValidateCredentials(w, username, password)
 	if err != nil {
+		log.Println(err)
 		return
 	}
+	log.Printf("Got userid=%d\n", userid)
 
 	// Create a new session and store it in the session map
 	session := NewSession()
