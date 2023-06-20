@@ -49,7 +49,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 
 	// Say it's OK
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 
 	log.Println("Leaving LoginHandler")
