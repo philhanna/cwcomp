@@ -33,6 +33,7 @@ func main() {
 	handler := loggingHandler{http.DefaultServeMux}
 
 	// Start the server
+	log.Printf("Starting debug server on localhost:5053")
 	log.Fatal(http.ListenAndServe(":5053", handler))
 }
 
