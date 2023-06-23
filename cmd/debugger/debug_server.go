@@ -40,7 +40,7 @@ func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-	w.Header().Set("Access-Control-Allow-Headers", "credentials")
+	w.Header().Set("Access-Control-Allow-Headers", "credentials, content-type, access-control-allow-origin")
 	w.WriteHeader(http.StatusOK)
 
 	// Log outgoing headers
