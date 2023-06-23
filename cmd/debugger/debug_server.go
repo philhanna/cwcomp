@@ -22,6 +22,7 @@ func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Call the wrapped handler
 	h.handler.ServeHTTP(w, r)
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 
 	// Log outgoing headers
 	log.Printf("Outgoing headers: %v", dumpHeaders(w.Header()))
