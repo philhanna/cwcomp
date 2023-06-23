@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/philhanna/cwcomp/rest"
 	"log"
 	"net/http"
 	"strings"
@@ -20,9 +21,26 @@ func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Incoming method:  %q\n", r.Method)
 	log.Printf("Incoming headers: %v", dumpHeaders(r.Header))
 
-	// Call the wrapped handler
-	h.handler.ServeHTTP(w, r)
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+	if r.Method == "POST" {
+		username, password, err := rest.UnmarshalCredentials(r, w)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if username != "saspeh" {
+			errmsg := "user name not found in users table"
+			http.Error(w, errmsg, http.StatusNotFound)
+			log.Println(errmsg)
+			return
+		} else if password != "waffle" {
+			errmsg := "passwords do not match"
+			http.Error(w, errmsg, http.StatusUnauthorized)
+			log.Println(errmsg)
+			return
+		}
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+	w.WriteHeader(http.StatusOK)
 
 	// Log outgoing headers
 	log.Printf("Outgoing headers: %v", dumpHeaders(w.Header()))
