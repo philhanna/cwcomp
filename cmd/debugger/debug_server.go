@@ -40,6 +40,7 @@ func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	requestURL := r.Referer()
+	requestURL = strings.TrimSuffix(requestURL, "/")
 	log.Printf("Referer is %q\n", requestURL)
 	w.Header().Set("Access-Control-Allow-Origin", requestURL)
 	w.Header().Set("Access-Control-Allow-Headers", "credentials, content-type, access-control-allow-origin")
