@@ -16,7 +16,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Entering LoginHandler")
 
 	// Set the required CORS header(s)
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	requester := r.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", requester)
+	w.Header().Set("Access-Control-Allow-Headers", "Credentials")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 	// For a CORS preflight request, that's all we need
 	if r.Method == "OPTIONS" {
