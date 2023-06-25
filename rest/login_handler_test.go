@@ -1,10 +1,10 @@
 package rest
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -38,11 +38,14 @@ func TestLoginHandler(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			postdata := fmt.Sprintf("{%q:%q,%q:%q}",
-				"username", tt.username,
-				"password", tt.password)
+			cred := url.Values{}
+			cred.Set("username", tt.username)
+			cred.Set("password", tt.password)
+			postdata := cred.Encode()
+
 			reader := strings.NewReader(postdata)
 			req, err := http.NewRequest("POST", "/login", reader)
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 			assert.Nil(t, err)
 
 			rr := httptest.NewRecorder()
