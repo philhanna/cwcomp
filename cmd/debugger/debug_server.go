@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/philhanna/cwcomp/rest"
 	"log"
 	"net/http"
 	"strings"
@@ -18,12 +17,21 @@ func init() {
 
 func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Log incoming headers
-	log.Printf("Incoming method:  %q\n", r.Method)
+	log.Printf("Incoming URL: %q\n", r.URL.String())
+	log.Printf("Incoming method: %q\n", r.Method)
 	log.Printf("Incoming headers: %v", dumpHeaders(r.Header))
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-	if r.Method == "POST" {
-		username, password, err := rest.UnmarshalCredentials(r, w)
+	// Add required CORS headers
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	switch r.Method {
+
+	case "OPTIONS":
+		w.Header().Set("Access-Control-Allow-Headers", "credentials, content-type, access-control-allow-origin")
+		w.WriteHeader(http.StatusOK)
+	
+	case "POST":
+		username, password, err := UnmarshalCredentials(w, r)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -38,13 +46,9 @@ func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			log.Println(errmsg)
 			return
 		}
+		// TODO handle login for real
+		w.WriteHeader(http.StatusOK)
 	}
-	requestURL := r.Referer()
-	requestURL = strings.TrimSuffix(requestURL, "/")
-	log.Printf("Referer is %q\n", requestURL)
-	w.Header().Set("Access-Control-Allow-Origin", requestURL)
-	w.Header().Set("Access-Control-Allow-Headers", "credentials, content-type, access-control-allow-origin")
-	w.WriteHeader(http.StatusOK)
 
 	// Log outgoing headers
 	log.Printf("Outgoing headers: %v", dumpHeaders(w.Header()))
@@ -61,15 +65,25 @@ func main() {
 
 func dumpHeaders(headers http.Header) string {
 	sb := strings.Builder{}
-	sb.WriteString("\n")
 	for name, values := range headers {
+	sb.WriteString("\n")
 		parts := []string{}
 		for _, value := range values {
 			part := value
 			parts = append(parts, part)
 		}
 		value := strings.Join(parts, ", ")
-		sb.WriteString(fmt.Sprintf("    %q: %q\n", name, value))
+		sb.WriteString(fmt.Sprintf("    %q: %q", name, value))
 	}
 	return sb.String() + "\n\n"
+}
+
+func UnmarshalCredentials(w http.ResponseWriter, r *http.Request) (string, string, error) {
+	err := r.ParseForm()
+	if err != nil {
+		return "", "", err
+	}
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	return username, password, nil
 }

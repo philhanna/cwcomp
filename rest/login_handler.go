@@ -2,7 +2,6 @@ package rest
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,14 +15,21 @@ import (
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Entering LoginHandler")
 
-	// Get the username and password from the JSON form data
-	username, password, err := UnmarshalCredentials(r, w)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	// Set the required CORS header(s)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	// For a CORS preflight request, that's all we need
+	if r.Method == "OPTIONS" {
 		return
 	}
-	log.Printf("Got username=%q\n", username)
-	log.Printf("Got password=%q\n", password)
+
+	// Get the username and password from the form data
+	err := r.ParseForm()
+	if err != nil {
+		log.Fatal(err)
+	}
+	username := r.FormValue("username")
+	password := r.FormValue("password")
 
 	// Validate the user's credentials by looking up encrypted password
 	// and comparing it to the one sent in the request
@@ -36,16 +42,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	log.Printf("Got userid=%d\n", userid)
-
 
 	// Create a new session and store it in the session map
 	session := NewSession()
 	session.USERID = userid
 	session.USERNAME = username
 	Sessions[session.ID] = session
-
-	w.Header().Set("Content-Type", "application/json")
 
 	// Send the session cookie back to client
 	cookie := session.NewSessionCookie()
@@ -83,7 +85,7 @@ func ValidateCredentials(w http.ResponseWriter, username, password string) (int,
 	userFound := rows.Next()
 	if !userFound {
 		errmsg := fmt.Sprintf("username %q not found in users table", username)
-		http.Error(w, errmsg, http.StatusNotFound)
+		http.Error(w, errmsg, http.StatusUnauthorized)
 		err = fmt.Errorf(errmsg)
 		return 0, err
 	}
@@ -100,22 +102,4 @@ func ValidateCredentials(w http.ResponseWriter, username, password string) (int,
 
 	// Everything OK
 	return userid, nil
-}
-
-// UnmarshalCredentials gets the user name and password from the request,
-// or returns an error if they could not be found
-func UnmarshalCredentials(r *http.Request, w http.ResponseWriter) (string, string, error) {
-
-	type Credentials struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
-	var cred Credentials
-	err := json.NewDecoder(r.Body).Decode(&cred)
-	if err != nil {
-		return "", "", err
-	}
-	username := cred.Username
-	password := cred.Password
-	return username, password, nil
 }
