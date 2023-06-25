@@ -27,13 +27,13 @@ func TestLoginHandler(t *testing.T) {
 		},
 		{
 			"invalid user", "bogus", "waffle",
-			http.StatusNotFound,
-			`username "bogus" not found in users table`,
+			http.StatusUnauthorized,
+			`Username "bogus" not found in users table`,
 		},
 		{
 			"invalid password", "saspeh", "wffl",
 			http.StatusUnauthorized,
-			`passwords do not match`,
+			`Passwords do not match`,
 		},
 	}
 	for _, tt := range tests {

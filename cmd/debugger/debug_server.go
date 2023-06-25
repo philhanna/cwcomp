@@ -29,7 +29,7 @@ func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "OPTIONS":
 		w.Header().Set("Access-Control-Allow-Headers", "credentials, content-type, access-control-allow-origin")
 		w.WriteHeader(http.StatusOK)
-	
+
 	case "POST":
 		username, password, err := UnmarshalCredentials(w, r)
 		if err != nil {
@@ -66,7 +66,7 @@ func main() {
 func dumpHeaders(headers http.Header) string {
 	sb := strings.Builder{}
 	for name, values := range headers {
-	sb.WriteString("\n")
+		sb.WriteString("\n")
 		parts := []string{}
 		for _, value := range values {
 			part := value

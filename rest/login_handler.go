@@ -20,6 +20,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// For a CORS preflight request, that's all we need
 	if r.Method == "OPTIONS" {
+		log.Println("Handled preflight OPTIONS request")
 		return
 	}
 
@@ -75,7 +76,7 @@ func ValidateCredentials(w http.ResponseWriter, username, password string) (int,
 
 	rows, err := con.Query(`SELECT userid, password FROM users WHERE username=?`, username)
 	if err != nil {
-		errmsg := fmt.Sprintf("could not read from users table")
+		errmsg := fmt.Sprintf("Could not read from users table")
 		http.Error(w, errmsg, http.StatusInternalServerError)
 		return 0, err
 	}
@@ -84,7 +85,7 @@ func ValidateCredentials(w http.ResponseWriter, username, password string) (int,
 	// Verify whether the username was found
 	userFound := rows.Next()
 	if !userFound {
-		errmsg := fmt.Sprintf("username %q not found in users table", username)
+		errmsg := fmt.Sprintf("Username %q not found in users table", username)
 		http.Error(w, errmsg, http.StatusUnauthorized)
 		err = fmt.Errorf(errmsg)
 		return 0, err
@@ -94,7 +95,7 @@ func ValidateCredentials(w http.ResponseWriter, username, password string) (int,
 	rows.Scan(&userid, &dbPassword)
 	passwordsMatch := bytes.Equal(hashedPassword, dbPassword)
 	if !passwordsMatch {
-		errmsg := "passwords do not match"
+		errmsg := "Passwords do not match"
 		http.Error(w, errmsg, http.StatusUnauthorized)
 		err = fmt.Errorf(errmsg)
 		return 0, err
