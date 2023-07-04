@@ -37,9 +37,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Validate the user's credentials by looking up encrypted password
 	// and comparing it to the one sent in the request
+	//
 	// Get the row from the users table for this user name
 	// If no user found, return 404 error
-	// Now get the encrypted password stored in the database, hash the
+	//
+	// Then get the encrypted password stored in the database, hash the
 	// one coming in with the request, and compare the two.
 	userid, err := ValidateCredentials(w, username, password)
 	if err != nil {
