@@ -13,3 +13,5 @@ based on the completed Python version [here](https://github.com/philhanna/crossw
 
 [idGoReportCard]: https://goreportcard.com/report/github.com/philhanna/cwcomp
 [idPkgGoDev]: https://pkg.go.dev/github.com/philhanna/cwcomp
+
+git clone https://github.com:443/philhanna/cwcomp.git
