@@ -1,11 +1,11 @@
 package model
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/philhanna/cwcomp"
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/exp/slices"
 )
 
 func TestGetPackage(t *testing.T) {

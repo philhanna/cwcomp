@@ -6,10 +6,9 @@ package model
  **********************************************************************/
 
 import (
+	"slices"
 	"sort"
 	"strings"
-
-	"golang.org/x/exp/slices"
 )
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -78,6 +77,7 @@ func Complement(ilist []int) []int {
 	xa := []int{}
 	for i := 0; i < len(ALPHABET); i++ {
 		p := slices.Index(ilist, i)
+
 		if p == -1 {
 			xa = append(xa, i)
 		}

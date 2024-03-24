@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/philhanna/stack"
+	"github.com/philhanna/collections"
 )
 
 // ---------------------------------------------------------------------
@@ -27,17 +27,17 @@ import (
 //
 // Puzzle supports a full "undo/redo" capability for the current session
 // (from load to save).  Any black cell additions or deletions are
-// pushed on an undo stack.
+// pushed on an undo collections.
 type Puzzle struct {
-	n              int                 // Size of the grid (n x n square)
-	puzzleName     string              // The puzzle name
-	cells          [][]Cell            // Black cells and letter cells
-	words          []*Word             // Pointers to the words in this grid
-	wordNumbers    []*WordNumber       // Word number pointers
-	undoPointStack stack.Stack[Point]  // Undo stack for black cells
-	redoPointStack stack.Stack[Point]  // Redo stack for black cells
-	undoWordStack  stack.Stack[Doable] // Undo stack for whole words
-	redoWordStack  stack.Stack[Doable] // Redo stack for whold words
+	n              int                       // Size of the grid (n x n square)
+	puzzleName     string                    // The puzzle name
+	cells          [][]Cell                  // Black cells and letter cells
+	words          []*Word                   // Pointers to the words in this grid
+	wordNumbers    []*WordNumber             // Word number pointers
+	undoPointStack collections.Stack[Point]  // Undo stack for black cells
+	redoPointStack collections.Stack[Point]  // Redo stack for black cells
+	undoWordStack  collections.Stack[Doable] // Undo stack for whole words
+	redoWordStack  collections.Stack[Doable] // Redo stack for whold words
 }
 
 // ---------------------------------------------------------------------
@@ -60,8 +60,8 @@ func NewPuzzle(n int) *Puzzle {
 		}
 	}
 
-	g.undoPointStack = stack.NewStack[Point]()
-	g.redoPointStack = stack.NewStack[Point]()
+	g.undoPointStack = collections.NewStack[Point]()
+	g.redoPointStack = collections.NewStack[Point]()
 
 	return g
 }
