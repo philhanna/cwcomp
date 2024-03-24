@@ -12,6 +12,6 @@ func HandleInit(pal *al.AcrossLite, line string) (ParsingState, error) {
 	case "<ACROSS PUZZLE>":
 		return LOOKING_FOR_TITLE, nil
 	default:
-		return UNKNOWN, fmt.Errorf("Valid AcrossLite file must start with <ACROSS PUZZLE>, not %s", line)
+		return UNKNOWN, fmt.Errorf("valid AcrossLite file must start with <ACROSS PUZZLE>, not %s", line)
 	}
 }

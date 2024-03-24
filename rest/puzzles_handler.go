@@ -53,12 +53,12 @@ func PuzzlesHandler(w http.ResponseWriter, r *http.Request) {
 		FROM		puzzles
 		WHERE		userid=?
 		ORDER BY	3 DESC, 2`, userid)
-	defer rows.Close()
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer rows.Close()
 
 	entries := new(PuzzleEntries)
 	for rows.Next() {

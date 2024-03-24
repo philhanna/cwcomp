@@ -1,8 +1,6 @@
 package importer
 
 import (
-	"fmt"
-
 	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
@@ -13,7 +11,7 @@ func HandleLookingForAuthor(pal *al.AcrossLite, line string) (ParsingState, erro
 	case "<AUTHOR>":
 		return READING_AUTHOR, nil
 	default:
-		return UNKNOWN, fmt.Errorf("did not find <AUTHOR>")
+		return UNKNOWN, errNoAuthor
 	}
 }
 

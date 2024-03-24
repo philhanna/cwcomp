@@ -14,7 +14,7 @@ func HandleLookingForGrid(pal *al.AcrossLite, line string) (ParsingState, error)
 		pal.Grid = make([]string, 0)
 		return READING_GRID, nil
 	default:
-		return UNKNOWN, fmt.Errorf("did not find <GRID>")
+		return UNKNOWN, errNoGrid
 	}
 }
 

@@ -28,10 +28,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the username and password from the form data
-	err := r.ParseForm()
-	if err != nil {
-		log.Fatal(err)
-	}
+	r.ParseForm()
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
@@ -79,18 +76,13 @@ func ValidateCredentials(w http.ResponseWriter, username, password string) (int,
 	con, _ := model.Connect()
 	defer con.Close()
 
-	rows, err := con.Query(`SELECT userid, password FROM users WHERE username=?`, username)
-	if err != nil {
-		errmsg := fmt.Sprintf("Could not read from users table")
-		http.Error(w, errmsg, http.StatusInternalServerError)
-		return 0, err
-	}
+	rows, _ := con.Query(`SELECT userid, password FROM users WHERE username=?`, username)
 	defer rows.Close()
 
 	// Verify whether the username was found
 	userFound := rows.Next()
 	if !userFound {
-		errmsg := fmt.Sprintf("Username %q not found in users table", username)
+		errmsg := fmt.Sprintf("username %q not found in users table", username)
 		http.Error(w, errmsg, http.StatusUnauthorized)
 		err = fmt.Errorf(errmsg)
 		return 0, err
@@ -100,7 +92,7 @@ func ValidateCredentials(w http.ResponseWriter, username, password string) (int,
 	rows.Scan(&userid, &dbPassword)
 	passwordsMatch := bytes.Equal(hashedPassword, dbPassword)
 	if !passwordsMatch {
-		errmsg := "Passwords do not match"
+		errmsg := "passwords do not match"
 		http.Error(w, errmsg, http.StatusUnauthorized)
 		err = fmt.Errorf(errmsg)
 		return 0, err

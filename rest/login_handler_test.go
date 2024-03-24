@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -10,6 +10,22 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestOptionsHandler(t *testing.T) {
+	cred := url.Values{}
+	cred.Set("username", "saspeh")
+	cred.Set("password", "waffle")
+	postdata := cred.Encode()
+
+	reader := strings.NewReader(postdata)
+	req, err := http.NewRequest("OPTIONS", "/login", reader)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	assert.Nil(t, err)
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(LoginHandler)
+	handler.ServeHTTP(rr, req)
+}
 
 func TestLoginHandler(t *testing.T) {
 	type Test struct {
@@ -28,12 +44,12 @@ func TestLoginHandler(t *testing.T) {
 		{
 			"invalid user", "bogus", "waffle",
 			http.StatusUnauthorized,
-			`Username "bogus" not found in users table`,
+			`username "bogus" not found in users table`,
 		},
 		{
 			"invalid password", "saspeh", "wffl",
 			http.StatusUnauthorized,
-			`Passwords do not match`,
+			`passwords do not match`,
 		},
 	}
 	for _, tt := range tests {
@@ -56,7 +72,7 @@ func TestLoginHandler(t *testing.T) {
 			wantStatus := tt.wantStatus
 			assert.Equal(t, wantStatus, haveStatus)
 
-			body, err := ioutil.ReadAll(rr.Body)
+			body, err := io.ReadAll(rr.Body)
 			assert.Nil(t, err)
 
 			wantBody := tt.wantBody

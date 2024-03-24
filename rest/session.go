@@ -82,7 +82,7 @@ func GetSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 	// or if the session is expired, go to the login screen.
 	cookie, err := r.Cookie("session")
 	if err != nil {
-		err := fmt.Errorf("No session cookie found: %v", err)
+		err := fmt.Errorf("no session cookie found: %v", err)
 		log.Println(err)
 		return nil, err
 	}
@@ -92,14 +92,14 @@ func GetSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 	// Get the session from the map
 	session, ok := Sessions[session_id]
 	if !ok {
-		err := fmt.Errorf("Session id %q not found in session map", session_id)
+		err := fmt.Errorf("session id %q not found in session map", session_id)
 		log.Println(err)
 		return nil, err
 	}
 
 	// Check for expired session
 	if session.EXPIRES.Before(time.Now()) {
-		err := fmt.Errorf("Session id %q has expired\n", session_id)
+		err := fmt.Errorf("session id %q has expired", session_id)
 		log.Println(err)
 		return nil, err
 	}

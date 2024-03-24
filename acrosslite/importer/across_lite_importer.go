@@ -2,9 +2,8 @@ package importer
 
 import (
 	"bufio"
-	"fmt"
+	"errors"
 	"io"
-	"log"
 	"sort"
 	"strings"
 
@@ -24,6 +23,21 @@ type Handler func(*al.AcrossLite, string) (ParsingState, error)
 // Constants and variables
 // ---------------------------------------------------------------------
 
+var (
+	errNoLines          = errors.New("no lines in file")
+	errNoTitle          = errors.New("never found <TITLE>")
+	errReadingTitle     = errors.New("unexpected final state READING_TITLE")
+	errNoAuthor         = errors.New("never found <AUTHOR>")
+	errReadingAuthor    = errors.New("unexpected final state READING_AUTHOR")
+	errNoCopyright      = errors.New("never found <COPYRIGHT>")
+	errReadingCopyright = errors.New("unexpected final state READING_COPYRIGHT")
+	errNoSize           = errors.New("never found <SIZE>")
+	errReadingSize      = errors.New("unexpected final state READING_SIZE")
+	errNoGrid           = errors.New("never found <GRID>")
+	errReadingGrid      = errors.New("unexpected final state READING_GRID")
+	errReadingAcross    = errors.New("unexpected final state READING_ACROSS")
+)
+
 // Define the map of parsing states to handler functions
 var StateMap = map[ParsingState]Handler{
 	INIT:                  HandleInit,
@@ -40,7 +54,22 @@ var StateMap = map[ParsingState]Handler{
 	READING_ACROSS:        HandleReadingAcross,
 	READING_DOWN:          HandleReadingDown,
 	READING_NOTEPAD:       HandleReadingNotepad,
-	DONE:                  HandleDone,
+}
+
+// Define the map of invalid final states to their error messages
+var FinalStateMap = map[ParsingState]error{
+	INIT:                  errNoLines,
+	LOOKING_FOR_TITLE:     errNoTitle,
+	READING_TITLE:         errReadingTitle,
+	LOOKING_FOR_AUTHOR:    errNoAuthor,
+	READING_AUTHOR:        errReadingAuthor,
+	LOOKING_FOR_COPYRIGHT: errNoCopyright,
+	READING_COPYRIGHT:     errReadingCopyright,
+	LOOKING_FOR_SIZE:      errNoSize,
+	READING_SIZE:          errReadingSize,
+	LOOKING_FOR_GRID:      errNoGrid,
+	READING_GRID:          errReadingGrid,
+	READING_ACROSS:        errReadingAcross,
 }
 
 // ---------------------------------------------------------------------
@@ -77,7 +106,6 @@ func Parse(reader io.Reader) (*al.AcrossLite, error) {
 		if found {
 			state, err = handler(pal, line)
 			if err != nil {
-				log.Println(err)
 				return nil, err
 			}
 		}
@@ -85,35 +113,9 @@ func Parse(reader io.Reader) (*al.AcrossLite, error) {
 
 	// Check the final state
 
-	switch state {
-	default:
-		return nil, fmt.Errorf("unexpected final state %v", state)
-	case INIT:
-		return nil, fmt.Errorf("no lines in file")
-	case LOOKING_FOR_TITLE:
-		return nil, fmt.Errorf("never found <TITLE>")
-	case READING_TITLE:
-		return nil, fmt.Errorf("unexpected final state READING_TITLE")
-	case LOOKING_FOR_AUTHOR:
-		return nil, fmt.Errorf("never found <AUTHOR>")
-	case READING_AUTHOR:
-		return nil, fmt.Errorf("unexpected final state READING_AUTHOR")
-	case LOOKING_FOR_COPYRIGHT:
-		return nil, fmt.Errorf("never found <COPYRIGHT>")
-	case READING_COPYRIGHT:
-		return nil, fmt.Errorf("unexpected final state READING_COPYRIGHT")
-	case LOOKING_FOR_SIZE:
-		return nil, fmt.Errorf("never found <SIZE>")
-	case READING_SIZE:
-		return nil, fmt.Errorf("unexpected final state READING_SIZE")
-	case LOOKING_FOR_GRID:
-		return nil, fmt.Errorf("never found <GRID>")
-	case READING_GRID:
-		return nil, fmt.Errorf("unexpected final state READING_GRID")
-	case READING_ACROSS:
-		return nil, fmt.Errorf("unexpected final state READING_ACROSS")
-	case READING_DOWN, READING_NOTEPAD, DONE:
-		// OK
+	err = FinalStateMap[state]
+	if err != nil {
+		return nil, err
 	}
 
 	// Since we don't know the word numbers until the parsing is
@@ -164,13 +166,14 @@ func patchWordNumbers(pal *al.AcrossLite) {
 		// Internal function to return true if the given word number
 		// starts a word in the given direction.
 		isWordInThisDirection := func(nc model.NumberedCell, direction model.Direction) bool {
+			var result bool
 			switch direction {
 			case model.ACROSS:
-				return nc.StartA
+				result = nc.StartA
 			case model.DOWN:
-				return nc.StartD
+				result = nc.StartD
 			}
-			panic(direction)
+			return result
 		}
 
 		// Get a sorted list of the new clue indices

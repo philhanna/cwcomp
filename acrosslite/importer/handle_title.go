@@ -1,8 +1,6 @@
 package importer
 
 import (
-	"fmt"
-
 	al "github.com/philhanna/cwcomp/acrosslite"
 )
 
@@ -13,11 +11,11 @@ func HandleLookingForTitle(pal *al.AcrossLite, line string) (ParsingState, error
 	case "<TITLE>":
 		return READING_TITLE, nil
 	default:
-		return UNKNOWN, fmt.Errorf("did not find <TITLE>")
+		return UNKNOWN, errNoTitle
 	}
 }
 
-// HandleReadingTitel copies the line into the Title element of the
+// HandleReadingTitle copies the line into the Title element of the
 // AcrossLite structure.
 func HandleReadingTitle(pal *al.AcrossLite, line string) (ParsingState, error) {
 	pal.Title = line
