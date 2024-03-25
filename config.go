@@ -12,7 +12,7 @@ import (
 // Type definitions
 // ---------------------------------------------------------------------
 
-type configuration struct {
+type Configuration struct {
 	DATABASE database `json:"database"`
 	SERVER   server   `json:"server"`
 }
@@ -38,7 +38,11 @@ const YAML_FILE_NAME = "config.yaml"
 var PACKAGE_NAME = GetPackageName()
 
 // A pointer to the loaded instance of the configuration
-var Configuration *configuration
+var configInstance *Configuration
+
+var GetConfiguration = func() *Configuration {
+	return configInstance
+}
 
 // ---------------------------------------------------------------------
 // Constructor
@@ -46,7 +50,7 @@ var Configuration *configuration
 
 // newConfiguration creates a configuration structure from the YAML file
 // in the user configuration directory.
-func newConfiguration() (*configuration, error) {
+func newConfiguration() (*Configuration, error) {
 
 	// Get the configuration file name
 	configfile, err := configurationFile()
@@ -62,7 +66,7 @@ func newConfiguration() (*configuration, error) {
 	}
 
 	// Create a configuration structure from the YAML
-	p := new(configuration)
+	p := new(Configuration)
 	err = yaml.Unmarshal(yamlBlob, p)
 	if err != nil {
 		return nil, err
@@ -97,7 +101,7 @@ func configurationFile() (string, error) {
 func init() {
 	// Load the configuration
 	var err error
-	Configuration, err = newConfiguration()
+	configInstance, err = newConfiguration()
 	if err != nil {
 		log.Fatal(err)
 	}
