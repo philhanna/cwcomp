@@ -136,7 +136,6 @@ func (pal *AcrossLite) GetNotepad() string {
 	return "{" + strings.Join(parts, ",") + "}"
 }
 
-
 // GetSize returns the number of rows or columns in this puzzle
 func (pal *AcrossLite) GetSize() int {
 	return pal.Size

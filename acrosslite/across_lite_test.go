@@ -482,17 +482,17 @@ func TestAcrossLite_SetCell(t *testing.T) {
 
 func TestAcrossLite_SetSize(t *testing.T) {
 	tests := []struct {
-		name string
-		pal  *AcrossLite
+		name    string
+		pal     *AcrossLite
 		newSize int
 	}{
 		{
-			pal : CreateTestObject(),
-			newSize : 21,
+			pal:     CreateTestObject(),
+			newSize: 21,
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T){
+		t.Run(tt.name, func(t *testing.T) {
 			pal := tt.pal
 			want := tt.newSize
 			pal.SetSize(tt.newSize)
