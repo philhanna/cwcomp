@@ -15,7 +15,7 @@ import (
 func HandleRequests() {
 
 	// Get host and port from configuration
-	config := cwcomp.Configuration
+	config := cwcomp.GetConfiguration()
 	host := config.SERVER.HOST
 	port := config.SERVER.PORT
 	hostAndPort := fmt.Sprintf("%s:%d", host, port)

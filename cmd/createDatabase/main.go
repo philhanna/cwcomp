@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// Get the database file name
-	config := cwcomp.Configuration
+	config := cwcomp.GetConfiguration()
 	filename := config.DATABASE.NAME
 	log.Printf("Database file name = %v\n", filename)
 

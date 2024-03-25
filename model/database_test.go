@@ -25,13 +25,15 @@ func createTestDatabase() {
 
 	// Set configuration to use the test database name
 	tmp := os.TempDir()
-	config := cwcomp.Configuration
+	config := cwcomp.GetConfiguration()
 	dbName := filepath.Join(tmp, "cwcomp_test.db")
 	if cwcomp.FileExists(dbName) {
 		os.Remove(dbName)
 	}
 	config.DATABASE.NAME = dbName
-	cwcomp.Configuration = config
+	cwcomp.GetConfiguration = func() *cwcomp.Configuration {
+		return config
+	}
 
 	// Create the test database
 	CreateDatabase()

@@ -21,7 +21,7 @@ var ddl string
 
 // Connect opens a connection to the cwcomp database.
 func Connect() (*sql.DB, error) {
-	dbName := cwcomp.Configuration.DATABASE.NAME
+	dbName := cwcomp.GetConfiguration().DATABASE.NAME
 	dataSourceName := fmt.Sprintf("file:%s?_foreign_keys=on", dbName)
 	con, _ := sql.Open("sqlite3", dataSourceName)
 	return con, nil
@@ -37,7 +37,7 @@ func CreateDatabase() {
 	// Run the DDL
 	ddl := GetDDL()
 	con.Exec(ddl)
-	log.Printf("Created %v\n", cwcomp.Configuration.DATABASE.NAME)
+	log.Printf("Created %v\n", cwcomp.GetConfiguration().DATABASE.NAME)
 
 }
 
