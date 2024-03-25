@@ -44,19 +44,20 @@ var GetConfiguration = func() *Configuration {
 	return configInstance
 }
 
+var GetConfigFileName = func() string {
+	return GetDefaultConfigFileName()
+}
+
 // ---------------------------------------------------------------------
 // Constructor
 // ---------------------------------------------------------------------
 
-// newConfiguration creates a configuration structure from the YAML file
+// NewConfiguration creates a configuration structure from the YAML file
 // in the user configuration directory.
-func newConfiguration() (*Configuration, error) {
+func NewConfiguration() (*Configuration, error) {
 
 	// Get the configuration file name
-	configfile, err := configurationFile()
-	if err != nil {
-		return nil, err
-	}
+	configfile := GetConfigFileName()
 	log.Printf("Reading configuration from %v\n", configfile)
 
 	// Load its data
@@ -79,29 +80,26 @@ func newConfiguration() (*Configuration, error) {
 // Functions
 // ---------------------------------------------------------------------
 
-// configurationFile returns the name of the configuration YAML file in
+// GetConfigFileName returns the name of the configuration YAML file in
 // .config
-func configurationFile() (string, error) {
+func GetDefaultConfigFileName() string {
 
 	// Start with the user configuration directory
 	// (on Unix, "$HOME/.config")
 
-	dirname, err := os.UserConfigDir()
-	if err != nil {
-		return "", err
-	}
+	dirname, _ := os.UserConfigDir()
 
 	// Concatenate the path to the yaml
 
 	configfile := filepath.Join(dirname, PACKAGE_NAME, YAML_FILE_NAME)
 
-	return configfile, nil
+	return configfile
 }
 
 func init() {
 	// Load the configuration
 	var err error
-	configInstance, err = newConfiguration()
+	configInstance, err = NewConfiguration()
 	if err != nil {
 		log.Fatal(err)
 	}
