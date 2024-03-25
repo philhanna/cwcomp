@@ -10,10 +10,6 @@ import (
 )
 
 func main() {
-	var (
-		err error
-	)
-
 	// Get the database file name
 	config := cwcomp.Configuration
 	filename := config.DATABASE.NAME
@@ -24,10 +20,7 @@ func main() {
 	os.Remove(backup)
 
 	// Copy current to backup
-	_, err = CopyFile(backup, filename)
-	if err != nil {
-		log.Fatalf("Could not copy file: %v\n", err)
-	}
+	CopyFile(backup, filename)
 	log.Printf("Created backup as %v\n", backup)
 
 	// Delete current
@@ -38,21 +31,13 @@ func main() {
 }
 
 // CopyFile copies src into dst (Note the order of the arguments!)
-func CopyFile(dst, src string) (int64, error) {
-	source, err := os.Open(src)
-	if os.IsNotExist(err) {
-		return 0, nil
-	}
-	if err != nil {
-		return 0, err
-	}
+func CopyFile(dst, src string) int64 {
+	source, _ := os.Open(src)
 	defer source.Close()
 
-	destination, err := os.Create(dst)
-	if err != nil {
-		return 0, err
-	}
+	destination, _ := os.Create(dst)
 	defer destination.Close()
-	nBytes, err := io.Copy(destination, source)
-	return nBytes, err
+
+	nBytes, _ := io.Copy(destination, source)
+	return nBytes
 }

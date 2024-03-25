@@ -7,19 +7,81 @@ import (
 	"strings"
 )
 
-type loggingHandler struct {
+// ---------------------------------------------------------------------
+// Type definitions
+// ---------------------------------------------------------------------
+
+type LoggingHandler struct {
 	handler http.Handler
 }
 
+// ---------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------
+
+const (
+	PORT = 5053
+)
+
+// ---------------------------------------------------------------------
+// Mainline
+// ---------------------------------------------------------------------
+
+func main() {
+	// Create a new handler that logs headers and wraps the existing handler
+	handler := LoggingHandler{http.DefaultServeMux}
+
+	// Start the server
+	hostport := fmt.Sprintf("localhost:%d", PORT)
+	log.Printf("Starting debug server on %s", hostport)
+	log.Fatal(http.ListenAndServe(hostport, handler))
+}
+
+// ---------------------------------------------------------------------
+// Functions
+// ---------------------------------------------------------------------
+
+// DumpHeaders creates a string representation of the values in an
+// http.Header object.
+func DumpHeaders(headers http.Header) string {
+	sb := strings.Builder{}
+	for name, values := range headers {
+		sb.WriteString("\n")
+		parts := []string{}
+		for _, value := range values {
+			part := value
+			parts = append(parts, part)
+		}
+		value := strings.Join(parts, ", ")
+		sb.WriteString(fmt.Sprintf("    %q: %q", name, value))
+	}
+	return sb.String() + "\n\n"
+}
+
+// init sets the logging flags at startup
 func init() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
-func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+// UnmarshalCredentials extracts the username and password from a
+// request.
+func UnmarshalCredentials(w http.ResponseWriter, r *http.Request) (string, string) {
+	r.ParseForm()
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	return username, password
+}
+
+// ---------------------------------------------------------------------
+// Methods
+// ---------------------------------------------------------------------
+
+// ServeHTTP handles a request
+func (h LoggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Log incoming headers
 	log.Printf("Incoming URL: %q\n", r.URL.String())
 	log.Printf("Incoming method: %q\n", r.Method)
-	log.Printf("Incoming headers: %v", dumpHeaders(r.Header))
+	log.Printf("Incoming headers: %v", DumpHeaders(r.Header))
 
 	// Add required CORS headers
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -31,10 +93,7 @@ func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 
 	case "POST":
-		username, password, err := UnmarshalCredentials(w, r)
-		if err != nil {
-			log.Fatal(err)
-		}
+		username, password := UnmarshalCredentials(w, r)
 		if username != "saspeh" {
 			errmsg := "user name not found in users table"
 			http.Error(w, errmsg, http.StatusNotFound)
@@ -51,39 +110,5 @@ func (h loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Log outgoing headers
-	log.Printf("Outgoing headers: %v", dumpHeaders(w.Header()))
-}
-
-func main() {
-	// Create a new handler that logs headers and wraps the existing handler
-	handler := loggingHandler{http.DefaultServeMux}
-
-	// Start the server
-	log.Printf("Starting debug server on localhost:5053")
-	log.Fatal(http.ListenAndServe(":5053", handler))
-}
-
-func dumpHeaders(headers http.Header) string {
-	sb := strings.Builder{}
-	for name, values := range headers {
-		sb.WriteString("\n")
-		parts := []string{}
-		for _, value := range values {
-			part := value
-			parts = append(parts, part)
-		}
-		value := strings.Join(parts, ", ")
-		sb.WriteString(fmt.Sprintf("    %q: %q", name, value))
-	}
-	return sb.String() + "\n\n"
-}
-
-func UnmarshalCredentials(w http.ResponseWriter, r *http.Request) (string, string, error) {
-	err := r.ParseForm()
-	if err != nil {
-		return "", "", err
-	}
-	username := r.FormValue("username")
-	password := r.FormValue("password")
-	return username, password, nil
+	log.Printf("Outgoing headers: %v", DumpHeaders(w.Header()))
 }
