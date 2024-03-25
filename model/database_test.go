@@ -31,7 +31,7 @@ func createTestDatabase() {
 		os.Remove(dbName)
 	}
 	config.DATABASE.NAME = dbName
-	cwcomp.GetConfiguration = func() *cwcomp.Configuration{
+	cwcomp.GetConfiguration = func() *cwcomp.Configuration {
 		return config
 	}
 
