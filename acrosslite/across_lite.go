@@ -47,39 +47,18 @@ func NewAcrossLite() *AcrossLite {
 	return pal
 }
 
-// GetSize returns the number of rows or columns in this puzzle
-func (self *AcrossLite) GetSize() int {
-	return self.Size
-}
+// ---------------------------------------------------------------------
+// Methods
+// ---------------------------------------------------------------------
 
-// GetName returns the puzzle name, which will be used as part of the
-// key in the database representation.
-//
-// This is not the same as the puzzle title
-func (self *AcrossLite) GetName() string {
-	return self.Name
-}
-
-// GetTitle returns the puzzle title, which is a descriptive string that
-// is typically used as the heading of the page it is printed on in the
-// newspaper.
-func (self *AcrossLite) GetTitle() string {
-	return self.Title
+// GetAcrossClues returns a map of across word numbers to their clues.
+func (pal *AcrossLite) GetAcrossClues() map[int]string {
+	return pal.AcrossClues
 }
 
 // GetAuthor returns the author line
-func (self *AcrossLite) GetAuthor() string {
-	return self.Author
-}
-
-// GetCopyright returns the copyright line
-func (self *AcrossLite) GetCopyright() string {
-	return self.Copyright
-}
-
-// GetGrid returns the list of strings in the grid
-func (self *AcrossLite) GetGrid() []string {
-	return self.Grid
+func (pal *AcrossLite) GetAuthor() string {
+	return pal.Author
 }
 
 // GetCell returns the letter at a given point in the grid.  These are
@@ -90,17 +69,17 @@ func (self *AcrossLite) GetGrid() []string {
 // If the letter value is '\x00', it is a black cell.  Otherwise, it is
 // converted to uppercase.  If the letter is not a black cell and not in
 // the alphabet A-Z, an error is returned.
-func (self *AcrossLite) GetCell(r, c int) (byte, error) {
-	n := self.GetSize()
+func (pal *AcrossLite) GetCell(r, c int) (byte, error) {
+	n := pal.GetSize()
 	if n < 1 {
-		return 0, fmt.Errorf("Puzzle size has not yet been set")
+		return 0, fmt.Errorf("puzzle size has not yet been set")
 	}
 	if r < 1 || r > n || c < 1 || c > n {
-		return 0, fmt.Errorf("Invalid index: r=%d,c=%d", r, c)
+		return 0, fmt.Errorf("invalid index: r=%d,c=%d", r, c)
 	}
 	i, j := r-1, c-1
 
-	letter := self.Grid[i][j]
+	letter := pal.Grid[i][j]
 	if letter == byte('.') {
 		letter = byte('\x00')
 	}
@@ -108,73 +87,80 @@ func (self *AcrossLite) GetCell(r, c int) (byte, error) {
 	return letter, nil
 }
 
-// GetAcrossClues returns a map of across word numbers to their clues.
-func (self *AcrossLite) GetAcrossClues() map[int]string {
-	return self.AcrossClues
-}
-
-// GetAcrossClues returns a map of down word numbers to their clues.
-func (self *AcrossLite) GetDownClues() map[int]string {
-	return self.DownClues
+// GetCopyright returns the copyright line
+func (pal *AcrossLite) GetCopyright() string {
+	return pal.Copyright
 }
 
 // GetCreatedDate returns the creation date timestamp. If one has not
 // been specified, uses current date/time.
-func (self *AcrossLite) GetCreatedDate() time.Time {
-	if self.CreatedDate.IsZero() {
-		self.CreatedDate = time.Now()
+func (pal *AcrossLite) GetCreatedDate() time.Time {
+	if pal.CreatedDate.IsZero() {
+		pal.CreatedDate = time.Now()
 	}
-	return self.CreatedDate
+	return pal.CreatedDate
+}
+
+// GetDownClues returns a map of down word numbers to their clues.
+func (pal *AcrossLite) GetDownClues() map[int]string {
+	return pal.DownClues
+}
+
+// GetGrid returns the list of strings in the grid
+func (pal *AcrossLite) GetGrid() []string {
+	return pal.Grid
 }
 
 // GetModifiedDate returns the modified date timestamp. If one has not
 // been specified, uses current date/time.
-func (self *AcrossLite) GetModifiedDate() time.Time {
-	if self.ModifiedDate.IsZero() {
-		self.ModifiedDate = time.Now().Add(3 * 24 * time.Hour)
+func (pal *AcrossLite) GetModifiedDate() time.Time {
+	if pal.ModifiedDate.IsZero() {
+		pal.ModifiedDate = time.Now().Add(3 * 24 * time.Hour)
 	}
-	return self.ModifiedDate
+	return pal.ModifiedDate
+}
+
+// GetName returns the puzzle name, which will be used as part of the
+// key in the database representation.
+//
+// This is not the same as the puzzle title
+func (pal *AcrossLite) GetName() string {
+	return pal.Name
 }
 
 // GetNotepad returns the <NOTEPAD> entry, which may be empty
-func (self *AcrossLite) GetNotepad() string {
+func (pal *AcrossLite) GetNotepad() string {
 	parts := make([]string, 2)
-	parts[0] = fmt.Sprintf("%q:%q", "created", self.GetCreatedDate().Format(ISO8601))
-	parts[1] = fmt.Sprintf("%q:%q", "modified", self.GetModifiedDate().Format(ISO8601))
+	parts[0] = fmt.Sprintf("%q:%q", "created", pal.GetCreatedDate().Format(ISO8601))
+	parts[1] = fmt.Sprintf("%q:%q", "modified", pal.GetModifiedDate().Format(ISO8601))
 	return "{" + strings.Join(parts, ",") + "}"
+}
+
+
+// GetSize returns the number of rows or columns in this puzzle
+func (pal *AcrossLite) GetSize() int {
+	return pal.Size
+}
+
+// GetTitle returns the puzzle title, which is a descriptive string that
+// is typically used as the heading of the page it is printed on in the
+// newspaper.
+func (pal *AcrossLite) GetTitle() string {
+	return pal.Title
 }
 
 // ---------------------------------------------------------------------
 // Implementation of Exporter interface
 // ---------------------------------------------------------------------
 
-// SetSize sets the number of rows or columns in this puzzle
-func (self *AcrossLite) SetSize(n int) {
-	self.Size = n
-	self.Grid = make([]string, n)
-	for i := 0; i < n; i++ {
-		self.Grid[i] = strings.Repeat(" ", n)
-	}
-}
-
-// SetName sets the puzzle nme
-func (self *AcrossLite) SetName(name string) {
-	self.Name = name
-}
-
-// SetTitle sets the puzzle title
-func (self *AcrossLite) SetTitle(title string) {
-	self.Title = title
+// SetAcrossClues sets the across clue map
+func (pal *AcrossLite) SetAcrossClues(clueMap map[int]string) {
+	pal.AcrossClues = clueMap
 }
 
 // SetAuthor sets the author line
-func (self *AcrossLite) SetAuthor(author string) {
-	self.Author = author
-}
-
-// SetCopyright sets the copyright line
-func (self *AcrossLite) SetCopyright(copyright string) {
-	self.Copyright = copyright
+func (pal *AcrossLite) SetAuthor(author string) {
+	pal.Author = author
 }
 
 // SetCell sets the letter at a given point in the grid.  These are
@@ -185,15 +171,15 @@ func (self *AcrossLite) SetCopyright(copyright string) {
 // If the letter value is '\x00', it is a black cell, which must be
 // represented by '.' in this struct element, according to the
 // AcrossLite format.
-func (self *AcrossLite) SetCell(r, c int, letter byte) error {
+func (pal *AcrossLite) SetCell(r, c int, letter byte) error {
 
 	// Size must have already been parsed
-	n := self.GetSize()
+	n := pal.GetSize()
 	if n < 1 {
-		return fmt.Errorf("Puzzle size has not yet been set")
+		return fmt.Errorf("puzzle size has not yet been set")
 	}
 	if r < 1 || r > n || c < 1 || c > n {
-		return fmt.Errorf("Invalid index: r=%d,c=%d", r, c)
+		return fmt.Errorf("invalid index: r=%d,c=%d", r, c)
 	}
 
 	// Convert row and column to zero-based coordinates
@@ -206,7 +192,7 @@ func (self *AcrossLite) SetCell(r, c int, letter byte) error {
 
 	// Replace the cell in the string[i] at position j
 	sb := strings.Builder{}
-	for k, sLetter := range self.Grid[i] {
+	for k, sLetter := range pal.Grid[i] {
 		if k == j {
 			// This is the one we want to replace
 			sb.WriteRune(rune(letter))
@@ -216,27 +202,46 @@ func (self *AcrossLite) SetCell(r, c int, letter byte) error {
 		}
 	}
 	// Set the resultng string back in the struct element
-	self.Grid[i] = sb.String()
+	pal.Grid[i] = sb.String()
 
 	return nil
 }
 
-// SetAcrossClues sets the across clue map
-func (self *AcrossLite) SetAcrossClues(clueMap map[int]string) {
-	self.AcrossClues = clueMap
-}
-
-// SetDownClues sets the down clue map
-func (self *AcrossLite) SetDownClues(clueMap map[int]string) {
-	self.DownClues = clueMap
+// SetCopyright sets the copyright line
+func (pal *AcrossLite) SetCopyright(copyright string) {
+	pal.Copyright = copyright
 }
 
 // SetCreatedDate sets the creation datetime
-func (self *AcrossLite) SetCreatedDate(created time.Time) {
-	self.CreatedDate = created
+func (pal *AcrossLite) SetCreatedDate(created time.Time) {
+	pal.CreatedDate = created
+}
+
+// SetDownClues sets the down clue map
+func (pal *AcrossLite) SetDownClues(clueMap map[int]string) {
+	pal.DownClues = clueMap
 }
 
 // SetModifiedDate sets the modified datetime
-func (self *AcrossLite) SetModifiedDate(modified time.Time) {
-	self.ModifiedDate = modified
+func (pal *AcrossLite) SetModifiedDate(modified time.Time) {
+	pal.ModifiedDate = modified
+}
+
+// SetName sets the puzzle nme
+func (pal *AcrossLite) SetName(name string) {
+	pal.Name = name
+}
+
+// SetSize sets the number of rows or columns in this puzzle
+func (pal *AcrossLite) SetSize(n int) {
+	pal.Size = n
+	pal.Grid = make([]string, n)
+	for i := 0; i < n; i++ {
+		pal.Grid[i] = strings.Repeat(" ", n)
+	}
+}
+
+// SetTitle sets the puzzle title
+func (pal *AcrossLite) SetTitle(title string) {
+	pal.Title = title
 }

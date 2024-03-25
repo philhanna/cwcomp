@@ -8,7 +8,6 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/philhanna/collections v1.4.0
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/exp v0.0.0-20240318143956-a85f2c67cd81
 )
 
 require (
