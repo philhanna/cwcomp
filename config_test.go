@@ -36,7 +36,7 @@ func TestNewConfiguration(t *testing.T) {
 	// File with invalid yaml
 	filename := filepath.Join(os.TempDir(), "invalid.yaml")
 	defer os.Remove(filename)
-	
+
 	data := []byte(`this is invalid yaml`)
 	os.WriteFile(filename, data, 0644)
 	GetConfigFileName = func() string {
